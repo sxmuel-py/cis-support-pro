@@ -1,6 +1,6 @@
 import * as React from "react"
 
-export interface ToastProps extends React.HTMLAttributes<HTMLDivElement> {
+export interface ToastProps extends Omit<React.HTMLAttributes<HTMLDivElement>, "title"> {
   title?: React.ReactNode
   description?: React.ReactNode
   variant?: "default" | "destructive"
