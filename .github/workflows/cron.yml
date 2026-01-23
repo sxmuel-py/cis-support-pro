@@ -1,0 +1,16 @@
+name: Trigger Email Processing
+
+on:
+  schedule:
+    # Run every 5 minutes
+    - cron: "*/5 * * * *"
+  workflow_dispatch: # Allows manual triggering from GitHub UI
+
+jobs:
+  cron:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Call Cron Endpoint
+        run: |
+          curl -s -X GET "${{ secrets.NETLIFY_SITE_URL }}/api/cron/process-emails" \
+          -H "Authorization: Bearer ${{ secrets.CRON_SECRET }}"

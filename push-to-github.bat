@@ -1,74 +1,36 @@
 @echo off
-setlocal
 echo ===========================================
-echo 🚀 Automated GitHub Push Script
+echo 🚀 Automated GitHub Push Script (Simplified)
 echo ===========================================
-
-:: Navigate to the script's directory (project root)
 cd /d "%~dp0"
 
 echo.
-echo [1/6] Configuring Git Identity...
+echo [1/5] Configuring Git...
 git config --global user.email "samuel.maps.helper@gmail.com"
 git config --global user.name "sxmuel-py"
 
 echo.
-echo [2/6] Initializing Repository...
-if not exist .git (
-    git init
-    git branch -M main
-    echo    Initialized new repository.
-) else (
-    echo    Repository already initialized.
-)
+echo [2/5] Initializing...
+if not exist .git git init
+git branch -M main
 
 echo.
-echo [3/6] Setting Remote Origin...
-:: Remove existing origin to avoid conflicts/errors
+echo [3/5] Setting Remote...
 git remote remove origin >nul 2>&1
 git remote add origin https://github.com/sxmuel-py/cis-support-pro.git
-echo    Remote set to: https://github.com/sxmuel-py/cis-support-pro.git
 
 echo.
-echo [4/6] Adding Files...
+echo [4/5] Adding and Committing...
 git add .
-
-echo.
-echo [5/6] Committing Changes...
+:: This might say "nothing to commit" if you already ran it, which is fine!
 git commit -m "Automated deployment commit"
-if %errorlevel% equ 0 (
-    echo    Changes committed.
-) else (
-    echo    No changes to commit (or commit failed).
-)
 
 echo.
-echo [6/6] Pushing to GitHub...
-echo    Please wait...
+echo [5/5] Pushing to GitHub...
 git push -u origin main
 
-if %errorlevel% neq 0 (
-    echo.
-    echo ===========================================
-    echo ❌ PUSH FAILED!
-    echo ===========================================
-    echo.
-    echo Possible reasons:
-    echo 1. The repository 'cis-support-pro' does NOT exist on your GitHub account.
-    echo    -> Go to https://github.com/new and create it first!
-    echo.
-    echo 2. You don't have internet access.
-    echo.
-    echo 3. Credentials issue (if prompted, sign in via browser).
-    echo.
-) else (
-    echo.
-    echo ===========================================
-    echo ✅ SUCCESS! Code pushed to GitHub.
-    echo ===========================================
-    echo.
-    echo You can now proceed to Vercel to import this project.
-)
-
 echo.
+echo ===========================================
+echo If you see a URL above, it worked!
+echo ===========================================
 pause
