@@ -6,11 +6,13 @@ import { revalidatePath } from "next/cache";
 export async function selfAssignTicket(ticketId: string) {
   const supabase = await createClient();
 
-  // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) {
+  // Get current user from session (more reliable in server actions)
+  const { data: { session } } = await supabase.auth.getSession();
+  if (!session?.user) {
     return { error: "Unauthorized" };
   }
+
+  const user = session.user;
 
   // Verify ticket is unassigned
   const { data: ticket } = await supabase

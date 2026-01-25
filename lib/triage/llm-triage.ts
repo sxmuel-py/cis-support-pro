@@ -90,6 +90,25 @@ export function triageEmailWithKeywords(
   body: string
 ): TriageResult {
   const text = `${subject} ${body}`.toLowerCase();
+  const fromEmail = from.toLowerCase();
+
+  // Blocked senders (auto-junk)
+  const blockedSenders = [
+    'help@cisitservices.on.spiceworks.com',
+    'noreply@',
+    'no-reply@',
+  ];
+
+  const isBlockedSender = blockedSenders.some((sender) => fromEmail.includes(sender));
+
+  if (isBlockedSender) {
+    return {
+      classification: 'junk',
+      priority: 'low',
+      category: 'other',
+      reasoning: 'Blocked sender (automated/notification email)',
+    };
+  }
 
   // Junk indicators
   const junkKeywords = [
