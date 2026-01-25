@@ -4,7 +4,8 @@ export function generateTicketCreatedTemplate(
   senderName: string,
   body: string
 ) {
-  const shortTicketId = ticketId.slice(0, 8); // Use first 8 chars for cleaner ID
+  const shortTicketId = ticketId.slice(0, 8);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cis-pro-support.netlify.app';
   
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -17,6 +18,10 @@ export function generateTicketCreatedTemplate(
         
         <p>The IT team has received your request and will get back to you. Meanwhile, you can reply to this email if you have any additional questions or details.</p>
         
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${appUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Ticket Status</a>
+        </div>
+
         <p>Sincerely,<br>
         <strong>IT Team</strong></p>
         
@@ -41,6 +46,7 @@ export function generateTicketClosedTemplate(
   closedBy: string
 ) {
   const shortTicketId = ticketId.slice(0, 8);
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cis-pro-support.netlify.app';
 
   return `
     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -52,6 +58,10 @@ export function generateTicketClosedTemplate(
         <p>Hi <strong>${senderName}</strong>,</p>
         
         <p>The IT team has received your request and will get back to you. Meanwhile, you can reply to this email if you have any additional questions or details.</p>
+
+        <div style="text-align: center; margin: 30px 0;">
+          <a href="${appUrl}" style="background-color: #2563eb; color: white; padding: 12px 24px; text-decoration: none; border-radius: 5px; font-weight: bold;">View Ticket Dashboard</a>
+        </div>
         
         <p>Sincerely,<br>
         <strong>IT Team</strong></p>
