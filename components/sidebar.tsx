@@ -51,6 +51,19 @@ export function Sidebar() {
     fetchUser();
   }, [supabase]);
 
+  const getRoleLabel = (role: string) => {
+    switch (role) {
+      case "supervisor":
+        return "Supervisor";
+      case "technician":
+        return "Technician";
+      case "sims_manager":
+        return "Sims Manager";
+      default:
+        return role;
+    }
+  };
+
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-card">
       {/* Logo/Header */}
@@ -78,7 +91,7 @@ export function Sidebar() {
                   variant={user.role === "supervisor" ? "default" : "secondary"}
                   className="text-[10px] px-1.5 py-0"
                 >
-                  {user.role === "supervisor" ? "Supervisor" : "Technician"}
+                  {getRoleLabel(user.role)}
                 </Badge>
               </div>
             </div>
@@ -124,4 +137,3 @@ export function Sidebar() {
     </div>
   );
 }
-
