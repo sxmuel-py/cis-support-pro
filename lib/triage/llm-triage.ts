@@ -1,9 +1,11 @@
 import OpenAI from 'openai';
 
+import { TicketCategory, TicketPriority } from "@/lib/types";
+
 export interface TriageResult {
   classification: 'support_request' | 'junk';
-  priority: 'low' | 'medium' | 'high' | 'urgent';
-  category: 'hardware' | 'software' | 'network' | 'access' | 'email' | 'other';
+  priority: TicketPriority;
+  category: TicketCategory;
   reasoning: string;
 }
 
@@ -23,7 +25,7 @@ export async function triageEmailWithLLM(
       apiKey: process.env.OPENAI_API_KEY,
     });
 
-    const prompt = `You are an IT support ticket classifier for a school (CIS Lagos). Analyze this email and determine if it's a legitimate support request or junk/spam.
+  const prompt = `You are an IT support ticket classifier for a school (CIS Lagos). Analyze this email and determine if it's a legitimate support request or junk/spam.
 
 Email Details:
 - From: ${from}
@@ -36,13 +38,14 @@ Classify as:
 
 Also determine:
 - Priority: low (general questions), medium (non-urgent issues), high (affecting work), urgent (critical/security)
-- Category: hardware, software, network, access, email, other
+- Category: hardware, software, network, access, email, sims, other
+- "sims" category: Use this for anything related to iSAMS, SIMS, report cards, grades, attendance, student data, or the school management system.
 
 Respond ONLY with valid JSON in this exact format:
 {
   "classification": "support_request" | "junk",
   "priority": "low" | "medium" | "high" | "urgent",
-  "category": "hardware" | "software" | "network" | "access" | "email" | "other",
+  "category": "hardware" | "software" | "network" | "access" | "email" | "sims" | "other",
   "reasoning": "Brief explanation"
 }`;
 
@@ -145,6 +148,7 @@ export function triageEmailWithKeywords(
   const hardwareKeywords = ['computer', 'laptop', 'printer', 'monitor', 'keyboard', 'mouse', 'hardware'];
   const softwareKeywords = ['software', 'application', 'program', 'install', 'update'];
   const emailKeywords = ['email', 'outlook', 'gmail', 'mail'];
+  const simsKeywords = ['sims', 'isams', 'report card', 'grade', 'attendance', 'student data', 'report'];
 
   // Determine priority
   let priority: TriageResult['priority'] = 'medium';
@@ -158,7 +162,9 @@ export function triageEmailWithKeywords(
 
   // Determine category
   let category: TriageResult['category'] = 'other';
-  if (accessKeywords.some((k) => text.includes(k))) {
+  if (simsKeywords.some((k) => text.includes(k))) {
+    category = 'sims';
+  } else if (accessKeywords.some((k) => text.includes(k))) {
     category = 'access';
   } else if (networkKeywords.some((k) => text.includes(k))) {
     category = 'network';

@@ -143,6 +143,16 @@ export default function DashboardPage() {
 
   // Apply filters
   const filteredTickets = tickets.filter((ticket) => {
+    // Role-based filtering
+    const isSimsManager = currentUser?.role === "sims_manager";
+    const isTechnician = currentUser?.role === "technician";
+
+    // SIMS Manager sees ONLY SIMS tickets
+    if (isSimsManager && ticket.category !== "sims") return false;
+
+    // Technicians see everything EXCEPT SIMS tickets (Supervisors see all)
+    if (isTechnician && ticket.category === "sims") return false;
+
     // Tab filter
     if (filter === "mine" && ticket.assigned_to !== currentUser?.id) return false;
     if (filter === "unassigned" && ticket.assigned_to) return false;
@@ -160,7 +170,8 @@ export default function DashboardPage() {
         ticket.id.toLowerCase().includes(query) ||
         ticket.subject.toLowerCase().includes(query) ||
         ticket.sender_name?.toLowerCase().includes(query) ||
-        ticket.sender_email.toLowerCase().includes(query)
+        ticket.sender_email.toLowerCase().includes(query) ||
+        ticket.category?.toLowerCase().includes(query)
       );
     }
 
