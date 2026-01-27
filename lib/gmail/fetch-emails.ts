@@ -11,6 +11,7 @@ export interface EmailMessage {
   bodyHtml: string;
   date: Date;
   labels: string[];
+  headers: Record<string, string>; // Add headers for filtering
   attachments: {
     filename: string;
     mimeType: string;
@@ -116,6 +117,14 @@ function parseEmailMessage(message: gmail_v1.Schema$Message): EmailMessage | nul
   // Extract attachments
   const attachments = extractAttachments(message.payload);
 
+  // Build headers map for easy access
+  const headersMap: Record<string, string> = {};
+  headers.forEach((header) => {
+    if (header.name && header.value) {
+      headersMap[header.name.toLowerCase()] = header.value;
+    }
+  });
+
   return {
     id: message.id,
     threadId: message.threadId,
@@ -126,6 +135,7 @@ function parseEmailMessage(message: gmail_v1.Schema$Message): EmailMessage | nul
     bodyHtml: html,
     date: date ? new Date(date) : new Date(),
     labels: message.labelIds || [],
+    headers: headersMap,
     attachments,
   };
 }

@@ -38,7 +38,20 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
   const isAssignedToMe = currentUser && ticket.assigned_to === currentUser.id;
   const isSupervisor = currentUser?.role === "supervisor";
   const canAcceptReject = isAssignedToMe && assignmentStatus === "assigned";
-  const canSelfAssign = !ticket.assigned_to && assignmentStatus === "unassigned" && currentUser?.role === "technician";
+  
+  // More robust check for self-assignment
+  const canSelfAssign = 
+    currentUser?.role === "technician" && 
+    !ticket.assigned_to && 
+    (assignmentStatus === "unassigned" || !assignmentStatus);
+
+  // Debug logging
+  console.log("Self-assign check:", {
+    userRole: currentUser?.role,
+    assignedTo: ticket.assigned_to,
+    assignmentStatus,
+    canSelfAssign
+  });
 
   useEffect(() => {
     loadDetails();
@@ -126,22 +139,36 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
   };
 
   const handleSelfAssign = async () => {
+    console.log("Self-assign clicked for ticket:", ticket.id);
     setProcessing(true);
-    const result = await selfAssignTicket(ticket.id);
     
-    if (result.error) {
+    try {
+      const result = await selfAssignTicket(ticket.id);
+      console.log("Self-assign result:", result);
+      
+      if (result.error) {
+        console.error("Self-assign error:", result.error);
+        toast({
+          title: "Error",
+          description: result.error,
+          variant: "destructive",
+        });
+      } else {
+        toast({
+          title: "Success",
+          description: "Ticket assigned to you and moved to In Progress",
+        });
+        await loadDetails();
+      }
+    } catch (error) {
+      console.error("Self-assign exception:", error);
       toast({
         title: "Error",
-        description: result.error,
+        description: "Failed to assign ticket. Please try again.",
         variant: "destructive",
       });
-    } else {
-      toast({
-        title: "Success",
-        description: "Ticket assigned to you and moved to In Progress",
-      });
-      await loadDetails();
     }
+    
     setProcessing(false);
   };
 

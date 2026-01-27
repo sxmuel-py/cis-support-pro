@@ -22,6 +22,8 @@ export async function sendEmail({ to, cc, subject, html }: SendEmailParams) {
       `Subject: ${utf8Subject}`,
       'MIME-Version: 1.0',
       'Content-Type: text/html; charset=utf-8',
+      'X-Auto-Reply: true', // Custom header to identify bot emails
+      'X-CIS-Support-Bot: v1', // Additional identifier
       '',
       html,
     ].filter(part => part !== null);

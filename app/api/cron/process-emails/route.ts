@@ -39,10 +39,31 @@ export async function GET(request: Request) {
 
     for (const email of emails) {
       try {
-        // Filter out blocked senders BEFORE processing
+        // Filter out bot-sent emails by checking for custom headers
+        const isAutoReply = email.headers['x-auto-reply'] === 'true' || 
+                           email.headers['x-cis-support-bot'] === 'v1';
+        
+        if (isAutoReply) {
+          console.log(`Skipping bot auto-reply: ${email.from} - ${email.subject}`);
+          
+          // Mark as processed to avoid reprocessing
+          await supabase.from('processed_emails').insert({
+            message_id: email.id,
+            thread_id: email.threadId,
+            classification: 'junk',
+          });
+
+          // Mark as read and archive
+          await markEmailAsRead(email.id);
+          await archiveEmail(email.id);
+          
+          results.junk_filtered++;
+          continue;
+        }
+
+        // Filter out other blocked senders
         const blockedSenders = [
           'help@cisitservices.on.spiceworks.com',
-          'itsupport@cislagos.org', // Our own bot email
           'noreply@',
           'no-reply@',
         ];
@@ -159,6 +180,7 @@ export async function GET(request: Request) {
             
             await sendEmail({
               to: email.from,
+              cc: 'itsupport@cislagos.org', // Re-enabled - bot headers prevent loops
               subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
               html,
             });
