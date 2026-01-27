@@ -39,6 +39,35 @@ export async function GET(request: Request) {
 
     for (const email of emails) {
       try {
+        // Filter out blocked senders BEFORE processing
+        const blockedSenders = [
+          'help@cisitservices.on.spiceworks.com',
+          'itsupport@cislagos.org', // Our own bot email
+          'noreply@',
+          'no-reply@',
+        ];
+
+        const fromEmail = email.from.toLowerCase();
+        const isBlockedSender = blockedSenders.some((sender) => fromEmail.includes(sender));
+
+        if (isBlockedSender) {
+          console.log(`Skipping blocked sender: ${email.from} - ${email.subject}`);
+          
+          // Mark as processed to avoid reprocessing
+          await supabase.from('processed_emails').insert({
+            message_id: email.id,
+            thread_id: email.threadId,
+            classification: 'junk',
+          });
+
+          // Mark as read and archive
+          await markEmailAsRead(email.id);
+          await archiveEmail(email.id);
+          
+          results.junk_filtered++;
+          continue;
+        }
+
         // Check if already processed
         const { data: existing } = await supabase
           .from('processed_emails')
@@ -130,7 +159,6 @@ export async function GET(request: Request) {
             
             await sendEmail({
               to: email.from,
-              cc: 'itsupport@cislagos.org',
               subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
               html,
             });
