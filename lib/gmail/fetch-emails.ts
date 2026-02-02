@@ -93,6 +93,52 @@ export async function archiveEmail(messageId: string): Promise<void> {
   }
 }
 
+/**
+ * Removes email signatures, disclaimers, and quoted replies from email body
+ */
+function cleanEmailBody(text: string): string {
+  if (!text) return '';
+
+  let cleaned = text;
+
+  // Remove CIS email signature/disclaimer
+  const cisSignaturePatterns = [
+    /--[\s\S]*?CIS\s+is committed to safeguarding[\s\S]*/gi,
+    /CIS\s+is committed to safeguarding[\s\S]*/gi,
+    /This email and any attachments are sent in confidence[\s\S]*/gi,
+    /\*\*Vision\*[\s\S]*/gi,
+  ];
+
+  cisSignaturePatterns.forEach(pattern => {
+    cleaned = cleaned.replace(pattern, '');
+  });
+
+  // Remove common email signatures
+  const signaturePatterns = [
+    /--\s*$/gm, // Signature delimiter
+    /^--\s*$/gm,
+    /_{3,}/g, // Multiple underscores
+    /Sent from my (iPhone|iPad|Android|Mobile)/gi,
+    /Get Outlook for (iOS|Android)/gi,
+  ];
+
+  signaturePatterns.forEach(pattern => {
+    cleaned = cleaned.replace(pattern, '');
+  });
+
+  // Remove quoted replies (lines starting with >)
+  cleaned = cleaned.split('\n')
+    .filter(line => !line.trim().startsWith('>'))
+    .join('\n');
+
+  // Remove excessive whitespace
+  cleaned = cleaned
+    .replace(/\n{3,}/g, '\n\n') // Max 2 consecutive newlines
+    .trim();
+
+  return cleaned;
+}
+
 function parseEmailMessage(message: gmail_v1.Schema$Message): EmailMessage | null {
   if (!message.id || !message.threadId) {
     return null;
@@ -131,7 +177,7 @@ function parseEmailMessage(message: gmail_v1.Schema$Message): EmailMessage | nul
     from: fromEmail,
     fromName: fromName || fromEmail,
     subject: subject || '(No Subject)',
-    body: text,
+    body: cleanEmailBody(text), // Clean signatures and disclaimers
     bodyHtml: html,
     date: date ? new Date(date) : new Date(),
     labels: message.labelIds || [],
