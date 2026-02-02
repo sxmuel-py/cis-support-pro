@@ -5,7 +5,7 @@ export function generateTicketCreatedTemplate(
   body: string
 ) {
   const shortTicketId = ticketId.slice(0, 8);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cis-support-pro.netlify.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-vercel-url.vercel.app';
   const ticketUrl = `${appUrl}/dashboard?ticket=${ticketId}`;
   
   return `
@@ -108,7 +108,7 @@ export function generateTicketClosedTemplate(
   closedBy: string
 ) {
   const shortTicketId = ticketId.slice(0, 8);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cis-support-pro.netlify.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-vercel-url.vercel.app';
   const ticketUrl = `${appUrl}/dashboard?ticket=${ticketId}`;
 
   return `
@@ -237,7 +237,7 @@ export function generateTicketAssignedTemplate(
   category: string
 ) {
   const shortTicketId = ticketId.slice(0, 8);
-  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://cis-support-pro.netlify.app';
+  const appUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://your-vercel-url.vercel.app';
   const ticketUrl = `${appUrl}/dashboard?ticket=${ticketId}`;
   
   const priorityColors: Record<string, { bg: string; border: string; text: string }> = {
