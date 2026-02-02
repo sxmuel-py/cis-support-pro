@@ -3,7 +3,7 @@ import { google } from 'googleapis';
 export interface GmailConfig {
   serviceAccountEmail?: string;
   privateKey?: string;
-  userEmail?: string; // The email to impersonate (itsupport@cislagos.org)
+  userEmail?: string; // The email to impersonate (cishelpdesk@cislagos.org)
   // OAuth2 credentials (for personal Gmail bot account)
   clientId?: string;
   clientSecret?: string;

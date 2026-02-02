@@ -276,7 +276,7 @@ export function generateTicketAssignedTemplate(
                   <p style="margin: 0 0 20px 0; color: #111827; font-size: 16px; line-height: 1.6;">Hello IT Support Team,</p>
                   
                   <p style="margin: 0 0 30px 0; color: #4b5563; font-size: 15px; line-height: 1.6;">
-                    A ticket has been assigned to <strong>${assignedTo}</strong> by <strong>${assignedBy}</strong>. This notification is being sent to <strong>itsupport@cislagos.org</strong> for record keeping.
+                    A ticket has been assigned to <strong>${assignedTo}</strong> by <strong>${assignedBy}</strong>. This notification is being sent to <strong>cishelpdesk@cislagos.org</strong> for record keeping.
                   </p>
                   
                   <!-- Assignment Badge -->
@@ -358,7 +358,7 @@ export function generateTicketAssignedTemplate(
                   <!-- Info Note -->
                   <div style="background-color: #eff6ff; border-left: 4px solid #2563eb; padding: 16px; border-radius: 4px; margin-top: 30px;">
                     <p style="margin: 0; color: #1e40af; font-size: 14px; line-height: 1.6;">
-                      <strong>Note:</strong> This is an automated notification sent to itsupport@cislagos.org for tracking purposes. The assigned technician has also been notified.
+                      <strong>Note:</strong> This is an automated notification sent to cishelpdesk@cislagos.org for tracking purposes. The assigned technician has also been notified.
                     </p>
                   </div>
                 </td>

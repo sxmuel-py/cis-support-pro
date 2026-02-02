@@ -180,7 +180,7 @@ export async function GET(request: Request) {
             
             await sendEmail({
               to: email.from,
-              cc: 'itsupport@cislagos.org', // Re-enabled - bot headers prevent loops
+              cc: 'cishelpdesk@cislagos.org', // Re-enabled - bot headers prevent loops
               subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
               html,
             });

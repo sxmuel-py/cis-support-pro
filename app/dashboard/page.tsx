@@ -312,7 +312,7 @@ export default function DashboardPage() {
                     <p className="text-sm text-muted-foreground max-w-md">
                       {searchQuery || statusFilter !== "all" || priorityFilter !== "all"
                         ? "Try adjusting your filters"
-                        : "Tickets will appear here when emails are sent to itsupport@cislagos.org"}
+                        : "Tickets will appear here when emails are sent to cishelpdesk@cislagos.org"}
                     </p>
                   </div>
                 </CardContent>

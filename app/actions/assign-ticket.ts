@@ -61,7 +61,7 @@ export async function assignTicket(ticketId: string, technicianId: string | null
     return { error: error.message };
   }
 
-  // Send email notification to itsupport@cislagos.org when ticket is assigned
+  // Send email notification to cishelpdesk@cislagos.org when ticket is assigned
   if (technicianId && ticket) {
     try {
       const emailHtml = generateTicketAssignedTemplate(
@@ -74,7 +74,7 @@ export async function assignTicket(ticketId: string, technicianId: string | null
       );
 
       await sendEmail({
-        to: 'itsupport@cislagos.org',
+        to: 'cishelpdesk@cislagos.org',
         subject: `Ticket Assigned: #${ticketId.slice(0, 8)} - ${ticket.subject}`,
         html: emailHtml,
       });
