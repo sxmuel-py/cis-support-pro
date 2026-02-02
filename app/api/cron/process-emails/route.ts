@@ -31,6 +31,7 @@ export async function GET(request: Request) {
     const results = {
       processed: 0,
       tickets_created: 0,
+      replies_added: 0, // New: track replies added as notes
       junk_filtered: 0,
       duplicates_skipped: 0,
       errors: 0,
@@ -102,6 +103,62 @@ export async function GET(request: Request) {
           await markEmailAsRead(email.id);
           continue;
         }
+
+        // ============================================
+        // SMART THREAD TRACKING - Prevent Duplicate Tickets
+        // ============================================
+        
+        // Check if this email is a reply to an existing ticket (by thread ID)
+        const { data: existingTicket } = await supabase
+          .from('tickets')
+          .select('id, subject, status, sender_email')
+          .eq('email_thread_id', email.threadId)
+          .single();
+
+        if (existingTicket) {
+          // This is a reply to an existing ticket - add as note instead
+          console.log(`Email is a reply to existing ticket #${existingTicket.id.slice(0, 8)}`);
+          
+          // Determine who sent the reply
+          const isFromOriginalSender = email.from.toLowerCase() === existingTicket.sender_email.toLowerCase();
+          const isFromTechnician = email.from.toLowerCase().endsWith('@cislagos.org');
+          
+          let noteContent = '';
+          if (isFromTechnician) {
+            noteContent = `**Technician Reply** (${email.fromName || email.from}):\n\n${email.body}`;
+          } else if (isFromOriginalSender) {
+            noteContent = `**Customer Follow-up** (${email.fromName || email.from}):\n\n${email.body}`;
+          } else {
+            noteContent = `**Reply from** ${email.fromName || email.from}:\n\n${email.body}`;
+          }
+
+          // Add as note to existing ticket
+          await supabase.from('notes').insert({
+            ticket_id: existingTicket.id,
+            content: noteContent,
+            author_name: email.fromName || email.from,
+            author_id: null, // System-generated note
+          });
+
+          // Mark as processed
+          await supabase.from('processed_emails').insert({
+            message_id: email.id,
+            thread_id: email.threadId,
+            classification: 'reply',
+            ticket_id: existingTicket.id,
+          });
+
+          // Mark email as read
+          await markEmailAsRead(email.id);
+
+          console.log(`Added reply as note to ticket #${existingTicket.id.slice(0, 8)}`);
+          results.replies_added++;
+          continue; // Don't create a new ticket
+        }
+
+        // ============================================
+        // NEW TICKET CREATION (only if not a reply)
+        // ============================================
 
         // Triage email
         console.log(`Triaging email from ${email.from}: ${email.subject}`);
