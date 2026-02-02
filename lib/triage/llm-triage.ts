@@ -14,16 +14,28 @@ export async function triageEmailWithLLM(
   subject: string,
   body: string
 ): Promise<TriageResult> {
-  // If no API key, use keyword fallback immediately
-  if (!process.env.OPENAI_API_KEY) {
-    console.log('No OPENAI_API_KEY found, using keyword triage');
+  // Try Groq first (faster and free), then OpenAI, then keyword fallback
+  const groqApiKey = process.env.GROQ_API_KEY;
+  const openaiApiKey = process.env.OPENAI_API_KEY;
+
+  if (!groqApiKey && !openaiApiKey) {
+    console.log('No LLM API key found, using keyword triage');
     return triageEmailWithKeywords(from, subject, body);
   }
 
   try {
-    const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY,
-    });
+    // Use Groq if available (faster and free)
+    const client = groqApiKey
+      ? new OpenAI({
+          apiKey: groqApiKey,
+          baseURL: 'https://api.groq.com/openai/v1',
+        })
+      : new OpenAI({
+          apiKey: openaiApiKey,
+        });
+
+    const model = groqApiKey ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
+    console.log(`Using ${groqApiKey ? 'Groq' : 'OpenAI'} for email triage with model: ${model}`);
 
   const prompt = `You are an IT support ticket classifier for a school (CIS Lagos). Analyze this email and determine if it's a legitimate support request or junk/spam.
 
@@ -49,8 +61,8 @@ Respond ONLY with valid JSON in this exact format:
   "reasoning": "Brief explanation"
 }`;
 
-    const response = await openai.chat.completions.create({
-      model: 'gpt-4o-mini',
+    const response = await client.chat.completions.create({
+      model: model,
       messages: [
         {
           role: 'system',
@@ -83,6 +95,7 @@ Respond ONLY with valid JSON in this exact format:
     console.error('LLM triage error:', error);
     
     // Fallback to keyword-based triage
+    console.log('Falling back to keyword-based triage');
     return triageEmailWithKeywords(from, subject, body);
   }
 }
