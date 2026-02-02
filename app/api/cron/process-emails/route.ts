@@ -237,7 +237,7 @@ export async function GET(request: Request) {
             
             await sendEmail({
               to: email.from,
-              cc: 'cishelpdesk@cislagos.org', // Re-enabled - bot headers prevent loops
+              cc: 'itsupport@cislagos.org', // CC IT support group for visibility
               subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
               html,
             });

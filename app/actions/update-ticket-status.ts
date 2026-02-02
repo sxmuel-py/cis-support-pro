@@ -72,7 +72,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
 
         const result = await sendEmail({
           to: ticket.sender_email,
-          cc: 'cishelpdesk@cislagos.org',
+          cc: 'itsupport@cislagos.org', // CC IT support group
           subject: `[Ticket Closed] #${ticketId.slice(0, 8)} - ${ticket.subject}`,
           html,
         });

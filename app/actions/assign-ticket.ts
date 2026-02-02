@@ -74,7 +74,7 @@ export async function assignTicket(ticketId: string, technicianId: string | null
       );
 
       await sendEmail({
-        to: 'cishelpdesk@cislagos.org',
+        to: 'itsupport@cislagos.org', // Send to IT support group
         subject: `Ticket Assigned: #${ticketId.slice(0, 8)} - ${ticket.subject}`,
         html: emailHtml,
       });
