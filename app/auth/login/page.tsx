@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -16,8 +16,54 @@ export default function LoginPage() {
   const [showForgotPassword, setShowForgotPassword] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
   const [resetSuccess, setResetSuccess] = useState(false);
+  const [processingMagicLink, setProcessingMagicLink] = useState(false);
   const router = useRouter();
   const supabase = createClient();
+
+  // Handle magic link authentication
+  useEffect(() => {
+    const handleMagicLink = async () => {
+      // Check if there's a hash in the URL (magic link token)
+      const hashParams = new URLSearchParams(window.location.hash.substring(1));
+      const accessToken = hashParams.get('access_token');
+      const refreshToken = hashParams.get('refresh_token');
+
+      if (accessToken) {
+        setProcessingMagicLink(true);
+        
+        try {
+          // Set the session with the tokens from the magic link
+          const { data, error: sessionError } = await supabase.auth.setSession({
+            access_token: accessToken,
+            refresh_token: refreshToken || '',
+          });
+
+          if (sessionError) {
+            console.error('Magic link error:', sessionError);
+            setError('Invalid or expired magic link. Please request a new one.');
+            setProcessingMagicLink(false);
+            // Clear the hash from URL
+            window.history.replaceState(null, '', window.location.pathname);
+            return;
+          }
+
+          if (data.session) {
+            // Successfully authenticated, redirect to dashboard
+            router.push('/dashboard');
+            router.refresh();
+          }
+        } catch (err) {
+          console.error('Magic link processing error:', err);
+          setError('Failed to process magic link');
+          setProcessingMagicLink(false);
+          // Clear the hash from URL
+          window.history.replaceState(null, '', window.location.pathname);
+        }
+      }
+    };
+
+    handleMagicLink();
+  }, [router, supabase.auth]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -96,12 +142,22 @@ export default function LoginPage() {
           <div>
             <CardTitle className="text-2xl">CIS Support Pro</CardTitle>
             <CardDescription>
-              {showForgotPassword ? "Reset Your Password" : "IT Help Desk Command Center"}
+              {processingMagicLink 
+                ? "Signing you in..." 
+                : showForgotPassword 
+                ? "Reset Your Password" 
+                : "IT Help Desk Command Center"}
             </CardDescription>
           </div>
         </CardHeader>
         <CardContent>
-          {!showForgotPassword ? (
+          {processingMagicLink ? (
+            // Magic Link Processing
+            <div className="flex flex-col items-center justify-center space-y-4 py-8">
+              <div className="h-8 w-8 animate-spin rounded-full border-4 border-primary border-t-transparent"></div>
+              <p className="text-sm text-muted-foreground">Processing magic link...</p>
+            </div>
+          ) : !showForgotPassword ? (
             // Login Form
             <form onSubmit={handleLogin} className="space-y-4">
               {error && (
