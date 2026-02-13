@@ -1,187 +1,243 @@
-# CIS Support Pro
+<div align="center">
 
-A modern, high-performance IT Help Desk portal built with Next.js 15, Tailwind CSS, Shadcn/UI, and Supabase. Designed to replace cluttered help desk systems with a clean, Apple-style "Command Center."
+# 🎯 CIS Support Pro
 
-## Features
+### Built by Samuel for the IT team at Children's International School Lagos
 
-- ✨ **Modern UI**: Clean, Apple-style design with dark/light mode support
-- 📊 **Dashboard**: Real-time view of active tickets with high-contrast status badges
-- 🎯 **Smart Triage**: AI-powered email classification (Support vs Junk)
-- 💬 **Internal Notes**: IT-only notes for ticket collaboration
-- ⚡ **Real-time Updates**: Supabase real-time subscriptions for instant updates
-- 📱 **Responsive**: Works seamlessly on desktop, tablet, and mobile
+[![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
+[![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
+[![Supabase](https://img.shields.io/badge/Supabase-Powered-green?style=flat-square&logo=supabase)](https://supabase.com/)
+[![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-## Tech Stack
+*Because dealing with cluttered email threads and lost tickets is so 2020* 📧❌
 
-- **Framework**: Next.js 15 (App Router)
-- **Styling**: Tailwind CSS v3
-- **Components**: Shadcn/UI
-- **Database**: Supabase (PostgreSQL + Real-time)
-- **Language**: TypeScript
-- **Font**: Inter (Google Fonts)
+</div>
 
-## Getting Started
+---
 
-### Prerequisites
+## 🤔 What is this?
 
-- Node.js 18+ and npm
-- Supabase account (for database and real-time features)
+This is a custom-built help desk system I created to replace our old cluttered ticket system. Instead of dealing with messy email threads and losing track of requests, we now have a clean dashboard where the IT team can see everything at a glance.
 
-### Installation
+The system automatically pulls emails from our support inbox (`cishelpdesk@cislagos.org`), creates tickets, and even uses AI to filter out spam and marketing emails so we only see real support requests.
 
-1. **Install dependencies**:
-   ```bash
-   npm install
-   ```
+## 💡 Why I built this
 
-2. **Set up environment variables**:
-   
-   Copy `.env.local.example` to `.env.local` and fill in your Supabase credentials:
-   ```bash
-   cp .env.local.example .env.local
-   ```
+Working IT support at CIS Lagos, I got tired of:
 
-   Update the following variables:
-   ```env
-   NEXT_PUBLIC_SUPABASE_URL=your_supabase_project_url
-   NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-   SUPABASE_SERVICE_ROLE_KEY=your_supabase_service_role_key
-   ```
+- 📨 Digging through email threads to find ticket details
+- 🤷‍♂️ Losing track of who's working on what
+- 🗑️ Spam and marketing emails mixed with real support requests
+- 📝 No easy way to add internal notes without emailing everyone
 
-3. **Run the development server**:
-   ```bash
-   npm run dev
-   ```
+So I built this. It's designed specifically for how **we** work at CIS.
 
-4. **Open your browser**:
-   
-   Navigate to [http://localhost:3000](http://localhost:3000)
+---
 
-## Project Structure
+## ✨ Features
 
-```
-├── app/
-│   ├── dashboard/          # Main dashboard page
-│   ├── analytics/          # Analytics page (placeholder)
-│   ├── settings/           # Settings page (placeholder)
-│   ├── trash/              # Filtered junk emails
-│   ├── api/                # API routes (to be implemented)
-│   ├── layout.tsx          # Root layout with theme provider
-│   ├── page.tsx            # Root page (redirects to dashboard)
-│   └── globals.css         # Global styles and theme variables
-├── components/
-│   ├── ui/                 # Shadcn/UI components
-│   ├── sidebar.tsx         # Sidebar navigation
-│   ├── ticket-list.tsx     # Ticket list table
-│   ├── theme-provider.tsx  # Theme context provider
-│   └── theme-toggle.tsx    # Dark/light mode toggle
-├── lib/
-│   ├── types.ts            # TypeScript type definitions
-│   ├── utils.ts            # Utility functions
-│   └── mock-data.ts        # Mock ticket data
-└── supabase/
-    └── migrations/         # Database migrations (to be created)
-```
+| Feature | Description |
+|---------|-------------|
+| 📬 **Email Integration** | Automatically pulls emails from Gmail and creates tickets |
+| 🤖 **AI Triage** | Uses Groq AI to filter junk emails (newsletters, marketing, etc.) |
+| 📊 **Clean Dashboard** | See all open tickets, who they're assigned to, and their status |
+| 💬 **Internal Notes** | Add notes that only IT staff can see |
+| ⚡ **Real-time Updates** | When someone updates a ticket, everyone sees it instantly |
+| 🌙 **Dark Mode** | Because we're in the server room a lot |
 
-## Current Status
+---
 
-### ✅ Completed
-- [x] Project setup with Next.js 15 and TypeScript
-- [x] Tailwind CSS configuration
-- [x] Shadcn/UI components (Button, Badge, Card, Input, Textarea, Table)
-- [x] Dark/light mode theme system
-- [x] Sidebar navigation with Apple-style design
-- [x] Dashboard page with stats cards
-- [x] Ticket list with status/priority badges
-- [x] Mock data for development
-- [x] Placeholder pages (Analytics, Settings, Trash)
+## 🛠️ Tech Stack
 
-### 🚧 In Progress / To Do
-- [ ] Supabase database schema and migrations
-- [ ] Real-time ticket subscriptions
-- [ ] Ticket detail view (slide-over/modal)
-- [ ] Internal notes functionality
-- [ ] Email triage API route (`/api/inbound`)
-- [ ] LLM integration for email classification
-- [ ] Authentication and user management
+<table>
+<tr>
+<td align="center" width="96">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" width="48" height="48" alt="Next.js" />
+<br>Next.js 15
+</td>
+<td align="center" width="96">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="48" height="48" alt="TypeScript" />
+<br>TypeScript
+</td>
+<td align="center" width="96">
+<img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" width="48" height="48" alt="Supabase" />
+<br>Supabase
+</td>
+<td align="center" width="96">
+<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="48" height="48" alt="Tailwind" />
+<br>Tailwind CSS
+</td>
+</tr>
+</table>
 
-## Database Schema
+Plus: **Groq AI** for email classification (free and blazing fast ⚡)
 
-The following tables will be created in Supabase:
+---
 
-### `tickets`
-- `id` (uuid, primary key)
-- `created_at` (timestamp)
-- `updated_at` (timestamp)
-- `subject` (text)
-- `body` (text)
-- `sender_email` (text)
-- `sender_name` (text, nullable)
-- `status` (enum: open, pending, resolved, closed)
-- `priority` (enum: low, medium, high, urgent)
-- `category` (enum: hardware, software, network, access, other)
-- `assigned_to` (text, nullable)
+## 🚀 Setup
 
-### `notes`
-- `id` (uuid, primary key)
-- `ticket_id` (uuid, foreign key → tickets.id)
-- `content` (text)
-- `author_name` (text)
-- `created_at` (timestamp)
+If you're setting this up for another school or organization:
 
-### `trash`
-- `id` (uuid, primary key)
-- `from` (text)
-- `subject` (text)
-- `body` (text)
-- `received_at` (timestamp)
-- `classification_reason` (text, nullable)
+### 1️⃣ Clone and install
 
-## API Routes
-
-### `/api/inbound` (POST)
-Receives incoming email JSON and classifies it as "Support Request" or "Junk" using LLM or keyword filtering.
-
-**Request Body**:
-```json
-{
-  "from": "user@example.com",
-  "subject": "Email subject",
-  "body": "Email body content",
-  "received_at": "2026-01-21T18:00:00Z"
-}
-```
-
-**Response**:
-```json
-{
-  "classification": "support",
-  "confidence": 0.95,
-  "ticket_id": "uuid-here"
-}
-```
-
-## Development
-
-### Type Checking
 ```bash
-npm run type-check
+git clone <repo-url>
+cd "IT SUPPORT"
+npm install
 ```
 
-### Linting
+### 2️⃣ Set up Supabase
+
+- Create a project at [supabase.com](https://supabase.com)
+- Run the migrations in `supabase/migrations/` in order (001 → 006)
+- Copy your project URL and keys to `.env.local`
+
+### 3️⃣ Set up Gmail
+
+- Create a Google Cloud project
+- Enable Gmail API
+- Create OAuth2 credentials
+- Run `node scripts/get-gmail-token.js` to get your refresh token
+- Add credentials to `.env.local`
+
+### 4️⃣ Set up AI (optional but recommended)
+
+- Get a free API key from [groq.com](https://groq.com)
+- Add to `.env.local` as `GROQ_API_KEY`
+
+### 5️⃣ Run it
+
 ```bash
-npm run lint
+npm run dev
 ```
 
-### Build
-```bash
-npm run build
+Open [http://localhost:3000](http://localhost:3000) and you're good to go! 🎉
+
+---
+
+## 🔄 How it works
+
+```mermaid
+graph LR
+    A[📧 Email arrives] --> B[🤖 AI checks it]
+    B --> C{Real support request?}
+    C -->|Yes| D[🎫 Create ticket]
+    C -->|No| E[🗑️ Mark as junk]
+    D --> F[📨 Send auto-reply]
+    F --> G[👨‍💻 IT team works on it]
+    G --> H[⚡ Real-time updates]
 ```
 
-## Contributing
+1. **Email comes in** → Gmail API fetches it
+2. **AI checks it** → Groq determines if it's a real support request or junk
+3. **Ticket created** → Real requests become tickets in the dashboard
+4. **Auto-reply sent** → Customer gets a confirmation email with ticket number
+5. **IT team works on it** → Assign, add notes, update status
+6. **Real-time updates** → Everyone sees changes instantly
 
-This is an internal IT Help Desk project. For questions or suggestions, contact the IT team.
+---
 
-## License
+## 📁 Project Structure
 
-Proprietary - Internal use only
+```
+IT SUPPORT/
+├── 📱 app/
+│   ├── dashboard/              # Main ticket dashboard
+│   ├── api/cron/process-emails # Email processing endpoint
+│   └── actions/                # Server actions (assign, add notes, etc.)
+├── 🧩 components/
+│   ├── ticket-list.tsx         # Ticket table
+│   ├── ticket-detail.tsx       # Ticket details sidebar
+│   └── ticket-notes.tsx        # Internal notes
+├── 📚 lib/
+│   ├── gmail/                  # Gmail API integration
+│   └── triage/                 # AI email classification
+└── 🗄️ supabase/migrations/     # Database schema
+```
+
+---
+
+## 🔐 Environment Variables
+
+Copy `.env.local` and fill in your credentials:
+
+```env
+# Supabase
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+SUPABASE_SERVICE_ROLE_KEY=your_service_key
+
+# Gmail OAuth
+GMAIL_CLIENT_ID=your_client_id
+GMAIL_CLIENT_SECRET=your_secret
+GMAIL_REFRESH_TOKEN=your_refresh_token
+GMAIL_INBOX_EMAIL=your_support_email
+
+# AI (optional)
+GROQ_API_KEY=your_groq_key
+
+# Cron security
+CRON_SECRET=random_string
+```
+
+---
+
+## 🚢 Deployment
+
+I deployed this on **Vercel**:
+
+1. Push to GitHub
+2. Import to Vercel
+3. Add environment variables
+4. Deploy
+5. Set up a cron job to hit `/api/cron/process-emails` every 5 minutes
+
+**Live at:** `https://cis-pro-support.vercel.app`
+
+---
+
+## 📝 Notes
+
+- ✅ Built specifically for CIS Lagos IT team workflows
+- ✅ Email replies to tickets automatically become notes
+- ✅ The triage system learns from our patterns
+- ✅ All internal - no customer-facing portal (yet)
+
+---
+
+## 🤝 Questions?
+
+**CIS Lagos IT team:** You know where to find me 😉
+
+**Other schools:** Feel free to use this! Just know it's built for our specific setup. You might need to tweak things.
+
+---
+
+## ☕ Support
+
+If this project helped you or your school, consider buying me a coffee! It helps keep the late-night coding sessions going ☕
+
+<div align="center">
+
+[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/yourusername)
+[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/yourusername)
+[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/yourusername)
+[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/yourusername)
+
+**Crypto:**
+
+- **Bitcoin (BTC):** `your-btc-address`
+- **Ethereum (ETH):** `your-eth-address`
+- **USDT (TRC20):** `your-usdt-address`
+
+</div>
+
+---
+
+<div align="center">
+
+### Built with ☕ and late nights in the CIS server room
+
+**Made with ❤️ by Samuel**
+
+</div>

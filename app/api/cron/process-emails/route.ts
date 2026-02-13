@@ -164,88 +164,69 @@ export async function GET(request: Request) {
         console.log(`Triaging email from ${email.from}: ${email.subject}`);
         const triage = await triageEmailWithLLM(email.from, email.subject, email.body);
 
-        if (triage.classification === 'junk') {
-          // Log to trash
-          await supabase.from('trash').insert({
+        // NOTE: Triage system no longer filters to trash
+        // All emails (including those classified as 'junk') are created as tickets
+        // Junk emails will be categorized as 'other' (uncategorized)
+        
+        // Override junk classification to treat as uncategorized support request
+        const finalCategory = triage.classification === 'junk' ? 'other' : triage.category;
+        const finalPriority = triage.classification === 'junk' ? 'low' : triage.priority;
+
+        // Create ticket
+        const { data: ticket, error: ticketError } = await supabase
+          .from('tickets')
+          .insert({
             sender_email: email.from,
+            sender_name: email.fromName,
             subject: email.subject,
             body: email.body,
+            status: 'open',
+            priority: finalPriority,
+            category: finalCategory,
+            email_thread_id: email.threadId,
             email_message_id: email.id,
-            triage_reasoning: triage.reasoning,
-            email_from: email.from,
-            email_subject: email.subject,
+            attachments: email.attachments,
+          })
+          .select()
+          .single();
+
+        if (ticketError) {
+          throw ticketError;
+        }
+
+        // Mark as processed
+        await supabase.from('processed_emails').insert({
+          message_id: email.id,
+          thread_id: email.threadId,
+          classification: triage.classification === 'junk' ? 'junk' : 'support_request',
+          ticket_id: ticket.id,
+        });
+
+        // Mark email as read
+        await markEmailAsRead(email.id);
+
+        results.tickets_created++;
+        console.log(`Created ticket #${ticket.id.slice(0, 8)} for: ${email.subject}${triage.classification === 'junk' ? ' (originally classified as junk, now uncategorized)' : ''}`);
+
+        // Send auto-reply
+        try {
+          const html = generateTicketCreatedTemplate(
+            ticket.id,
+            email.subject,
+            email.fromName || email.from,
+            email.body
+          );
+          
+          await sendEmail({
+            to: email.from,
+            cc: 'itsupport@cislagos.org', // CC IT support group for visibility
+            subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
+            html,
           });
-
-          // Mark as processed
-          await supabase.from('processed_emails').insert({
-            message_id: email.id,
-            thread_id: email.threadId,
-            classification: 'junk',
-          });
-
-          // Archive email
-          await markEmailAsRead(email.id);
-          await archiveEmail(email.id);
-
-          results.junk_filtered++;
-          console.log(`Filtered as junk: ${email.subject}`);
-        } else {
-          // Create ticket
-          const { data: ticket, error: ticketError } = await supabase
-            .from('tickets')
-            .insert({
-              sender_email: email.from,
-              sender_name: email.fromName,
-              subject: email.subject,
-              body: email.body,
-              status: 'open',
-              priority: triage.priority,
-              category: triage.category,
-              email_thread_id: email.threadId,
-              email_message_id: email.id,
-              attachments: email.attachments,
-            })
-            .select()
-            .single();
-
-          if (ticketError) {
-            throw ticketError;
-          }
-
-          // Mark as processed
-          await supabase.from('processed_emails').insert({
-            message_id: email.id,
-            thread_id: email.threadId,
-            classification: 'support_request',
-            ticket_id: ticket.id,
-          });
-
-          // Mark email as read
-          await markEmailAsRead(email.id);
-
-          results.tickets_created++;
-          console.log(`Created ticket #${ticket.id.slice(0, 8)} for: ${email.subject}`);
-
-          // Send auto-reply
-          try {
-            const html = generateTicketCreatedTemplate(
-              ticket.id,
-              email.subject,
-              email.fromName || email.from,
-              email.body
-            );
-            
-            await sendEmail({
-              to: email.from,
-              cc: 'itsupport@cislagos.org', // CC IT support group for visibility
-              subject: `[Request Received] #${ticket.id.slice(0, 8)} - ${email.subject}`,
-              html,
-            });
-            console.log(`Sent auto-reply to ${email.from}`);
-          } catch (emailError) {
-            console.error('Error sending auto-reply:', emailError);
-            // Don't fail the whole process if email sending fails
-          }
+          console.log(`Sent auto-reply to ${email.from}`);
+        } catch (emailError) {
+          console.error('Error sending auto-reply:', emailError);
+          // Don't fail the whole process if email sending fails
         }
 
         results.processed++;
