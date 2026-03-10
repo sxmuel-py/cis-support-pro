@@ -1,13 +1,14 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedSession } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function addNote(ticketId: string, content: string) {
   const supabase = await createClient();
 
   // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
   if (!user) {
     return { error: "Unauthorized" };
   }
@@ -16,12 +17,32 @@ export async function addNote(ticketId: string, content: string) {
     return { error: "Note content cannot be empty" };
   }
 
-  // Get user profile for author_name
+  // Get target ticket to check permissions
+  const { data: ticket } = await supabase
+    .from("tickets")
+    .select("category")
+    .eq("id", ticketId)
+    .single();
+
+  if (!ticket) {
+    return { error: "Ticket not found" };
+  }
+
+  // Get user profile for author_name and role check
   const { data: userProfile } = await supabase
     .from("users")
-    .select("full_name, email")
+    .select("full_name, email, role")
     .eq("id", user.id)
     .single();
+
+  // Role-based permission check
+  if (userProfile?.role === "technician" && ticket.category === "sims") {
+    return { error: "Unauthorized: Technicians cannot access SIMS tickets" };
+  }
+
+  if (userProfile?.role === "sims_manager" && ticket.category !== "sims") {
+    return { error: "Unauthorized: SIMS Managers can only access SIMS tickets" };
+  }
 
   // Create note
   const { error } = await supabase

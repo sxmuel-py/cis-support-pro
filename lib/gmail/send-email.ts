@@ -10,6 +10,10 @@ interface SendEmailParams {
 
 export async function sendEmail({ to, cc, subject, html }: SendEmailParams) {
   try {
+    // EMERGENCY STOP: Disabling email sending to prevent flooding loops
+    console.log(`[EMERGENCY STOP] Blocked email to ${to}: ${subject}`);
+    return { success: true };
+
     const config = getGmailConfig();
     const gmail = createGmailClient(config);
 

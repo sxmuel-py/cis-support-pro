@@ -1,4 +1,5 @@
 "use client";
+import { useMemo } from "react";
 
 import { createClient } from "@/lib/supabase/client";
 import { useRouter } from "next/navigation";
@@ -7,7 +8,7 @@ import { LogOut } from "lucide-react";
 
 export function LogoutButton() {
   const router = useRouter();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();

@@ -1,5 +1,6 @@
 import { createServerClient, type CookieOptions } from '@supabase/ssr'
 import { cookies } from 'next/headers'
+import { cache } from 'react'
 
 export async function createClient() {
   const cookieStore = await cookies()
@@ -34,3 +35,9 @@ export async function createClient() {
     }
   )
 }
+
+// Wrap getSession securely in a cache to prevent duped requests per render pass
+export const getCachedSession = cache(async () => {
+  const supabase = await createClient()
+  return await supabase.auth.getSession()
+})

@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { Sidebar } from "@/components/sidebar";
 import { StatCard } from "@/components/analytics/stat-card";
 import { TicketTrendsChart } from "@/components/analytics/ticket-trends-chart";
@@ -20,7 +20,7 @@ export default function AnalyticsPage() {
   const [loading, setLoading] = useState(true);
   const [timeRange, setTimeRange] = useState(30);
   const [currentUser, setCurrentUser] = useState<{ id: string; role: string } | null>(null);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     loadUser();
@@ -33,7 +33,8 @@ export default function AnalyticsPage() {
   }, [currentUser, timeRange]);
 
   const loadUser = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
+    const user = session?.user;
     if (user) {
       const { data: userData } = await supabase
         .from("users")

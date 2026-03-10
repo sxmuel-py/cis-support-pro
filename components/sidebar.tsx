@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { 
@@ -18,6 +18,7 @@ import { NotificationBell } from "./notification-bell";
 import { createClient } from "@/lib/supabase/client";
 import { User } from "@/lib/types";
 import { Badge } from "./ui/badge";
+import { Logo } from "./logo";
 
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
@@ -29,11 +30,13 @@ const navigation = [
 export function Sidebar() {
   const pathname = usePathname();
   const [user, setUser] = useState<User | null>(null);
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
     const fetchUser = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
+      // Use getSession to avoid unnecessary network request on every mount
+      const { data: { session } } = await supabase.auth.getSession();
+      const authUser = session?.user;
       
       if (authUser) {
         const { data: userData } = await supabase
@@ -67,13 +70,15 @@ export function Sidebar() {
   return (
     <div className="flex h-screen w-64 flex-col border-r bg-card">
       {/* Logo/Header */}
-      <div className="flex h-16 items-center gap-3 border-b px-6">
-        <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary">
-          <Headset className="h-6 w-6 text-primary-foreground" />
-        </div>
-        <div>
-          <h1 className="text-lg font-bold">CIS Support Pro</h1>
-          <p className="text-xs text-muted-foreground">Command Center</p>
+      <div className="flex h-20 items-center gap-4 border-b px-6 bg-accent/5">
+        <Logo size={42} />
+        <div className="flex flex-col">
+          <h1 className="text-xl font-black tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
+            CIS <span className="text-primary">PRO</span>
+          </h1>
+          <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 leading-none">
+            Support Portal
+          </p>
         </div>
       </div>
 

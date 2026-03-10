@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import { X, Clock, User, Tag, Calendar, CheckCircle2, XCircle, UserPlus } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -30,7 +30,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
   const [loading, setLoading] = useState(true);
   const [processing, setProcessing] = useState(false);
   const { toast } = useToast();
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
   const ticket = details?.ticket || initialTicket;
   // assignment_status may be missing in older DBs; default to 'unassigned'

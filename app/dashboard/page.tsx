@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Sidebar } from "@/components/sidebar";
 import { TicketList } from "@/components/ticket-list";
@@ -11,8 +11,7 @@ import { Ticket, User, TicketStatus, TicketPriority } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX } from "lucide-react";
-import { getITStaff } from "@/app/actions/get-staff";
-import { getTicketStats } from "@/app/actions/get-ticket-stats";
+import { getDashboardData } from "@/app/actions/get-dashboard-data";
 
 export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -28,57 +27,26 @@ export default function DashboardPage() {
   const [priorityFilter, setPriorityFilter] = useState<TicketPriority | "all">("all");
   const [searchQuery, setSearchQuery] = useState("");
   
-  const supabase = createClient();
+  const supabase = useMemo(() => createClient(), []);
 
-  // Fetch current user
+  // Consolidated data fetching
+  const refreshData = async (showLoading = false) => {
+    if (showLoading) setLoading(true);
+    try {
+      const data = await getDashboardData();
+      setTickets(data.tickets);
+      setStaff(data.staff);
+      setCurrentUser(data.currentUser);
+      setWorkloadStats(data.stats.byTechnician);
+    } catch (error) {
+      console.error("Error fetching dashboard data:", error);
+    } finally {
+      if (showLoading) setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    const fetchCurrentUser = async () => {
-      const { data: { user: authUser } } = await supabase.auth.getUser();
-      
-      if (authUser) {
-        const { data: userData } = await supabase
-          .from("users")
-          .select("*")
-          .eq("id", authUser.id)
-          .single();
-        
-        if (userData) {
-          setCurrentUser(userData);
-        }
-      }
-    };
-
-    fetchCurrentUser();
-  }, [supabase]);
-
-  // Fetch IT staff
-  useEffect(() => {
-    const fetchStaff = async () => {
-      const staffData = await getITStaff();
-      setStaff(staffData);
-    };
-
-    fetchStaff();
-  }, []);
-
-  // Fetch tickets from Supabase
-  useEffect(() => {
-    const fetchTickets = async () => {
-      setLoading(true);
-      const { data, error } = await supabase
-        .from("tickets")
-        .select("*")
-        .order("created_at", { ascending: false });
-
-      if (error) {
-        console.error("Error fetching tickets:", error);
-      } else {
-        setTickets(data || []);
-      }
-      setLoading(false);
-    };
-
-    fetchTickets();
+    refreshData(true);
 
     // Set up real-time subscription
     const channel = supabase
@@ -94,17 +62,22 @@ export default function DashboardPage() {
           console.log("Real-time update:", payload);
 
           if (payload.eventType === "INSERT") {
-            setTickets((current) => [payload.new as Ticket, ...current]);
+            // Re-fetch everything to ensure server-side filtering is applied to the new item
+            refreshData();
           } else if (payload.eventType === "UPDATE") {
+            // Optimistically update tickets
             setTickets((current) =>
               current.map((ticket) =>
                 ticket.id === payload.new.id ? (payload.new as Ticket) : ticket
               )
             );
+            // Refresh stats in background as assignments might have changed
+            refreshData();
           } else if (payload.eventType === "DELETE") {
             setTickets((current) =>
               current.filter((ticket) => ticket.id !== payload.old.id)
             );
+            refreshData();
           }
         }
       )
@@ -115,20 +88,11 @@ export default function DashboardPage() {
     };
   }, [supabase]);
 
-  // Fetch workload stats
+  // Periodic stats refresh (less frequent now as real-time updates also refresh stats)
   useEffect(() => {
-    const fetchStats = async () => {
-      const stats = await getTicketStats();
-      setWorkloadStats(stats.byTechnician);
-    };
-
-    fetchStats();
-
-    // Refresh stats when tickets change
-    const interval = setInterval(fetchStats, 10000); // Refresh every 10 seconds
-
+    const interval = setInterval(() => refreshData(), 30000); // 30 seconds
     return () => clearInterval(interval);
-  }, [tickets]);
+  }, []);
 
   const stats = {
     total: tickets.length,
@@ -143,16 +107,6 @@ export default function DashboardPage() {
 
   // Apply filters
   const filteredTickets = tickets.filter((ticket) => {
-    // Role-based filtering
-    const isSimsManager = currentUser?.role === "sims_manager";
-    const isTechnician = currentUser?.role === "technician";
-
-    // SIMS Manager sees ONLY SIMS tickets
-    if (isSimsManager && ticket.category !== "sims") return false;
-
-    // Technicians see everything EXCEPT SIMS tickets (Supervisors see all)
-    if (isTechnician && ticket.category === "sims") return false;
-
     // Tab filter
     if (filter === "mine" && ticket.assigned_to !== currentUser?.id) return false;
     if (filter === "unassigned" && ticket.assigned_to) return false;

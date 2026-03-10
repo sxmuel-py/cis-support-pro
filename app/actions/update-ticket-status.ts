@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedSession } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { TicketStatus } from "@/lib/types";
 import { sendEmail } from "@/lib/gmail/send-email";
@@ -10,7 +10,8 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
   const supabase = await createClient();
 
   // Get current user
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
   if (!user) {
     return { error: "Unauthorized" };
   }

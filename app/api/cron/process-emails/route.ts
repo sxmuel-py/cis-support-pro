@@ -14,7 +14,9 @@ export async function GET(request: Request) {
     const authHeader = request.headers.get('authorization');
     const cronSecret = process.env.CRON_SECRET;
 
-    if (cronSecret && authHeader !== `Bearer ${cronSecret}`) {
+    // Strict check: fails if secret is missing or header doesn't match
+    if (!cronSecret || authHeader !== `Bearer ${cronSecret}`) {
+      console.error('Unauthorized cron attempt or missing CRON_SECRET');
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
@@ -254,7 +256,6 @@ export async function GET(request: Request) {
       {
         error: 'Internal server error',
         message: error instanceof Error ? error.message : 'Unknown error',
-        stack: error instanceof Error ? error.stack : undefined, // Add stack trace for debugging
       },
       { status: 500 }
     );

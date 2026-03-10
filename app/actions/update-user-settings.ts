@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedSession } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function updateUserProfile(data: {
@@ -9,7 +9,8 @@ export async function updateUserProfile(data: {
 }) {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
   if (!user) {
     return { error: "Unauthorized" };
   }
@@ -48,7 +49,8 @@ export async function updatePassword(data: {
 }) {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
   if (!user) {
     return { error: "Unauthorized" };
   }
@@ -68,7 +70,8 @@ export async function updatePassword(data: {
 export async function getUserSettings() {
   const supabase = await createClient();
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
   if (!user) {
     return null;
   }
