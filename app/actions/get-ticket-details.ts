@@ -36,11 +36,11 @@ export async function getTicketDetails(ticketId: string): Promise<TicketDetails 
     assignedUser = user;
   }
 
-  // Fetch notes
   const { data: notes } = await supabase
     .from("notes")
     .select(`
       *,
+      author_name,
       author:users!notes_author_id_fkey (
         id,
         full_name,

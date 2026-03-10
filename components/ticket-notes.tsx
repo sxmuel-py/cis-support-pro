@@ -12,12 +12,13 @@ import { formatDistanceToNow } from "date-fns";
 interface Note {
   id: string;
   content: string;
+  author_name: string;
   created_at: string;
-  author: {
+  author?: {
     id: string;
     full_name: string;
     email: string;
-  };
+  } | null;
 }
 
 interface TicketNotesProps {
@@ -92,11 +93,11 @@ export function TicketNotes({ ticketId, notes, currentUser, onNoteAdded }: Ticke
                 <div className="flex items-center gap-2">
                   <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
                     <span className="text-xs font-medium text-primary">
-                      {note.author.full_name?.charAt(0) || note.author.email.charAt(0).toUpperCase()}
+                      {(note.author?.full_name || note.author_name || note.author?.email || "?").charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{note.author.full_name || note.author.email}</p>
+                    <p className="text-sm font-medium">{note.author?.full_name || note.author_name || note.author?.email}</p>
                     <p className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}
                     </p>
