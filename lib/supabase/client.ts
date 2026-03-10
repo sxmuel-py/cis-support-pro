@@ -12,7 +12,6 @@ export function createClient() {
         autoRefreshToken: true,
         persistSession: true,
         detectSessionInUrl: true,
-        storageKey: 'supabase-auth-token'
       }
     }
   )

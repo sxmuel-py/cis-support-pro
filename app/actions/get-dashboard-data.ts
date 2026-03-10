@@ -58,17 +58,27 @@ export async function getDashboardData(): Promise<DashboardData> {
 
   // 5. Fetch Stats (Calculated server-side to save on client-side compute)
   // Reusing logic from get-ticket-stats.ts
-  const { data: allTicketsForStats } = await supabase
+  let statsQuery = supabase
     .from("tickets")
     .select(`
       id,
       status,
       assigned_to,
+      category,
       users:assigned_to (
         id,
         full_name
       )
     `);
+
+  // Role-based filtering for stats
+  if (role === "sims_manager") {
+    statsQuery = statsQuery.eq("category", "sims");
+  } else if (role === "technician") {
+    statsQuery = statsQuery.neq("category", "sims");
+  }
+
+  const { data: allTicketsForStats } = await statsQuery;
 
   const stats = {
     total: allTicketsForStats?.length || 0,

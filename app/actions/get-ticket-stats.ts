@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedSession } from "@/lib/supabase/server";
 
 export interface TicketStats {
   total: number;
@@ -20,18 +20,41 @@ export interface TicketStats {
 export async function getTicketStats(): Promise<TicketStats> {
   const supabase = await createClient();
 
-  // Get all tickets
-  const { data: tickets } = await supabase
+  // Get current user role
+  const { data: { session } } = await getCachedSession();
+  const user = session?.user;
+  let role = null;
+  
+  if (user) {
+    const { data: profile } = await supabase
+      .from("users")
+      .select("role")
+      .eq("id", user.id)
+      .single();
+    role = profile?.role;
+  }
+
+  // Get tickets with role-based filtering
+  let query = supabase
     .from("tickets")
     .select(`
       id,
       status,
       assigned_to,
+      category,
       users:assigned_to (
         id,
         full_name
       )
     `);
+
+  if (role === "sims_manager") {
+    query = query.eq("category", "sims");
+  } else if (role === "technician") {
+    query = query.neq("category", "sims");
+  }
+
+  const { data: tickets } = await query;
 
   if (!tickets) {
     return {

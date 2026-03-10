@@ -51,7 +51,7 @@ Classify as:
 Also determine:
 - Priority: low (general questions), medium (non-urgent issues), high (affecting work), urgent (critical/security)
 - Category: hardware, software, network, access, email, sims, other
-- "sims" category: Use this for anything related to iSAMS, SIMS, report cards, grades, attendance, student data, or the school management system.
+- "sims" category: Use this ONLY for school management system issues (iSAMS, SIMS, report cards, grading, attendance, student records). Do NOT use for general IT reports or print requests.
 
 Respond ONLY with valid JSON in this exact format:
 {
@@ -161,7 +161,7 @@ export function triageEmailWithKeywords(
   const hardwareKeywords = ['computer', 'laptop', 'printer', 'monitor', 'keyboard', 'mouse', 'hardware'];
   const softwareKeywords = ['software', 'application', 'program', 'install', 'update'];
   const emailKeywords = ['email', 'outlook', 'gmail', 'mail'];
-  const simsKeywords = ['sims', 'isams', 'report card', 'grade', 'attendance', 'student data', 'report'];
+  const simsKeywords = ['sims', 'isams', 'i-sams', 'report card', 'grading', 'attendance', 'student data', 'student record'];
 
   // Determine priority
   let priority: TriageResult['priority'] = 'medium';

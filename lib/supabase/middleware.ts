@@ -27,11 +27,6 @@ export async function updateSession(request: NextRequest) {
             value,
             ...options,
           })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
           response.cookies.set({
             name,
             value,
@@ -44,11 +39,6 @@ export async function updateSession(request: NextRequest) {
             value: '',
             ...options,
           })
-          response = NextResponse.next({
-            request: {
-              headers: request.headers,
-            },
-          })
           response.cookies.set({
             name,
             value: '',
@@ -59,19 +49,9 @@ export async function updateSession(request: NextRequest) {
     }
   )
 
-  // Skip getting the session and setting cookies if it's an internal next.js request
-  // (e.g. Server Action POST requests which already handle auth internally)
-  const isServerAction = request.headers.get("next-action") !== null;
-  const isInternalRsc = request.headers.get("rsc") === "1";
-
-  // If it's a server action or internal RSC request, skip the token refresh check here
-  // because the Server Action itself will validate auth using getCachedSession().
-  if (isServerAction || isInternalRsc) {
-    return response;
-  }
-
-  // Use getSession to refresh the session without hitting the API rate limit on every request
-  // getUser() makes a network request, getSession() only makes a request if the token is expired
+  // We'll proceed with getSession as normal.
+  // getSession() only makes a request if the token is expired, 
+  // so it won't hit rate limits on every pre-fetch.
   const { data: { session } } = await supabase.auth.getSession()
 
   // If user is on a protected route but not logged in, we could redirect here,
