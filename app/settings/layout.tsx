@@ -14,16 +14,5 @@ export default async function SettingsLayout({
     redirect("/auth/login");
   }
 
-  // Check if user is supervisor
-  const { data: profile } = await supabase
-    .from("users")
-    .select("role")
-    .eq("id", user.id)
-    .single();
-
-  if (profile?.role !== "supervisor") {
-    redirect("/dashboard");
-  }
-
   return <>{children}</>;
 }
