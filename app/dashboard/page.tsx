@@ -353,6 +353,7 @@ export default function DashboardPage() {
                 staff={staff}
                 currentUser={currentUser}
                 onTicketClick={(ticket) => setSelectedTicket(ticket)}
+                refreshData={refreshData}
               />
             )}
           </div>

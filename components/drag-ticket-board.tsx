@@ -15,6 +15,7 @@ interface DragTicketBoardProps {
   staff: User[];
   currentUser: User | null;
   onTicketClick?: (ticket: Ticket) => void;
+  refreshData: () => void;
 }
 
 const priorityVariants: Record<TicketPriority, "default" | "info" | "warning" | "destructive" | "secondary"> = {
@@ -77,28 +78,17 @@ export function DragTicketBoard({ tickets, staff, currentUser, onTicketClick }: 
     const newAssigneeId = destination.droppableId === "unassigned" ? null : destination.droppableId;
     
     // Database update
-    // We only call the assign action if it's moving TO an actual user. 
-    // Usually, un-assigning requires a different API, but since assignment dropdown supports clearing,
-    // let's assume assignTicket can handle or we just won't allow dragging back to unassigned depending on backend rules.
-    // Our existing assignTicket action requires a user ID, so dropping to unassigned might fail if not designed for it.
-    // For now, if dest is a valid staff ID, assign it.
-    
-    if (newAssigneeId) {
-      try {
-        const res = await assignTicket(movedTicket.id, newAssigneeId);
-        if (res?.error) {
-          throw new Error(res.error);
-        }
-        toast({ title: "Ticket Assigned", description: `Assigned #${movedTicket.id.slice(0,8)}` });
-      } catch (err: any) {
-        toast({ title: "Assignment Failed", description: err.message, variant: "destructive" });
-        // Revert UI on failure (simple reload would be best here from parent, but we'll let real-time handle it ideally)
+    try {
+      const res = await assignTicket(movedTicket.id, newAssigneeId);
+      if (res?.error) {
+        throw new Error(res.error);
       }
-    } else {
-      // Trying to unassign via drag (moving to 'unassigned' column)
-      // If your backend doesn't support this via assignTicket, you might need an unassignTicket action.
-      // For simplicity here, we assume it's allowed or we at least notify.
-      toast({ title: "Notice", description: "Dragging back to unassigned is not fully supported yet.", variant: "default" });
+      const message = newAssigneeId ? `Assigned #${movedTicket.id.slice(0,8)}` : `Unassigned #${movedTicket.id.slice(0,8)}`;
+      toast({ title: "Ticket Updated", description: message });
+    } catch (err: any) {
+      toast({ title: "Assignment Failed", description: err.message, variant: "destructive" });
+      // Reload on failure to ensure UI is in sync
+      refreshData();
     }
   };
 
