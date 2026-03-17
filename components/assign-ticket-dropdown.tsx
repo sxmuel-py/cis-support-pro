@@ -87,6 +87,10 @@ export function AssignTicketDropdown({
               {/* Unassign option */}
               <CommandItem
                 value="unassigned"
+                onPointerDown={(e) => {
+                  e.preventDefault();
+                  handleAssign(null);
+                }}
                 onSelect={() => handleAssign(null)}
               >
                 <Check
@@ -103,7 +107,11 @@ export function AssignTicketDropdown({
               {staff.map((member) => (
                 <CommandItem
                   key={member.id}
-                  value={`${member.full_name}-${member.id}`}
+                  value={member.full_name}
+                  onPointerDown={(e) => {
+                    e.preventDefault();
+                    handleAssign(member.id);
+                  }}
                   onSelect={() => handleAssign(member.id)}
                 >
                   <Check
