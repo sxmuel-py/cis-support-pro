@@ -128,7 +128,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent className="space-y-4">
             <p className="text-sm text-muted-foreground">
-              Please contact the British Tea Party IT HOD or a Supervisor to authorize your account.
+              Please contact the IT HOD or a Supervisor to authorize your account.
             </p>
             <div className="flex flex-col gap-2">
               <Button onClick={() => window.location.reload()} variant="outline">Refresh Dashboard</Button>
