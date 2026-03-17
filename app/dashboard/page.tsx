@@ -14,6 +14,7 @@ import { Badge } from "@/components/ui/badge";
 import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX, LayoutList, KanbanSquare } from "lucide-react";
 import { getDashboardData } from "@/app/actions/get-dashboard-data";
 import { Button } from "@/components/ui/button";
+import { LogoutButton } from "@/components/logout-button";
 
 export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -111,6 +112,33 @@ export default function DashboardPage() {
   const isSupervisor = currentUser?.role === "supervisor";
   const isHod = currentUser?.role === "hod";
   const isStaffAdmin = isSupervisor || isHod;
+
+  if (!loading && !currentUser) {
+    return (
+      <div className="flex h-screen bg-background items-center justify-center p-4">
+        <Card className="max-w-md w-full text-center">
+          <CardHeader>
+            <div className="flex justify-center mb-4">
+              <UserX className="h-12 w-12 text-destructive" />
+            </div>
+            <CardTitle>IT Staff Account Required</CardTitle>
+            <CardDescription>
+              We found your CIS login, but you haven't been added to the IT Staff list yet.
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <p className="text-sm text-muted-foreground">
+              Please contact the British Tea Party IT HOD or a Supervisor to authorize your account.
+            </p>
+            <div className="flex flex-col gap-2">
+              <Button onClick={() => window.location.reload()} variant="outline">Refresh Dashboard</Button>
+              <LogoutButton />
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
 
   // Apply filters
   const filteredTickets = tickets.filter((ticket) => {

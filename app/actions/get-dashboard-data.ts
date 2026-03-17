@@ -30,7 +30,21 @@ export async function getDashboardData(): Promise<DashboardData> {
     .single();
 
   if (!profile) {
-    throw new Error("User profile not found");
+    return {
+      tickets: [],
+      staff: [],
+      stats: {
+        total: 0,
+        open: 0,
+        in_progress: 0,
+        pending: 0,
+        resolved: 0,
+        closed: 0,
+        unassigned: 0,
+        byTechnician: [],
+      },
+      currentUser: null,
+    };
   }
 
   const role = profile.role;
