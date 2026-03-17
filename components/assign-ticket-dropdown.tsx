@@ -87,20 +87,30 @@ export function AssignTicketDropdown({
               {/* Unassign option */}
               <CommandItem
                 value="unassigned"
-                onPointerDown={(e) => {
-                  e.preventDefault();
+                onSelect={() => {
+                  console.log("Unassign selected via CMDK");
                   handleAssign(null);
                 }}
-                onSelect={() => handleAssign(null)}
+                className="cursor-pointer"
               >
-                <Check
-                  className={cn(
-                    "mr-2 h-4 w-4",
-                    !currentAssignee ? "opacity-100" : "opacity-0"
-                  )}
-                />
-                <UserX className="mr-2 h-4 w-4" />
-                Unassigned
+                <div 
+                  className="flex items-center w-full"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    console.log("Unassign clicked via mouse");
+                    handleAssign(null);
+                  }}
+                >
+                  <Check
+                    className={cn(
+                      "mr-2 h-4 w-4",
+                      !currentAssignee ? "opacity-100" : "opacity-0"
+                    )}
+                  />
+                  <UserX className="mr-2 h-4 w-4" />
+                  Unassigned
+                </div>
               </CommandItem>
 
               {/* Staff list */}
@@ -108,21 +118,31 @@ export function AssignTicketDropdown({
                 <CommandItem
                   key={member.id}
                   value={member.full_name}
-                  onPointerDown={(e) => {
-                    e.preventDefault();
+                  onSelect={() => {
+                    console.log(`Staff selected via CMDK: ${member.full_name}`);
                     handleAssign(member.id);
                   }}
-                  onSelect={() => handleAssign(member.id)}
+                  className="cursor-pointer"
                 >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      currentAssignee === member.id ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  <div className="flex flex-col">
-                    <span>{member.full_name}</span>
-                    <span className="text-xs text-muted-foreground">
+                  <div 
+                    className="flex flex-col w-full"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      e.stopPropagation();
+                      console.log(`Staff clicked via mouse: ${member.full_name}`);
+                      handleAssign(member.id);
+                    }}
+                  >
+                    <div className="flex items-center">
+                      <Check
+                        className={cn(
+                          "mr-2 h-4 w-4",
+                          currentAssignee === member.id ? "opacity-100" : "opacity-0"
+                        )}
+                      />
+                      <span>{member.full_name}</span>
+                    </div>
+                    <span className="text-xs text-muted-foreground ml-6">
                       {member.role === "hod" ? "Head of Dept" : member.role === "supervisor" ? "Supervisor" : member.role === "sims_manager" ? "SIMS Manager" : "Technician"}
                     </span>
                   </div>
