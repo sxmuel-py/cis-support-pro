@@ -18,6 +18,7 @@ import { TicketStatusDropdown } from "./ticket-status-dropdown";
 import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
+import { MergeTicketDialog } from "./merge-ticket-dialog";
 
 interface TicketDetailProps {
   ticket: Ticket;
@@ -37,6 +38,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
   const assignmentStatus = ticket.assignment_status ?? "unassigned";
   const isAssignedToMe = currentUser && ticket.assigned_to === currentUser.id;
   const isSupervisor = currentUser?.role === "supervisor";
+  const isHod = currentUser?.role === "hod";
   const canAcceptReject = isAssignedToMe && assignmentStatus === "assigned";
   
   // More robust check for self-assignment
@@ -253,7 +255,14 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                 </Button>
               )}
 
-              {(isAssignedToMe || isSupervisor) && (assignmentStatus === "accepted" || assignmentStatus === "assigned") && (
+              {(isHod || isSupervisor) && ticket.status !== 'closed' && (
+                <MergeTicketDialog 
+                  sourceTicket={ticket} 
+                  onMerged={onClose} 
+                />
+              )}
+
+              {(isAssignedToMe || isSupervisor || isHod) && (assignmentStatus === "accepted" || assignmentStatus === "assigned" || isHod || isSupervisor) && (
                 <TicketStatusDropdown
                   currentStatus={ticket.status}
                   onStatusChange={handleStatusChange}

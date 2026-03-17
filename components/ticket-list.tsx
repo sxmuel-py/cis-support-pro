@@ -37,7 +37,7 @@ const priorityVariants: Record<TicketPriority, "default" | "info" | "warning" | 
 };
 
 export function TicketList({ tickets, staff, currentUser, onTicketClick }: TicketListProps) {
-  const isSupervisor = currentUser?.role === "supervisor";
+  const isSupervisor = currentUser?.role === "supervisor" || currentUser?.role === "hod";
 
   return (
     <div className="rounded-lg border bg-card">

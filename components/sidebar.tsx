@@ -9,7 +9,8 @@ import {
   Settings, 
   Trash2,
   Headset,
-  User as UserIcon
+  User as UserIcon,
+  ShieldAlert
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -23,6 +24,7 @@ import { Logo } from "./logo";
 const navigation = [
   { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
   { name: "Analytics", href: "/analytics", icon: BarChart3 },
+  { name: "Admin", href: "/admin", icon: ShieldAlert, roles: ["hod", "supervisor"] },
   { name: "Settings", href: "/settings", icon: Settings },
   { name: "Trash", href: "/trash", icon: Trash2 },
 ];
@@ -56,6 +58,8 @@ export function Sidebar() {
 
   const getRoleLabel = (role: string) => {
     switch (role) {
+      case "hod":
+        return "Head of Dept";
       case "supervisor":
         return "Supervisor";
       case "technician":
@@ -107,6 +111,11 @@ export function Sidebar() {
       {/* Navigation */}
       <nav className="flex-1 space-y-1 p-4">
         {navigation.map((item) => {
+          // Check role restrictions if the item has a roles array
+          if (item.roles && user && !item.roles.includes(user.role)) {
+            return null;
+          }
+
           const isActive = pathname === item.href;
           return (
             <Link

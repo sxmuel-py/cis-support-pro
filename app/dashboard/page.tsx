@@ -4,14 +4,16 @@ import { useState, useEffect, useMemo } from "react";
 import { createClient } from "@/lib/supabase/client";
 import { Sidebar } from "@/components/sidebar";
 import { TicketList } from "@/components/ticket-list";
+import { DragTicketBoard } from "@/components/drag-ticket-board";
 import { TeamWorkload } from "@/components/team-workload";
 import { TicketDetail } from "@/components/ticket-detail";
 import { TicketFilters } from "@/components/ticket-filters";
 import { Ticket, User, TicketStatus, TicketPriority } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX } from "lucide-react";
+import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX, LayoutList, KanbanSquare } from "lucide-react";
 import { getDashboardData } from "@/app/actions/get-dashboard-data";
+import { Button } from "@/components/ui/button";
 
 export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
@@ -20,6 +22,9 @@ export default function DashboardPage() {
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [workloadStats, setWorkloadStats] = useState<{ id: string; name: string; count: number }[]>([]);
+  
+  // View mode
+  const [viewMode, setViewMode] = useState<"list" | "board">("list");
   
   // Filter state
   const [filter, setFilter] = useState<"all" | "mine" | "unassigned">("all");
@@ -104,6 +109,8 @@ export default function DashboardPage() {
   };
 
   const isSupervisor = currentUser?.role === "supervisor";
+  const isHod = currentUser?.role === "hod";
+  const isStaffAdmin = isSupervisor || isHod;
 
   // Apply filters
   const filteredTickets = tickets.filter((ticket) => {
@@ -200,7 +207,7 @@ export default function DashboardPage() {
               </CardContent>
             </Card>
 
-            {isSupervisor && (
+            {isStaffAdmin && (
               <Card>
                 <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                   <CardTitle className="text-sm font-medium">Unassigned</CardTitle>
@@ -216,8 +223,8 @@ export default function DashboardPage() {
             )}
           </div>
 
-          {/* Team Workload Widget (Supervisors Only) */}
-          {isSupervisor && workloadStats.length > 0 && (
+          {/* Team Workload Widget (Admins Only) */}
+          {isStaffAdmin && workloadStats.length > 0 && (
             <TeamWorkload stats={workloadStats} />
           )}
 
@@ -230,9 +237,31 @@ export default function DashboardPage() {
                   Manage and track all support requests
                 </p>
               </div>
-              <Badge variant="secondary" className="text-sm">
-                {filteredTickets.length} of {tickets.length} tickets
-              </Badge>
+              <div className="flex items-center gap-4">
+                <div className="flex items-center rounded-md border bg-muted/50 p-1">
+                  <Button 
+                    variant={viewMode === "list" ? "secondary" : "ghost"} 
+                    size="sm" 
+                    className="h-7 px-2"
+                    onClick={() => setViewMode("list")}
+                  >
+                    <LayoutList className="w-4 h-4 mr-1" />
+                    List
+                  </Button>
+                  <Button 
+                    variant={viewMode === "board" ? "secondary" : "ghost"} 
+                    size="sm" 
+                    className="h-7 px-2"
+                    onClick={() => setViewMode("board")}
+                  >
+                    <KanbanSquare className="w-4 h-4 mr-1" />
+                    Board
+                  </Button>
+                </div>
+                <Badge variant="secondary" className="text-sm">
+                  {filteredTickets.length} of {tickets.length} tickets
+                </Badge>
+              </div>
             </div>
 
             {/* Filters */}
@@ -245,7 +274,7 @@ export default function DashboardPage() {
               onPriorityFilterChange={setPriorityFilter}
               searchQuery={searchQuery}
               onSearchChange={setSearchQuery}
-              isSupervisor={isSupervisor}
+              isSupervisor={isStaffAdmin}
             />
 
             {loading ? (
@@ -271,8 +300,15 @@ export default function DashboardPage() {
                   </div>
                 </CardContent>
               </Card>
-            ) : (
+            ) : viewMode === "list" ? (
               <TicketList 
+                tickets={filteredTickets}
+                staff={staff}
+                currentUser={currentUser}
+                onTicketClick={(ticket) => setSelectedTicket(ticket)}
+              />
+            ) : (
+              <DragTicketBoard
                 tickets={filteredTickets}
                 staff={staff}
                 currentUser={currentUser}

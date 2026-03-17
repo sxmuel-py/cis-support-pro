@@ -1,7 +1,7 @@
 export type TicketStatus = "open" | "in_progress" | "pending" | "resolved" | "closed";
 export type TicketPriority = "low" | "medium" | "high" | "urgent";
 export type TicketCategory = "hardware" | "software" | "network" | "access" | "email" | "sims" | "other";
-export type UserRole = "supervisor" | "technician" | "sims_manager";
+export type UserRole = "supervisor" | "technician" | "sims_manager" | "hod";
 
 export interface User {
   id: string;
@@ -9,7 +9,7 @@ export interface User {
   full_name: string;
   role: UserRole;
   created_at: string;
-  updated_at: string;
+  last_sign_in?: string;
 }
 
 export interface Ticket {

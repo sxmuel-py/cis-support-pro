@@ -37,6 +37,8 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
   if (currentUser?.role === "technician" && ticket.assigned_to !== user.id) {
     return { error: "You can only update tickets assigned to you" };
   }
+  
+  // Note: supervisor and hod roles bypass the assigned_to check and can update any ticket
 
   // Update ticket status
   const { error } = await supabase

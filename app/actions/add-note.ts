@@ -43,6 +43,8 @@ export async function addNote(ticketId: string, content: string) {
   if (userProfile?.role === "sims_manager" && ticket.category !== "sims") {
     return { error: "Unauthorized: SIMS Managers can only access SIMS tickets" };
   }
+  
+  // HOD and Supervsior have global access, so no further restrictions needed here
 
   // Create note
   const { error } = await supabase

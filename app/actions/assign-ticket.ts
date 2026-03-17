@@ -15,15 +15,15 @@ export async function assignTicket(ticketId: string, technicianId: string | null
     return { error: "Unauthorized" };
   }
 
-  // Verify user is a supervisor
+  // Verify user is a supervisor or hod
   const { data: currentUser } = await supabase
     .from("users")
     .select("role, full_name")
     .eq("id", user.id)
     .single();
 
-  if (!currentUser || currentUser.role !== "supervisor") {
-    return { error: "Only supervisors can assign tickets" };
+  if (!currentUser || (currentUser.role !== "supervisor" && currentUser.role !== "hod")) {
+    return { error: "Only supervisors and HODs can assign tickets" };
   }
 
   // Get ticket details for email notification

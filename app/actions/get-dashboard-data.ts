@@ -53,7 +53,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const { data: staff } = await supabase
     .from("users")
     .select("*")
-    .in("role", ["technician", "supervisor", "sims_manager"])
+    .in("role", ["technician", "supervisor", "sims_manager", "hod"])
     .order("full_name");
 
   // 5. Fetch Stats (Calculated server-side to save on client-side compute)

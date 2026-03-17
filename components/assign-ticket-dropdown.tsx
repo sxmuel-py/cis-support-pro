@@ -115,7 +115,7 @@ export function AssignTicketDropdown({
                   <div className="flex flex-col">
                     <span>{member.full_name}</span>
                     <span className="text-xs text-muted-foreground">
-                      {member.role === "supervisor" ? "Supervisor" : "Technician"}
+                      {member.role === "hod" ? "Head of Dept" : member.role === "supervisor" ? "Supervisor" : member.role === "sims_manager" ? "SIMS Manager" : "Technician"}
                     </span>
                   </div>
                 </CommandItem>

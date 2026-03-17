@@ -20,12 +20,33 @@ export default function ResetPasswordPage() {
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    // Check if there's a valid session (from the reset link)
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    // Check for an existing session (from the reset link/callback)
+    const checkSession = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
       if (!session) {
+        // We'll give it a moment to catch up if the redirect just happened
+        // The onAuthStateChange listener below will catch it if this misses
+      }
+    };
+
+    checkSession();
+
+    // Listen for auth state changes (crucial for PKCE redirects)
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      console.log("Auth state change in reset-password:", event);
+      if (event === "PASSWORD_RECOVERY") {
+        // Supabase just confirmed we are in recovery mode
+        setError(null);
+      } else if (event === "SIGNED_IN" || session) {
+        setError(null);
+      } else if (!session && event !== "INITIAL_SESSION") {
         setError("Invalid or expired reset link. Please request a new one.");
       }
     });
+
+    return () => {
+      subscription.unsubscribe();
+    };
   }, [supabase.auth]);
 
   const handleResetPassword = async (e: React.FormEvent) => {
