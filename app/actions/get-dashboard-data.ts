@@ -10,6 +10,7 @@ export interface DashboardData {
   currentUser: User | null;
   authId?: string;
   authEmail?: string;
+  isUnauthenticated?: boolean;
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
@@ -21,7 +22,22 @@ export async function getDashboardData(): Promise<DashboardData> {
   
   if (authError || !authUser) {
     console.error("Auth error in getDashboardData:", authError);
-    throw new Error("Unauthorized");
+    return {
+      tickets: [],
+      staff: [],
+      stats: {
+        total: 0,
+        open: 0,
+        in_progress: 0,
+        pending: 0,
+        resolved: 0,
+        closed: 0,
+        unassigned: 0,
+        byTechnician: [],
+      },
+      currentUser: null,
+      isUnauthenticated: true,
+    };
   }
 
   // 2. Fetch user profile

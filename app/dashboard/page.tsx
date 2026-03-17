@@ -15,8 +15,10 @@ import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX, LayoutList, Ka
 import { getDashboardData } from "@/app/actions/get-dashboard-data";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
+import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
+  const router = useRouter();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [staff, setStaff] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -41,6 +43,10 @@ export default function DashboardPage() {
     if (showLoading) setLoading(true);
     try {
       const data = await getDashboardData();
+      if (data.isUnauthenticated) {
+        router.push("/auth/login");
+        return;
+      }
       setTickets(data.tickets);
       setStaff(data.staff);
       setCurrentUser(data.currentUser);
