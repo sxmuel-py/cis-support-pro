@@ -41,13 +41,14 @@ export async function getDashboardData(): Promise<DashboardData> {
   }
 
   // 2. Fetch user profile
-  const { data: profile } = await supabase
+  const { data: profile, error: profileError } = await supabase
     .from("users")
     .select("*")
     .eq("id", authUser.id)
     .single();
 
-  if (!profile) {
+  if (profileError || !profile) {
+    if (profileError) console.error("Profile fetch error:", profileError);
     return {
       tickets: [],
       staff: [],
