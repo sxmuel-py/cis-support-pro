@@ -6,13 +6,16 @@ RETURNS TEXT AS $$
 $$ LANGUAGE sql SECURITY DEFINER SET search_path = public;
 
 -- 2. USERS TABLE
--- Allow all authenticated users to read profiles (standard behavior)
-DROP POLICY IF EXISTS "Users can read all users" ON public.users;
-CREATE POLICY "Users can read all users" ON public.users FOR SELECT USING (auth.role() = 'authenticated');
+-- We don't need a SELECT policy for HOD because the initial schema already has
+-- "Users can read all users" which allows all authenticated users (including HOD) to view profiles.
+-- Adding a recursive HOD SELECT policy here causes an infinite loop!
 
--- Allow HOD to update/delete users
+-- Allow HOD to update/delete any IT staff user
 DROP POLICY IF EXISTS "HOD can update all users" ON public.users;
 CREATE POLICY "HOD can update all users" ON public.users FOR UPDATE USING (public.get_my_role() = 'hod');
+
+DROP POLICY IF EXISTS "HOD can delete users" ON public.users;
+CREATE POLICY "HOD can delete users" ON public.users FOR DELETE USING (public.get_my_role() = 'hod');
 
 -- 3. TICKETS TABLE
 DROP POLICY IF EXISTS "HOD can view all tickets" ON public.tickets;
