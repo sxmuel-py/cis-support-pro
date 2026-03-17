@@ -20,6 +20,7 @@ export default function DashboardPage() {
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [staff, setStaff] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
+  const [authDebug, setAuthDebug] = useState<{ id?: string, email?: string }>({});
   const [loading, setLoading] = useState(true);
   const [selectedTicket, setSelectedTicket] = useState<Ticket | null>(null);
   const [workloadStats, setWorkloadStats] = useState<{ id: string; name: string; count: number }[]>([]);
@@ -43,6 +44,7 @@ export default function DashboardPage() {
       setTickets(data.tickets);
       setStaff(data.staff);
       setCurrentUser(data.currentUser);
+      setAuthDebug({ id: data.authId, email: data.authEmail });
       setWorkloadStats(data.stats.byTechnician);
     } catch (error) {
       console.error("Error fetching dashboard data:", error);
@@ -116,7 +118,7 @@ export default function DashboardPage() {
   if (!loading && !currentUser) {
     return (
       <div className="flex h-screen bg-background items-center justify-center p-4">
-        <Card className="max-w-md w-full text-center">
+        <Card className="max-w-md w-full text-center border-destructive/20 shadow-lg">
           <CardHeader>
             <div className="flex justify-center mb-4">
               <UserX className="h-12 w-12 text-destructive" />
@@ -127,8 +129,12 @@ export default function DashboardPage() {
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">
+            <div className="bg-muted p-3 rounded-md text-left text-xs space-y-2 font-mono break-all border">
+              <p><span className="text-muted-foreground">ID:</span> {authDebug.id}</p>
+              <p><span className="text-muted-foreground">Email:</span> {authDebug.email}</p>
+            </div>
             <p className="text-sm text-muted-foreground">
-              Please contact the IT HOD or a Supervisor to authorize your account.
+              Please contact the IT HOD or a Supervisor to authorize your account using the ID above.
             </p>
             <div className="flex flex-col gap-2">
               <Button onClick={() => window.location.reload()} variant="outline">Refresh Dashboard</Button>

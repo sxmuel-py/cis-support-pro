@@ -8,6 +8,8 @@ export interface DashboardData {
   staff: User[];
   stats: any; // Using any for stats to match the existing stats structure
   currentUser: User | null;
+  authId?: string;
+  authEmail?: string;
 }
 
 export async function getDashboardData(): Promise<DashboardData> {
@@ -44,6 +46,8 @@ export async function getDashboardData(): Promise<DashboardData> {
         byTechnician: [],
       },
       currentUser: null,
+      authId: authUser.id,
+      authEmail: authUser.email,
     };
   }
 
@@ -132,5 +136,7 @@ export async function getDashboardData(): Promise<DashboardData> {
     staff: staff || [],
     stats,
     currentUser: profile as User,
+    authId: authUser.id,
+    authEmail: authUser.email,
   };
 }
