@@ -159,6 +159,66 @@ export async function GET(request: Request) {
         }
 
         // ============================================
+        // SUBJECT MATCHING TRACKING - Prevent Duplicate Tickets for "RE:" replies without valid threads
+        // ============================================
+        
+        const isReSubject = email.subject.toLowerCase().startsWith('re:');
+        
+        if (!existingTicket && isReSubject) {
+          // Strip "Re: " from the start (handling multiple "Re: Re: " potentially)
+          let baseSubject = email.subject;
+          while (baseSubject.toLowerCase().startsWith('re:')) {
+            baseSubject = baseSubject.substring(3).trim();
+          }
+          
+          // Fallback: Try to find a recent open ticket by this sender and subject
+          const { data: subjectMatchTicket } = await supabase
+            .from('tickets')
+            .select('id, subject, status, sender_email')
+            .eq('sender_email', email.from)
+            .ilike('subject', `%${baseSubject}%`) // Use ilike for case-insensitive match
+            .order('created_at', { ascending: false })
+            .limit(1)
+            .single();
+
+          if (subjectMatchTicket) {
+            console.log(`Matched "RE:" email to existing ticket #${subjectMatchTicket.id.slice(0, 8)} based on subject: ${baseSubject}`);
+            
+            // Determine who sent the reply
+            const isFromTechnician = email.from.toLowerCase().endsWith('@cislagos.org');
+            
+            let noteContent = '';
+            if (isFromTechnician) {
+              noteContent = `**Technician Reply** (${email.fromName || email.from}):\n\n${email.body}`;
+            } else {
+              noteContent = `**Customer Follow-up via Email Reply** (${email.fromName || email.from}):\n\n${email.body}`;
+            }
+
+            // Add as note to existing ticket
+            await supabase.from('notes').insert({
+              ticket_id: subjectMatchTicket.id,
+              content: noteContent,
+              author_name: email.fromName || email.from,
+              author_id: null, // System-generated note
+            });
+
+            // Mark as processed
+            await supabase.from('processed_emails').insert({
+              message_id: email.id,
+              thread_id: email.threadId,
+              classification: 'reply',
+              ticket_id: subjectMatchTicket.id,
+            });
+
+            // Mark email as read
+            await markEmailAsRead(email.id);
+
+            results.replies_added++;
+            continue; // Don't create a new ticket
+          }
+        }
+
+        // ============================================
         // NEW TICKET CREATION (only if not a reply)
         // ============================================
 
@@ -166,15 +226,26 @@ export async function GET(request: Request) {
         console.log(`Triaging email from ${email.from}: ${email.subject}`);
         const triage = await triageEmailWithLLM(email.from, email.subject, email.body);
 
-        // NOTE: Triage system no longer filters to trash
-        // All emails (including those classified as 'junk') are created as tickets
-        // Junk emails will be categorized as 'other' (uncategorized)
-        
-        // Override junk classification to treat as uncategorized support request
-        const finalCategory = triage.classification === 'junk' ? 'other' : triage.category;
-        const finalPriority = triage.classification === 'junk' ? 'low' : triage.priority;
+        // Handle Junk / Broadcast emails
+        if (triage.classification === 'junk') {
+          console.log(`Skipping junk/broadcast email: ${email.from} - ${email.subject}`);
+          
+          // Mark as processed to avoid reprocessing
+          await supabase.from('processed_emails').insert({
+            message_id: email.id,
+            thread_id: email.threadId,
+            classification: 'junk',
+          });
 
-        // Create ticket
+          // Mark as read and archive
+          await markEmailAsRead(email.id);
+          await archiveEmail(email.id);
+          
+          results.junk_filtered++;
+          continue;
+        }
+
+        // Create ticket for valid support requests
         const { data: ticket, error: ticketError } = await supabase
           .from('tickets')
           .insert({
@@ -183,8 +254,8 @@ export async function GET(request: Request) {
             subject: email.subject,
             body: email.body,
             status: 'open',
-            priority: finalPriority,
-            category: finalCategory,
+            priority: triage.priority,
+            category: triage.category,
             email_thread_id: email.threadId,
             email_message_id: email.id,
             attachments: email.attachments,
@@ -200,7 +271,7 @@ export async function GET(request: Request) {
         await supabase.from('processed_emails').insert({
           message_id: email.id,
           thread_id: email.threadId,
-          classification: triage.classification === 'junk' ? 'junk' : 'support_request',
+          classification: 'support_request',
           ticket_id: ticket.id,
         });
 
@@ -208,7 +279,7 @@ export async function GET(request: Request) {
         await markEmailAsRead(email.id);
 
         results.tickets_created++;
-        console.log(`Created ticket #${ticket.id.slice(0, 8)} for: ${email.subject}${triage.classification === 'junk' ? ' (originally classified as junk, now uncategorized)' : ''}`);
+        console.log(`Created ticket #${ticket.id.slice(0, 8)} for: ${email.subject}`);
 
         // Send auto-reply
         try {
