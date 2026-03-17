@@ -103,7 +103,7 @@ export function AssignTicketDropdown({
               {staff.map((member) => (
                 <CommandItem
                   key={member.id}
-                  value={member.full_name}
+                  value={`${member.full_name}-${member.id}`}
                   onSelect={() => handleAssign(member.id)}
                 >
                   <Check
