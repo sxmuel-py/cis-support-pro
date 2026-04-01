@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from "react";
-import { X, Clock, User, Tag, Calendar, CheckCircle2, XCircle, UserPlus } from "lucide-react";
+import { X, Clock, User, Tag, Calendar, CheckCircle2, XCircle, UserPlus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -12,6 +12,7 @@ import { acceptTicket } from "@/app/actions/accept-ticket";
 import { rejectTicket } from "@/app/actions/reject-ticket";
 import { selfAssignTicket } from "@/app/actions/self-assign-ticket";
 import { updateTicketStatus } from "@/app/actions/update-ticket-status";
+import { deleteTicket } from "@/app/actions/delete-ticket";
 import { TicketNotes } from "./ticket-notes";
 import { TicketActivity } from "./ticket-activity";
 import { TicketStatusDropdown } from "./ticket-status-dropdown";
@@ -194,6 +195,31 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
     setProcessing(false);
   };
 
+  const handleDelete = async () => {
+    if (!window.confirm("Are you sure you want to permanently delete this ticket and all its associated data? This action cannot be undone.")) {
+      return;
+    }
+    
+    setProcessing(true);
+    const result = await deleteTicket(ticket.id);
+    
+    if (result.error) {
+      toast({
+        title: "Error",
+        description: result.error,
+        variant: "destructive",
+      });
+      setProcessing(false);
+    } else {
+      toast({
+        title: "Success",
+        description: "Ticket deleted successfully",
+      });
+      // Close the detail view since the ticket is gone
+      onClose();
+    }
+  };
+
   const statusVariants: Record<string, "default" | "warning" | "success" | "secondary" | "info"> = {
     open: "default",
     in_progress: "info",
@@ -268,6 +294,18 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                   onStatusChange={handleStatusChange}
                   disabled={processing}
                 />
+              )}
+              
+              {isHod && (
+                <Button 
+                  onClick={handleDelete} 
+                  disabled={processing} 
+                  variant="destructive" 
+                  className="gap-2 ml-auto"
+                >
+                  <Trash2 className="h-4 w-4" />
+                  Delete Ticket
+                </Button>
               )}
             </div>
           </div>

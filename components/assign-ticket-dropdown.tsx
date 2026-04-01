@@ -92,25 +92,16 @@ export function AssignTicketDropdown({
                   handleAssign(null);
                 }}
                 className="cursor-pointer"
+                onPointerDown={(e) => e.preventDefault()}
               >
-                <div 
-                  className="flex items-center w-full"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    e.stopPropagation();
-                    console.log("Unassign clicked via mouse");
-                    handleAssign(null);
-                  }}
-                >
-                  <Check
-                    className={cn(
-                      "mr-2 h-4 w-4",
-                      !currentAssignee ? "opacity-100" : "opacity-0"
-                    )}
-                  />
-                  <UserX className="mr-2 h-4 w-4" />
-                  Unassigned
-                </div>
+                <Check
+                  className={cn(
+                    "mr-2 h-4 w-4",
+                    !currentAssignee ? "opacity-100" : "opacity-0"
+                  )}
+                />
+                <UserX className="mr-2 h-4 w-4" />
+                Unassigned
               </CommandItem>
 
               {/* Staff list */}
@@ -123,16 +114,9 @@ export function AssignTicketDropdown({
                     handleAssign(member.id);
                   }}
                   className="cursor-pointer"
+                  onPointerDown={(e) => e.preventDefault()}
                 >
-                  <div 
-                    className="flex flex-col w-full"
-                    onClick={(e) => {
-                      e.preventDefault();
-                      e.stopPropagation();
-                      console.log(`Staff clicked via mouse: ${member.full_name}`);
-                      handleAssign(member.id);
-                    }}
-                  >
+                  <div className="flex flex-col w-full">
                     <div className="flex items-center">
                       <Check
                         className={cn(
