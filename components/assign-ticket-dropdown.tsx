@@ -88,12 +88,15 @@ export function AssignTicketDropdown({
               <CommandItem
                 value="unassigned"
                 onSelect={() => {
-                  console.log("Unassign selected via CMDK");
+                  console.log("Unassign selected via onSelect (keyboard)");
+                  handleAssign(null);
+                }}
+                onMouseDown={(e) => {
+                  e.preventDefault(); // Prevent focus shift
+                  console.log("Unassign clicked via onMouseDown (mouse)");
                   handleAssign(null);
                 }}
                 className="cursor-pointer"
-                onPointerDown={(e) => e.preventDefault()}
-                onMouseDown={(e) => e.preventDefault()}
               >
                 <Check
                   className={cn(
@@ -111,12 +114,15 @@ export function AssignTicketDropdown({
                   key={member.id}
                   value={member.full_name}
                   onSelect={() => {
-                    console.log(`Staff selected via CMDK: ${member.full_name}`);
+                    console.log(`Staff selected via onSelect: ${member.full_name}`);
+                    handleAssign(member.id);
+                  }}
+                  onMouseDown={(e) => {
+                    e.preventDefault(); // Prevent focus shift
+                    console.log(`Staff clicked via onMouseDown: ${member.full_name}`);
                     handleAssign(member.id);
                   }}
                   className="cursor-pointer"
-                  onPointerDown={(e) => e.preventDefault()}
-                  onMouseDown={(e) => e.preventDefault()}
                 >
                   <div className="flex flex-col w-full">
                     <div className="flex items-center">
