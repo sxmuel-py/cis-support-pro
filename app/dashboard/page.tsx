@@ -131,7 +131,7 @@ export default function DashboardPage() {
             </div>
             <CardTitle>IT Staff Account Required</CardTitle>
             <CardDescription>
-              We found your CIS login, but you haven't been added to the IT Staff list yet.
+              We found your IT login, but you haven't been added to the IT Staff list yet.
             </CardDescription>
           </CardHeader>
           <CardContent className="space-y-4">

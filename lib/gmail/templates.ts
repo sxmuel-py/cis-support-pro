@@ -24,7 +24,7 @@ export function generateTicketCreatedTemplate(
               <!-- Header -->
               <tr>
                 <td style="background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%); padding: 30px 40px; text-align: center;">
-                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">CIS IT Support</h1>
+                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">IT Helpdesk Support</h1>
                   <p style="margin: 8px 0 0 0; color: #dbeafe; font-size: 14px;">Ticket Confirmation</p>
                 </td>
               </tr>
@@ -85,7 +85,7 @@ export function generateTicketCreatedTemplate(
               <tr>
                 <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb;">
                   <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">Best regards,</p>
-                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">CIS IT Support Team</p>
+                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">IT Helpdesk Team</p>
                   <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
                     This is an automated message. Please do not reply directly to this email address.
                   </p>
@@ -127,7 +127,7 @@ export function generateTicketClosedTemplate(
               <!-- Header -->
               <tr>
                 <td style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); padding: 30px 40px; text-align: center;">
-                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">CIS IT Support</h1>
+                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">IT Helpdesk Support</h1>
                   <p style="margin: 8px 0 0 0; color: #d1fae5; font-size: 14px;">Ticket Resolved</p>
                 </td>
               </tr>
@@ -212,7 +212,7 @@ export function generateTicketClosedTemplate(
               <tr>
                 <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb;">
                   <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">Best regards,</p>
-                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">CIS IT Support Team</p>
+                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">IT Helpdesk Team</p>
                   <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
                     This is an automated message. Please do not reply directly to this email address.
                   </p>
@@ -265,7 +265,7 @@ export function generateTicketAssignedTemplate(
               <!-- Header -->
               <tr>
                 <td style="background: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%); padding: 30px 40px; text-align: center;">
-                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">CIS IT Support</h1>
+                  <h1 style="margin: 0; color: #ffffff; font-size: 28px; font-weight: 700; letter-spacing: -0.5px;">IT Helpdesk Support</h1>
                   <p style="margin: 8px 0 0 0; color: #ede9fe; font-size: 14px;">Ticket Assignment Notification</p>
                 </td>
               </tr>
@@ -368,9 +368,9 @@ export function generateTicketAssignedTemplate(
               <tr>
                 <td style="background-color: #f9fafb; padding: 30px 40px; border-top: 1px solid #e5e7eb;">
                   <p style="margin: 0 0 8px 0; color: #111827; font-size: 14px; font-weight: 600;">Best regards,</p>
-                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">CIS IT Support System</p>
+                  <p style="margin: 0 0 20px 0; color: #2563eb; font-size: 14px; font-weight: 700;">IT Helpdesk System</p>
                   <p style="margin: 0; color: #9ca3af; font-size: 12px; line-height: 1.5;">
-                    This is an automated message from the CIS Support Pro Portal.
+                    This is an automated message from the IT Helpdesk Portal.
                   </p>
                 </td>
               </tr>

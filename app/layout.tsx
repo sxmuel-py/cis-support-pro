@@ -9,7 +9,7 @@ const inter = Inter({
 });
 
 export const metadata: Metadata = {
-  title: "CIS Support Pro - IT Help Desk",
+  title: "IT Helpdesk - Support Portal",
   description: "Modern IT Help Desk Command Center",
 };
 

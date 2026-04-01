@@ -141,8 +141,8 @@ export default function LoginPage() {
             <Logo size={48} className="mb-2" />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-2xl font-bold tracking-tight">
-              CIS <span className="text-primary">PRO</span>
+            <CardTitle className="text-2xl font-bold tracking-tight uppercase">
+              IT <span className="text-primary">Helpdesk</span>
             </CardTitle>
             <CardDescription className="text-sm text-muted-foreground">
               {processingMagicLink 

@@ -77,8 +77,8 @@ export function Sidebar() {
       <div className="flex h-20 items-center gap-4 border-b px-6 bg-accent/5">
         <Logo size={42} />
         <div className="flex flex-col">
-          <h1 className="text-xl font-black tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent">
-            CIS <span className="text-primary">PRO</span>
+          <h1 className="text-xl font-black tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent uppercase">
+            IT <span className="text-primary">Helpdesk</span>
           </h1>
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 leading-none">
             Support Portal
