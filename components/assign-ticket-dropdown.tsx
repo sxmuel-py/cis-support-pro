@@ -61,7 +61,7 @@ export function AssignTicketDropdown({
   const selectedStaff = staff.find((s) => s.id === currentAssignee);
 
   return (
-    <Popover open={open} onOpenChange={setOpen}>
+    <Popover open={open} onOpenChange={setOpen} modal={true}>
       <PopoverTrigger asChild>
         <Button
           variant="outline"
@@ -93,6 +93,7 @@ export function AssignTicketDropdown({
                 }}
                 className="cursor-pointer"
                 onPointerDown={(e) => e.preventDefault()}
+                onMouseDown={(e) => e.preventDefault()}
               >
                 <Check
                   className={cn(
@@ -115,6 +116,7 @@ export function AssignTicketDropdown({
                   }}
                   className="cursor-pointer"
                   onPointerDown={(e) => e.preventDefault()}
+                  onMouseDown={(e) => e.preventDefault()}
                 >
                   <div className="flex flex-col w-full">
                     <div className="flex items-center">
