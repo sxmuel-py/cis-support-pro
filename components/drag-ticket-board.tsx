@@ -25,7 +25,7 @@ const priorityVariants: Record<TicketPriority, "default" | "info" | "warning" | 
   urgent: "destructive",
 };
 
-export function DragTicketBoard({ tickets, staff, currentUser, onTicketClick }: DragTicketBoardProps) {
+export function DragTicketBoard({ tickets, staff, currentUser, onTicketClick, refreshData }: DragTicketBoardProps) {
   const isSupervisorOrHod = currentUser?.role === "supervisor" || currentUser?.role === "hod";
   const { toast } = useToast();
 
