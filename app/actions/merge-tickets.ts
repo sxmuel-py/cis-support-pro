@@ -2,6 +2,8 @@
 
 import { createClient, getCachedSession } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { sendEmail } from "@/lib/gmail/send-email";
+import { generateTicketMergedTemplate } from "@/lib/gmail/templates";
 
 export async function mergeTickets(sourceTicketId: string, targetTicketId: string) {
   const supabase = await createClient();
@@ -94,5 +96,43 @@ ${sourceTicket.body}
   }
 
   revalidatePath("/dashboard");
+
+  // 4. Notify everyone via email
+  try {
+    // Fetch all IT staff emails
+    const { data: staffMembers } = await supabase
+      .from("users")
+      .select("email")
+      .not("email", "is", null);
+
+    if (staffMembers && staffMembers.length > 0) {
+      const emailHtml = generateTicketMergedTemplate(
+        sourceTicketId,
+        targetTicketId,
+        sourceTicket.subject,
+        targetTicket.subject,
+        currentUser.full_name
+      );
+
+      const subject = `[MERGED] Ticket #${sourceTicketId.slice(0, 8)} into #${targetTicketId.slice(0, 8)}`;
+
+      // Send to all staff
+      // For efficiency and to avoid hitting rate limits too fast, we'll send them in parallel
+      // but in a production app with many users, you might use a queue or bcc.
+      await Promise.all(
+        staffMembers.map(member => 
+          sendEmail({
+            to: member.email,
+            subject: subject,
+            html: emailHtml
+          })
+        )
+      );
+    }
+  } catch (emailError) {
+    console.error("Failed to send merge notification emails:", emailError);
+    // Don't return error here, the merge itself was successful
+  }
+
   return { success: true };
 }
