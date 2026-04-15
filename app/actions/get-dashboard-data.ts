@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { Ticket, User, TicketStatus, TicketPriority } from "@/lib/types";
 
 export interface DashboardData {
@@ -17,8 +17,7 @@ export async function getDashboardData(): Promise<DashboardData> {
   const supabase = await createClient();
 
   // 1. Get current user (Single point of auth check)
-  const { data: { session }, error: authError } = await getCachedSession();
-  const authUser = session?.user;
+  const { data: { user: authUser }, error: authError } = await getCachedUser();
   
   if (authError || !authUser) {
     console.error("Auth error in getDashboardData:", authError);

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
+import { useSearchParams } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { Sidebar } from "@/components/sidebar";
 import { TicketList } from "@/components/ticket-list";
@@ -11,7 +12,7 @@ import { TicketFilters } from "@/components/ticket-filters";
 import { Ticket, User, TicketStatus, TicketPriority } from "@/lib/types";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX, LayoutList, KanbanSquare } from "lucide-react";
+import { Inbox, Clock, CheckCircle2, AlertCircle, Loader2, UserX, LayoutList, KanbanSquare, Sparkles, ShieldCheck, RefreshCcw, Siren, ArrowUpRight, TimerReset } from "lucide-react";
 import { getDashboardData } from "@/app/actions/get-dashboard-data";
 import { Button } from "@/components/ui/button";
 import { LogoutButton } from "@/components/logout-button";
@@ -19,6 +20,7 @@ import { useRouter } from "next/navigation";
 
 export default function DashboardPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [tickets, setTickets] = useState<Ticket[]>([]);
   const [staff, setStaff] = useState<User[]>([]);
   const [currentUser, setCurrentUser] = useState<User | null>(null);
@@ -108,6 +110,16 @@ export default function DashboardPage() {
     return () => clearInterval(interval);
   }, []);
 
+  useEffect(() => {
+    const ticketId = searchParams.get("ticket");
+    if (!ticketId || tickets.length === 0) return;
+
+    const matchingTicket = tickets.find((candidate) => candidate.id === ticketId);
+    if (matchingTicket) {
+      setSelectedTicket((current) => current?.id === matchingTicket.id ? current : matchingTicket);
+    }
+  }, [searchParams, tickets]);
+
   const stats = {
     total: tickets.length,
     open: tickets.filter((t) => t.status === "open").length,
@@ -116,10 +128,74 @@ export default function DashboardPage() {
     resolved: tickets.filter((t) => t.status === "resolved").length,
     unassigned: tickets.filter((t) => !t.assigned_to).length,
   };
+  const urgentCount = tickets.filter((t) => t.priority === "urgent").length;
+  const mineCount = tickets.filter((t) => t.assigned_to === currentUser?.id).length;
+  const staleOpenCount = tickets.filter((t) => {
+    const ageInHours = (Date.now() - new Date(t.created_at).getTime()) / (1000 * 60 * 60);
+    return t.status === "open" && ageInHours >= 24;
+  }).length;
 
   const isSupervisor = currentUser?.role === "supervisor";
   const isHod = currentUser?.role === "hod";
   const isStaffAdmin = isSupervisor || isHod;
+  const firstName = currentUser?.full_name?.split(" ")[0] || "Team";
+  const highlightCards = [
+    {
+      title: "Urgent Queue",
+      value: urgentCount,
+      description: urgentCount > 0 ? "High-friction tickets that need active eyes." : "No urgent tickets competing for attention.",
+      icon: Siren,
+      accent: "from-rose-500/20 to-orange-500/10",
+    },
+    {
+      title: "My Active Work",
+      value: mineCount,
+      description: currentUser?.role === "technician" ? "Tickets currently sitting with you." : "Use this as a quick ownership pulse.",
+      icon: ShieldCheck,
+      accent: "from-sky-500/20 to-cyan-500/10",
+    },
+    {
+      title: "Aging Open Tickets",
+      value: staleOpenCount,
+      description: "Open for more than 24 hours and still awaiting progress.",
+      icon: TimerReset,
+      accent: "from-amber-500/20 to-yellow-500/10",
+    },
+  ];
+  const statCards = [
+    {
+      title: "Total Tickets",
+      value: stats.total,
+      description: "Full pipeline across the helpdesk.",
+      meta: `${stats.pending} pending review`,
+      icon: Inbox,
+      iconClass: "text-slate-700",
+    },
+    {
+      title: "Open",
+      value: stats.open,
+      description: "Fresh requests needing triage or pickup.",
+      meta: urgentCount > 0 ? `${urgentCount} urgent` : "Queue is calm",
+      icon: AlertCircle,
+      iconClass: "text-sky-600",
+    },
+    {
+      title: "In Progress",
+      value: stats.in_progress,
+      description: "Tickets actively being worked on.",
+      meta: `${mineCount} in your lane`,
+      icon: Clock,
+      iconClass: "text-amber-500",
+    },
+    {
+      title: "Resolved",
+      value: stats.resolved,
+      description: "Issues closed out and communicated.",
+      meta: `${Math.round((stats.resolved / Math.max(stats.total, 1)) * 100)}% completion`,
+      icon: CheckCircle2,
+      iconClass: "text-emerald-600",
+    },
+  ];
 
   if (!loading && !currentUser) {
     return (
@@ -184,105 +260,134 @@ export default function DashboardPage() {
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-8 space-y-8">
-          {/* Header */}
-          <div>
-            <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
-            <p className="text-muted-foreground mt-1">
-              Welcome to your IT Help Desk Command Center
-            </p>
+        <div className="container mx-auto space-y-8 p-6 md:p-8">
+          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70">
+            <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
+              <div className="max-w-3xl space-y-4">
+                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm">
+                  <Sparkles className="mr-2 h-3.5 w-3.5" />
+                  Operations Console
+                </Badge>
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+                    {`Good to see you, ${firstName}.`}
+                  </h1>
+                  <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+                    The support queue is live. Keep the backlog moving, spot risk early, and hand off work with confidence.
+                  </p>
+                </div>
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                    {stats.total} total tickets in view
+                  </div>
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                    {currentUser?.role?.replace("_", " ")} access
+                  </div>
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                    {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
+                  </div>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[460px]">
+                {highlightCards.map((card) => {
+                  const Icon = card.icon;
+
+                  return (
+                    <div key={card.title} className={`rounded-3xl border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50`}>
+                      <div className="mb-4 flex items-center justify-between">
+                        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">
+                          {card.title}
+                        </span>
+                        <Icon className="h-4 w-4 text-slate-700" />
+                      </div>
+                      <div className="text-3xl font-semibold text-slate-900">{card.value}</div>
+                      <p className="mt-2 text-sm leading-5 text-slate-600">{card.description}</p>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
           </div>
 
-          {/* Stats Cards */}
-          <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Total Tickets</CardTitle>
-                <Inbox className="h-4 w-4 text-muted-foreground" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.total}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  All time tickets
-                </p>
-              </CardContent>
-            </Card>
+          <div className={`grid gap-4 ${isStaffAdmin ? "md:grid-cols-2 xl:grid-cols-5" : "md:grid-cols-2 xl:grid-cols-4"}`}>
+            {statCards.map((card) => {
+              const Icon = card.icon;
 
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Open</CardTitle>
-                <AlertCircle className="h-4 w-4 text-blue-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.open}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Requires attention
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">In Progress</CardTitle>
-                <Clock className="h-4 w-4 text-orange-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.in_progress}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Being worked on
-                </p>
-              </CardContent>
-            </Card>
-
-            <Card>
-              <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                <CardTitle className="text-sm font-medium">Resolved</CardTitle>
-                <CheckCircle2 className="h-4 w-4 text-green-500" />
-              </CardHeader>
-              <CardContent>
-                <div className="text-2xl font-bold">{stats.resolved}</div>
-                <p className="text-xs text-muted-foreground mt-1">
-                  Completed
-                </p>
-              </CardContent>
-            </Card>
+              return (
+                <Card key={card.title} className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                    <div className="space-y-1">
+                      <CardTitle className="text-sm font-medium text-slate-700">{card.title}</CardTitle>
+                      <CardDescription>{card.description}</CardDescription>
+                    </div>
+                    <div className="rounded-2xl bg-white/80 p-2 shadow-sm">
+                      <Icon className={`h-4 w-4 ${card.iconClass}`} />
+                    </div>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="flex items-end justify-between gap-4">
+                      <div className="text-3xl font-semibold tracking-tight">{card.value}</div>
+                      <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                        <ArrowUpRight className="h-3.5 w-3.5" />
+                        {card.meta}
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
 
             {isStaffAdmin && (
-              <Card>
-                <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-                  <CardTitle className="text-sm font-medium">Unassigned</CardTitle>
-                  <UserX className="h-4 w-4 text-yellow-500" />
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                  <div className="space-y-1">
+                    <CardTitle className="text-sm font-medium text-slate-700">Unassigned</CardTitle>
+                    <CardDescription>Tickets waiting for an owner.</CardDescription>
+                  </div>
+                  <div className="rounded-2xl bg-white/80 p-2 shadow-sm">
+                    <UserX className="h-4 w-4 text-yellow-600" />
+                  </div>
                 </CardHeader>
                 <CardContent>
-                  <div className="text-2xl font-bold">{stats.unassigned}</div>
-                  <p className="text-xs text-muted-foreground mt-1">
-                    Needs assignment
-                  </p>
+                  <div className="flex items-end justify-between gap-4">
+                    <div className="text-3xl font-semibold tracking-tight">{stats.unassigned}</div>
+                    <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                      <ArrowUpRight className="h-3.5 w-3.5" />
+                      Dispatch queue
+                    </div>
+                  </div>
                 </CardContent>
               </Card>
             )}
           </div>
 
-          {/* Team Workload Widget (Admins Only) */}
           {isStaffAdmin && workloadStats.length > 0 && (
             <TeamWorkload stats={workloadStats} />
           )}
 
-          {/* Active Tickets */}
           <div className="space-y-4">
-            <div className="flex items-center justify-between">
+            <div className="flex flex-col gap-4 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-xl shadow-slate-200/60 lg:flex-row lg:items-center lg:justify-between">
               <div>
                 <h2 className="text-2xl font-semibold tracking-tight">Active Tickets</h2>
                 <p className="text-sm text-muted-foreground">
-                  Manage and track all support requests
+                  Scan the live queue, then jump into detail with one click.
                 </p>
               </div>
-              <div className="flex items-center gap-4">
-                <div className="flex items-center rounded-md border bg-muted/50 p-1">
+              <div className="flex flex-wrap items-center gap-3">
+                <Button
+                  variant="outline"
+                  className="rounded-2xl border-white/70 bg-white/80"
+                  onClick={() => refreshData(true)}
+                >
+                  <RefreshCcw className="mr-2 h-4 w-4" />
+                  Refresh Queue
+                </Button>
+                <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm">
                   <Button 
                     variant={viewMode === "list" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-7 px-2"
+                    className="h-8 rounded-xl px-3"
                     onClick={() => setViewMode("list")}
                   >
                     <LayoutList className="w-4 h-4 mr-1" />
@@ -291,20 +396,19 @@ export default function DashboardPage() {
                   <Button 
                     variant={viewMode === "board" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-7 px-2"
+                    className="h-8 rounded-xl px-3"
                     onClick={() => setViewMode("board")}
                   >
                     <KanbanSquare className="w-4 h-4 mr-1" />
                     Board
                   </Button>
                 </div>
-                <Badge variant="secondary" className="text-sm">
+                <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
                   {filteredTickets.length} of {tickets.length} tickets
                 </Badge>
               </div>
             </div>
 
-            {/* Filters */}
             <TicketFilters
               filter={filter}
               onFilterChange={setFilter}
@@ -318,7 +422,7 @@ export default function DashboardPage() {
             />
 
             {loading ? (
-              <Card>
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="flex flex-col items-center gap-2">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -327,7 +431,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             ) : filteredTickets.length === 0 ? (
-              <Card>
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="flex flex-col items-center gap-2 text-center">
                     <Inbox className="h-12 w-12 text-muted-foreground" />
@@ -371,4 +475,3 @@ export default function DashboardPage() {
     </div>
   );
 }
-

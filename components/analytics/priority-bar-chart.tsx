@@ -11,9 +11,9 @@ interface PriorityBarChartProps {
 }
 
 const PRIORITY_COLORS: Record<string, string> = {
-  low: "hsl(var(--muted))",
-  medium: "hsl(var(--chart-2))",
-  high: "hsl(var(--chart-3))",
+  low: "hsl(215 16% 75%)",
+  medium: "hsl(203 89% 53%)",
+  high: "hsl(32 95% 56%)",
   urgent: "hsl(var(--destructive))",
 };
 
@@ -25,7 +25,7 @@ export function PriorityBarChart({ data }: PriorityBarChartProps) {
   }));
 
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
       <CardHeader>
         <CardTitle>Priority Distribution</CardTitle>
         <CardDescription>Tickets by priority level</CardDescription>
@@ -33,7 +33,7 @@ export function PriorityBarChart({ data }: PriorityBarChartProps) {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData} layout="vertical">
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} />
             <XAxis 
               type="number"
               className="text-xs"
@@ -52,7 +52,7 @@ export function PriorityBarChart({ data }: PriorityBarChartProps) {
                 borderRadius: "6px",
               }}
             />
-            <Bar dataKey="count" radius={[0, 4, 4, 0]} />
+            <Bar dataKey="count" radius={[0, 10, 10, 0]} />
           </BarChart>
         </ResponsiveContainer>
       </CardContent>

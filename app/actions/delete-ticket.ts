@@ -1,14 +1,13 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function deleteTicket(ticketId: string) {
   const supabase = await createClient();
 
   // 1. Auth & Perms
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
   
   if (!user) {
     return { error: "Unauthorized" };

@@ -1,7 +1,7 @@
 "use server";
 
 import { createClient } from "@supabase/supabase-js";
-import { getCachedSession } from "@/lib/supabase/server";
+import { getCachedUser } from "@/lib/supabase/server";
 
 export async function sendWelcomeEmail(targetUserId: string, targetEmail: string) {
   // We need the service role key to forcefully trigger password reset emails
@@ -14,8 +14,7 @@ export async function sendWelcomeEmail(targetUserId: string, targetEmail: string
   const supabaseClient = await import("@/lib/supabase/server").then(m => m.createClient());
 
   // 1. Auth check
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
 
   if (!user) {
     return { error: "Unauthorized" };

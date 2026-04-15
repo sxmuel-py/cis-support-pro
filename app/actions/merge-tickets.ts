@@ -1,16 +1,51 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/gmail/send-email";
 import { generateTicketMergedTemplate } from "@/lib/gmail/templates";
+
+async function resolveTicketId(input: string, fieldLabel: string) {
+  const supabase = await createClient();
+  const normalized = input.trim();
+
+  if (!normalized) {
+    return { error: `${fieldLabel} ticket ID is required.` };
+  }
+
+  if (normalized.length === 36) {
+    return { ticketId: normalized };
+  }
+
+  const { data: tickets, error } = await supabase
+    .from("tickets")
+    .select("id")
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    return { error: `Could not look up the ${fieldLabel.toLowerCase()} ticket.` };
+  }
+
+  const matches = (tickets || []).filter((ticket) =>
+    ticket.id.toLowerCase().startsWith(normalized.toLowerCase())
+  );
+
+  if (!matches || matches.length === 0) {
+    return { error: `${fieldLabel} ticket not found.` };
+  }
+
+  if (matches.length > 1) {
+    return { error: `${fieldLabel} ticket ID is ambiguous. Please paste more characters.` };
+  }
+
+  return { ticketId: matches[0].id };
+}
 
 export async function mergeTickets(sourceTicketId: string, targetTicketId: string) {
   const supabase = await createClient();
 
   // 1. Auth & Perms
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
   
   if (!user) {
     return { error: "Unauthorized" };
@@ -26,7 +61,20 @@ export async function mergeTickets(sourceTicketId: string, targetTicketId: strin
     return { error: "Only HODs and Supervisors can merge tickets." };
   }
 
-  if (sourceTicketId === targetTicketId) {
+  const resolvedSource = await resolveTicketId(sourceTicketId, "Source");
+  if (resolvedSource.error) {
+    return { error: resolvedSource.error };
+  }
+
+  const resolvedTarget = await resolveTicketId(targetTicketId, "Target");
+  if (resolvedTarget.error) {
+    return { error: resolvedTarget.error };
+  }
+
+  const resolvedSourceTicketId = resolvedSource.ticketId;
+  const resolvedTargetTicketId = resolvedTarget.ticketId;
+
+  if (resolvedSourceTicketId === resolvedTargetTicketId) {
     return { error: "Cannot merge a ticket into itself." };
   }
 
@@ -34,7 +82,7 @@ export async function mergeTickets(sourceTicketId: string, targetTicketId: strin
   const { data: sourceTicket, error: sourceError } = await supabase
     .from("tickets")
     .select("*")
-    .eq("id", sourceTicketId)
+    .eq("id", resolvedSourceTicketId)
     .single();
 
   if (sourceError || !sourceTicket) {
@@ -44,7 +92,7 @@ export async function mergeTickets(sourceTicketId: string, targetTicketId: strin
   const { data: targetTicket, error: targetError } = await supabase
     .from("tickets")
     .select("*")
-    .eq("id", targetTicketId)
+    .eq("id", resolvedTargetTicketId)
     .single();
 
   if (targetError || !targetTicket) {
@@ -58,7 +106,7 @@ export async function mergeTickets(sourceTicketId: string, targetTicketId: strin
   // 3. Begin Merge Strategy
   // a) Create a meganote on the target ticket containing the source body
   const mergeNoteContent = `**[SYSTEM] Ticket Merged**
-The contents of ticket #${sourceTicketId.slice(0, 8)} ("${sourceTicket.subject}") have been merged into this ticket by ${currentUser.full_name}.
+The contents of ticket #${resolvedSourceTicketId.slice(0, 8)} ("${sourceTicket.subject}") have been merged into this ticket by ${currentUser.full_name}.
 
 **Original Message from ${sourceTicket.sender_name || sourceTicket.sender_email}:**
 ${sourceTicket.body}
@@ -67,7 +115,7 @@ ${sourceTicket.body}
   const { error: noteError } = await supabase
     .from("notes")
     .insert({
-      ticket_id: targetTicketId,
+      ticket_id: resolvedTargetTicketId,
       author_name: "System",
       content: mergeNoteContent,
     });
@@ -79,17 +127,17 @@ ${sourceTicket.body}
   // b) Take all existing notes from source and re-parent them to target
   await supabase
     .from("notes")
-    .update({ ticket_id: targetTicketId })
-    .eq("ticket_id", sourceTicketId);
+    .update({ ticket_id: resolvedTargetTicketId })
+    .eq("ticket_id", resolvedSourceTicketId);
 
   // c) Close the source ticket and set merged_info_id
   const { error: updateError } = await supabase
     .from("tickets")
     .update({
       status: "closed",
-      merged_into_id: targetTicketId,
+      merged_into_id: resolvedTargetTicketId,
     })
-    .eq("id", sourceTicketId);
+    .eq("id", resolvedSourceTicketId);
 
   if (updateError) {
     return { error: "Failed to close and link source ticket." };
@@ -107,14 +155,14 @@ ${sourceTicket.body}
 
     if (staffMembers && staffMembers.length > 0) {
       const emailHtml = generateTicketMergedTemplate(
-        sourceTicketId,
-        targetTicketId,
+        resolvedSourceTicketId,
+        resolvedTargetTicketId,
         sourceTicket.subject,
         targetTicket.subject,
         currentUser.full_name
       );
 
-      const subject = `[MERGED] Ticket #${sourceTicketId.slice(0, 8)} into #${targetTicketId.slice(0, 8)}`;
+      const subject = `[MERGED] Ticket #${resolvedSourceTicketId.slice(0, 8)} into #${resolvedTargetTicketId.slice(0, 8)}`;
 
       // Send to all staff
       // For efficiency and to avoid hitting rate limits too fast, we'll send them in parallel

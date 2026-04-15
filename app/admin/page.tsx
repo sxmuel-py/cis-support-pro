@@ -1,12 +1,11 @@
 import { redirect } from "next/navigation";
-import { getCachedSession, createClient } from "@/lib/supabase/server";
+import { getCachedUser, createClient } from "@/lib/supabase/server";
 import { Sidebar } from "@/components/sidebar";
 import { getUsers } from "@/app/actions/get-users";
 import { UserManagementTable } from "@/components/admin/user-management-table";
 
 export default async function AdminPage() {
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
 
   if (!user) {
     redirect("/auth/login");

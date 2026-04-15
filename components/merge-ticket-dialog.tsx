@@ -51,16 +51,25 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
     } else {
       toast({
         title: "Success",
-        description: `Ticket successfully merged into #${targetId.slice(0, 8)}`,
+        description: `Ticket successfully merged into #${targetId.trim().slice(0, 8)}`,
       });
       setProcessing(false);
+      setTargetId("");
       setOpen(false);
       onMerged();
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
+    <Dialog
+      open={open}
+      onOpenChange={(nextOpen) => {
+        setOpen(nextOpen);
+        if (!nextOpen) {
+          setTargetId("");
+        }
+      }}
+    >
       <DialogTrigger asChild>
         <Button variant="outline" className="gap-2 text-primary hover:text-primary">
           <CopyPlus className="h-4 w-4" />
@@ -84,14 +93,14 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
               <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
               <Input
                 id="target-id"
-                placeholder="Paste the full ticket UUID..."
+                placeholder="Paste the ticket ID or first 8 characters..."
                 className="pl-9"
                 value={targetId}
                 onChange={(e) => setTargetId(e.target.value)}
               />
             </div>
             <p className="text-xs text-muted-foreground">
-              You can find the target ID in the dashboard URL when viewing the other ticket.
+              Short IDs shown in the dashboard also work here, as long as they are unique.
             </p>
           </div>
         </div>

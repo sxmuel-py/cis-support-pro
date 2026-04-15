@@ -11,9 +11,10 @@ import { TechnicianPerformanceTable } from "@/components/analytics/technician-pe
 import { getAnalyticsData, type AnalyticsData } from "@/app/actions/get-analytics-data";
 import { exportToCSV, exportToJSON, printReport } from "@/lib/export-utils";
 import { createClient } from "@/lib/supabase/client";
-import { Inbox, Clock, CheckCircle2, TrendingUp, Loader2 } from "lucide-react";
+import { Inbox, Clock, CheckCircle2, TrendingUp, Loader2, Sparkles, Download, CalendarRange } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 
 export default function AnalyticsPage() {
   const [data, setData] = useState<AnalyticsData | null>(null);
@@ -33,8 +34,7 @@ export default function AnalyticsPage() {
   }, [currentUser, timeRange]);
 
   const loadUser = async () => {
-    const { data: { session } } = await supabase.auth.getSession();
-    const user = session?.user;
+    const { data: { user } } = await supabase.auth.getUser();
     if (user) {
       const { data: userData } = await supabase
         .from("users")
@@ -55,78 +55,98 @@ export default function AnalyticsPage() {
   };
 
   const isSupervisor = currentUser?.role === "supervisor";
+  const timeOptions = [7, 30, 90];
+  const exportActions = data ? [
+    { label: "Export CSV", onClick: () => exportToCSV(data, timeRange) },
+    { label: "Export JSON", onClick: () => exportToJSON(data, timeRange) },
+    { label: "Print / PDF", onClick: () => printReport(data, timeRange) },
+  ] : [];
 
   return (
     <div className="flex h-screen bg-background">
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-8 space-y-8">
-          {/* Header */}
-          <div className="flex items-center justify-between">
+        <div className="container mx-auto space-y-8 p-6 md:p-8">
+          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70">
+            <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
+              <div className="max-w-3xl space-y-4">
+                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm">
+                  <Sparkles className="mr-2 h-3.5 w-3.5" />
+                  Performance Intelligence
+                </Badge>
+                <div className="space-y-2">
+                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+                    Analytics that actually help you steer.
+                  </h1>
+                  <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+                    {isSupervisor
+                      ? "Monitor queue health, spot team imbalance early, and keep service quality visible."
+                      : "Track your response rhythm, output, and where your tickets are spending time."}
+                  </p>
+                </div>
+              </div>
+
+              <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[460px]">
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Time Window</div>
+                  <div className="text-3xl font-semibold text-slate-900">{timeRange}</div>
+                  <p className="mt-2 text-sm text-slate-600">Days in view</p>
+                </div>
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Perspective</div>
+                  <div className="text-xl font-semibold text-slate-900">{isSupervisor ? "Team" : "Personal"}</div>
+                  <p className="mt-2 text-sm text-slate-600">Current reporting lens</p>
+                </div>
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Exports</div>
+                  <div className="text-xl font-semibold text-slate-900">{data ? exportActions.length : 0}</div>
+                  <p className="mt-2 text-sm text-slate-600">Report formats ready</p>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="surface-glass flex flex-col gap-4 rounded-[2rem] border border-white/60 p-5 shadow-xl shadow-slate-200/60 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h1 className="text-3xl font-bold tracking-tight">Analytics</h1>
-              <p className="text-muted-foreground">
-                {isSupervisor ? "Team performance and ticket insights" : "Your performance metrics"}
+              <h2 className="text-2xl font-semibold tracking-tight">Reporting Controls</h2>
+              <p className="text-sm text-muted-foreground">
+                Choose the period you want to inspect, then export when you need to share the story.
               </p>
             </div>
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm">
+                <CalendarRange className="ml-3 h-4 w-4 text-muted-foreground" />
+                {timeOptions.map((option) => (
+                  <Button
+                    key={option}
+                    variant={timeRange === option ? "secondary" : "ghost"}
+                    size="sm"
+                    className="h-8 rounded-xl px-3"
+                    onClick={() => setTimeRange(option)}
+                  >
+                    {option} Days
+                  </Button>
+                ))}
+              </div>
 
-            {/* Time Range Selector */}
-            <div className="flex gap-2">
-              <Button
-                variant={timeRange === 7 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTimeRange(7)}
-              >
-                7 Days
-              </Button>
-              <Button
-                variant={timeRange === 30 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTimeRange(30)}
-              >
-                30 Days
-              </Button>
-              <Button
-                variant={timeRange === 90 ? "default" : "outline"}
-                size="sm"
-                onClick={() => setTimeRange(90)}
-              >
-                90 Days
-              </Button>
-              
-              {/* Export Buttons */}
-              {data && (
-                <>
-                  <div className="w-px bg-border mx-2" />
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => exportToCSV(data, timeRange)}
-                  >
-                    Export CSV
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => exportToJSON(data, timeRange)}
-                  >
-                    Export JSON
-                  </Button>
-                  <Button
-                    variant="outline"
-                    size="sm"
-                    onClick={() => printReport(data, timeRange)}
-                  >
-                    Print/PDF
-                  </Button>
-                </>
-              )}
+              {exportActions.map((action) => (
+                <Button
+                  key={action.label}
+                  variant="outline"
+                  size="sm"
+                  className="rounded-2xl border-white/70 bg-white/80"
+                  onClick={action.onClick}
+                >
+                  <Download className="mr-2 h-4 w-4" />
+                  {action.label}
+                </Button>
+              ))}
             </div>
           </div>
 
           {loading ? (
-            <Card>
+            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
               <CardContent className="flex items-center justify-center h-64">
                 <div className="flex flex-col items-center gap-2">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -135,7 +155,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
           ) : !data ? (
-            <Card>
+            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
               <CardContent className="flex items-center justify-center h-64">
                 <p className="text-sm text-muted-foreground">No data available</p>
               </CardContent>

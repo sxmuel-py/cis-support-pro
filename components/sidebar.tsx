@@ -8,9 +8,9 @@ import {
   BarChart3, 
   Settings, 
   Trash2,
-  Headset,
   User as UserIcon,
-  ShieldAlert
+  ShieldAlert,
+  ChevronRight
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { ThemeToggle } from "./theme-toggle";
@@ -36,9 +36,7 @@ export function Sidebar() {
 
   useEffect(() => {
     const fetchUser = async () => {
-      // Use getSession to avoid unnecessary network request on every mount
-      const { data: { session } } = await supabase.auth.getSession();
-      const authUser = session?.user;
+      const { data: { user: authUser } } = await supabase.auth.getUser();
       
       if (authUser) {
         const { data: userData } = await supabase
@@ -72,33 +70,31 @@ export function Sidebar() {
   };
 
   return (
-    <div className="flex h-screen w-64 flex-col border-r bg-card">
-      {/* Logo/Header */}
-      <div className="flex h-20 items-center gap-4 border-b px-6 bg-accent/5">
+    <div className="surface-glass flex h-screen w-72 flex-col border-r border-white/60 shadow-xl shadow-slate-200/40">
+      <div className="mesh-panel flex h-24 items-center gap-4 border-b border-white/60 px-6">
         <Logo size={42} />
         <div className="flex flex-col">
-          <h1 className="text-xl font-black tracking-tight bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-transparent uppercase">
+          <h1 className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-xl font-black tracking-tight text-transparent uppercase">
             IT <span className="text-primary">Helpdesk</span>
           </h1>
           <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground/60 leading-none">
-            Support Portal
+            Support Command
           </p>
         </div>
       </div>
 
-      {/* User Profile Section */}
       {user && (
-        <div className="border-b px-4 py-3">
+        <div className="border-b border-white/60 px-4 py-4">
           <div className="flex items-center gap-3">
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/10">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 shadow-sm">
               <UserIcon className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{user.full_name}</p>
-              <div className="flex items-center gap-2 mt-0.5">
+              <p className="truncate text-sm font-medium">{user.full_name}</p>
+              <div className="mt-0.5 flex items-center gap-2">
                 <Badge 
                   variant={user.role === "supervisor" ? "default" : "secondary"}
-                  className="text-[10px] px-1.5 py-0"
+                  className="rounded-full px-2 py-0 text-[10px]"
                 >
                   {getRoleLabel(user.role)}
                 </Badge>
@@ -108,10 +104,8 @@ export function Sidebar() {
         </div>
       )}
 
-      {/* Navigation */}
-      <nav className="flex-1 space-y-1 p-4">
+      <nav className="flex-1 space-y-2 p-4">
         {navigation.map((item) => {
-          // Check role restrictions if the item has a roles array
           if (item.roles && user && !item.roles.includes(user.role)) {
             return null;
           }
@@ -122,29 +116,37 @@ export function Sidebar() {
               key={item.name}
               href={item.href}
               className={cn(
-                "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all hover:bg-accent",
+                "group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-accent text-accent-foreground"
-                  : "text-muted-foreground hover:text-foreground"
+                  ? "bg-white text-foreground shadow-md shadow-slate-200/50"
+                  : "text-muted-foreground hover:bg-white/70 hover:text-foreground"
               )}
             >
-              <item.icon className="h-5 w-5" />
-              {item.name}
+              <div className={cn(
+                "flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
+                isActive ? "bg-primary/10 text-primary" : "bg-muted/60 text-muted-foreground group-hover:text-foreground"
+              )}>
+                <item.icon className="h-4 w-4" />
+              </div>
+              <span className="flex-1">{item.name}</span>
+              <ChevronRight className={cn(
+                "h-4 w-4 transition-transform",
+                isActive ? "translate-x-0 text-primary" : "-translate-x-1 opacity-0 group-hover:translate-x-0 group-hover:opacity-100"
+              )} />
             </Link>
           );
         })}
       </nav>
 
-      {/* Footer with Notifications, Logout, and Theme Toggle */}
-      <div className="border-t p-4 space-y-3">
+      <div className="border-t border-white/60 p-4 space-y-3">
         <div className="flex items-center justify-between gap-2">
           <LogoutButton />
           <div className="flex items-center gap-1">
-            {user && <NotificationBell userId={user.id} />}
+            {user && <NotificationBell />}
             <ThemeToggle />
           </div>
         </div>
-        <div className="text-xs text-muted-foreground text-center">
+        <div className="rounded-2xl bg-white/70 px-3 py-2 text-center text-xs text-muted-foreground">
           IT Help Desk v1.0
         </div>
       </div>

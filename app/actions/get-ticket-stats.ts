@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 
 export interface TicketStats {
   total: number;
@@ -21,8 +21,7 @@ export async function getTicketStats(): Promise<TicketStats> {
   const supabase = await createClient();
 
   // Get current user role
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
   let role = null;
   
   if (user) {

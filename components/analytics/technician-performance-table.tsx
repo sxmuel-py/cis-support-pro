@@ -25,7 +25,7 @@ interface TechnicianPerformanceTableProps {
 export function TechnicianPerformanceTable({ data }: TechnicianPerformanceTableProps) {
   if (data.length === 0) {
     return (
-      <Card className="col-span-2">
+      <Card className="surface-glass col-span-2 border-white/60 shadow-xl shadow-slate-200/60">
         <CardHeader>
           <CardTitle>Technician Performance</CardTitle>
           <CardDescription>Performance metrics per technician</CardDescription>
@@ -40,15 +40,16 @@ export function TechnicianPerformanceTable({ data }: TechnicianPerformanceTableP
   }
 
   return (
-    <Card className="col-span-2">
+    <Card className="surface-glass col-span-2 border-white/60 shadow-xl shadow-slate-200/60">
       <CardHeader>
         <CardTitle>Technician Performance</CardTitle>
         <CardDescription>Performance metrics per technician</CardDescription>
       </CardHeader>
       <CardContent>
+        <div className="overflow-hidden rounded-2xl border border-white/60 bg-white/70">
         <Table>
           <TableHeader>
-            <TableRow>
+            <TableRow className="bg-muted/30">
               <TableHead>Technician</TableHead>
               <TableHead className="text-right">Assigned</TableHead>
               <TableHead className="text-right">Resolved</TableHead>
@@ -58,7 +59,7 @@ export function TechnicianPerformanceTable({ data }: TechnicianPerformanceTableP
           </TableHeader>
           <TableBody>
             {data.map((tech) => (
-              <TableRow key={tech.id}>
+              <TableRow key={tech.id} className="border-white/50">
                 <TableCell className="font-medium">{tech.name}</TableCell>
                 <TableCell className="text-right">{tech.assigned}</TableCell>
                 <TableCell className="text-right">
@@ -78,6 +79,7 @@ export function TechnicianPerformanceTable({ data }: TechnicianPerformanceTableP
             ))}
           </TableBody>
         </Table>
+        </div>
       </CardContent>
     </Card>
   );

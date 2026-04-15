@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 
 export interface Notification {
   id: string;
@@ -15,8 +15,18 @@ export interface Notification {
   created_by: string | null;
 }
 
-export async function getNotifications(userId: string, unreadOnly: boolean = false) {
+async function getAuthenticatedUserId() {
+  const { data: { user } } = await getCachedUser();
+  return user?.id ?? null;
+}
+
+export async function getNotifications(unreadOnly: boolean = false) {
   const supabase = await createClient();
+  const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return [];
+  }
 
   let query = supabase
     .from("notifications")
@@ -39,8 +49,13 @@ export async function getNotifications(userId: string, unreadOnly: boolean = fal
   return data as Notification[];
 }
 
-export async function getUnreadCount(userId: string): Promise<number> {
+export async function getUnreadCount(): Promise<number> {
   const supabase = await createClient();
+  const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return 0;
+  }
 
   const { count, error } = await supabase
     .from("notifications")

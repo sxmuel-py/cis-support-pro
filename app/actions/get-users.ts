@@ -1,12 +1,11 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 
 export async function getUsers() {
   const supabase = await createClient();
 
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
 
   if (!user) {
     throw new Error("Unauthorized");

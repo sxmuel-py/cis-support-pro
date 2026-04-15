@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { TicketStatus } from "@/lib/types";
 import { sendEmail } from "@/lib/gmail/send-email";
@@ -10,8 +10,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
   const supabase = await createClient();
 
   // Get current user
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
   if (!user) {
     return { error: "Unauthorized" };
   }
@@ -19,7 +18,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
   // Get current user role and details (including name)
   const { data: currentUser } = await supabase
     .from("users")
-    .select("role, name, email") // Added name and email
+    .select("role, full_name, email")
     .eq("id", user.id)
     .single();
 
@@ -61,7 +60,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
     
     if (ticket.sender_email) {
        try {
-        const closedByName = currentUser?.name || currentUser?.email || 'IT Support Team';
+        const closedByName = currentUser?.full_name || currentUser?.email || 'IT Support Team';
         const recipientName = ticket.sender_name || ticket.sender_email;
 
         console.log(`[UpdateStatus] Preparing to send email to ${ticket.sender_email}`);

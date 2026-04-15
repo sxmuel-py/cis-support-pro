@@ -19,7 +19,7 @@ export function TicketTrendsChart({ data }: TicketTrendsChartProps) {
   }));
 
   return (
-    <Card className="col-span-2">
+    <Card className="surface-glass col-span-2 border-white/60 shadow-xl shadow-slate-200/60">
       <CardHeader>
         <CardTitle>Ticket Trends</CardTitle>
         <CardDescription>Created vs Resolved tickets over time</CardDescription>
@@ -27,7 +27,7 @@ export function TicketTrendsChart({ data }: TicketTrendsChartProps) {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <LineChart data={formattedData}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} />
             <XAxis 
               dataKey="date" 
               className="text-xs"
@@ -49,14 +49,18 @@ export function TicketTrendsChart({ data }: TicketTrendsChartProps) {
               type="monotone" 
               dataKey="created" 
               stroke="hsl(var(--primary))" 
-              strokeWidth={2}
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 5 }}
               name="Created"
             />
             <Line 
               type="monotone" 
               dataKey="resolved" 
               stroke="hsl(142 76% 36%)" 
-              strokeWidth={2}
+              strokeWidth={3}
+              dot={false}
+              activeDot={{ r: 5 }}
               name="Resolved"
             />
           </LineChart>

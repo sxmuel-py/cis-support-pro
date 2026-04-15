@@ -12,11 +12,11 @@ interface StatusPieChartProps {
 }
 
 const STATUS_COLORS: Record<string, string> = {
-  open: "hsl(var(--chart-1))",
-  in_progress: "hsl(var(--chart-2))",
-  pending: "hsl(var(--chart-3))",
-  resolved: "hsl(var(--chart-4))",
-  closed: "hsl(var(--chart-5))",
+  open: "hsl(203 89% 53%)",
+  in_progress: "hsl(32 95% 56%)",
+  pending: "hsl(262 83% 58%)",
+  resolved: "hsl(142 71% 45%)",
+  closed: "hsl(215 16% 47%)",
 };
 
 export function StatusPieChart({ data }: StatusPieChartProps) {
@@ -27,7 +27,7 @@ export function StatusPieChart({ data }: StatusPieChartProps) {
   }));
 
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
       <CardHeader>
         <CardTitle>Status Distribution</CardTitle>
         <CardDescription>Breakdown of tickets by status</CardDescription>
@@ -41,9 +41,12 @@ export function StatusPieChart({ data }: StatusPieChartProps) {
               cy="50%"
               labelLine={false}
               label={({ name, percentage }) => `${name}: ${percentage}%`}
-              outerRadius={80}
+              outerRadius={88}
+              innerRadius={42}
               fill="#8884d8"
               dataKey="value"
+              stroke="rgba(255,255,255,0.9)"
+              strokeWidth={2}
             >
               {chartData.map((entry, index) => {
                 const status = data[index].status;

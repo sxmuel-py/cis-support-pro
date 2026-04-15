@@ -20,22 +20,21 @@ export default function ResetPasswordPage() {
   const supabase = useMemo(() => createClient(), []);
 
   useEffect(() => {
-    // Check for an existing session (from the reset link/callback)
-    const checkSession = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        // We'll give it a moment to catch up if the redirect just happened
-        // The onAuthStateChange listener below will catch it if this misses
+    let cancelled = false;
+
+    const verifyRecoveryUser = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user && !cancelled) {
+        // The auth callback can settle asynchronously, so we only surface this later
+        // if the auth state listener also fails to provide a recovery session.
       }
     };
 
-    checkSession();
+    verifyRecoveryUser();
 
-    // Listen for auth state changes (crucial for PKCE redirects)
     const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
       console.log("Auth state change in reset-password:", event);
       if (event === "PASSWORD_RECOVERY") {
-        // Supabase just confirmed we are in recovery mode
         setError(null);
       } else if (event === "SIGNED_IN" || session) {
         setError(null);
@@ -45,6 +44,7 @@ export default function ResetPasswordPage() {
     });
 
     return () => {
+      cancelled = true;
       subscription.unsubscribe();
     };
   }, [supabase.auth]);

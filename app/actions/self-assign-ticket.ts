@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 
 export async function selfAssignTicket(ticketId: string) {
@@ -8,15 +8,13 @@ export async function selfAssignTicket(ticketId: string) {
   const supabase = await createClient();
 
   // Get current user from session (more reliable in server actions)
-  const { data: { session } } = await getCachedSession();
-  console.log("[selfAssignTicket] Session user:", session?.user?.id);
+  const { data: { user } } = await getCachedUser();
+  console.log("[selfAssignTicket] Session user:", user?.id);
   
-  if (!session?.user) {
+  if (!user) {
     console.error("[selfAssignTicket] No session user found");
     return { error: "Unauthorized" };
   }
-
-  const user = session.user;
 
   // Verify ticket is unassigned
   const { data: ticket } = await supabase

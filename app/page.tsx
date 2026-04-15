@@ -1,10 +1,8 @@
-import { createClient, getCachedSession } from "@/lib/supabase/server";
+import { getCachedUser } from "@/lib/supabase/server";
 import { redirect } from "next/navigation";
 
 export default async function Home() {
-  const supabase = await createClient();
-  const { data: { session } } = await getCachedSession();
-  const user = session?.user;
+  const { data: { user } } = await getCachedUser();
 
   if (user) {
     redirect("/dashboard");

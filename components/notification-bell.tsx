@@ -17,7 +17,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
 
 interface NotificationBellProps {
-  userId: string;
+  userId?: string;
 }
 
 export function NotificationBell({ userId }: NotificationBellProps) {
@@ -28,11 +28,17 @@ export function NotificationBell({ userId }: NotificationBellProps) {
 
   // Fetch notifications
   useEffect(() => {
+    if (!userId) {
+      setNotifications([]);
+      setUnreadCount(0);
+      return;
+    }
+
     const fetchNotifications = async () => {
-      const data = await getNotifications(userId, false);
+      const data = await getNotifications(false);
       setNotifications(data.slice(0, 5)); // Show only last 5 in dropdown
       
-      const count = await getUnreadCount(userId);
+      const count = await getUnreadCount();
       setUnreadCount(count);
     };
 
@@ -89,7 +95,7 @@ export function NotificationBell({ userId }: NotificationBellProps) {
   };
 
   const handleMarkAllAsRead = async () => {
-    await markAllNotificationsAsRead(userId);
+    await markAllNotificationsAsRead();
     setNotifications((current) =>
       current.map((notif) => ({ ...notif, read: true, read_at: new Date().toISOString() }))
     );

@@ -35,91 +35,98 @@ export function TicketFilters({
   onSearchChange,
   isSupervisor,
 }: TicketFiltersProps) {
-  return (
-    <div className="space-y-4">
-      {/* Search */}
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search tickets by ID, subject, or sender..."
-          value={searchQuery}
-          onChange={(e) => onSearchChange(e.target.value)}
-          className="pl-10"
-        />
-      </div>
+  const hasActiveFilters = statusFilter !== "all" || priorityFilter !== "all" || searchQuery;
 
-      {/* Filter Tabs and Dropdowns */}
-      <div className="flex flex-wrap items-center gap-2">
-        {/* Tab Filters */}
-        <div className="flex gap-1 bg-muted p-1 rounded-lg">
-          <Button
-            variant={filter === "all" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onFilterChange("all")}
-          >
-            All Tickets
-          </Button>
-          <Button
-            variant={filter === "mine" ? "default" : "ghost"}
-            size="sm"
-            onClick={() => onFilterChange("mine")}
-          >
-            My Tickets
-          </Button>
-          {isSupervisor && (
+  return (
+    <div className="surface-glass rounded-3xl border border-white/60 p-4 shadow-lg shadow-slate-200/60">
+      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+        <div className="w-full max-w-xl space-y-2">
+          <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+            Search And Refine
+          </p>
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+            <Input
+              placeholder="Search by ticket ID, subject, sender, or category..."
+              value={searchQuery}
+              onChange={(e) => onSearchChange(e.target.value)}
+              className="h-11 rounded-2xl border-white/70 bg-white/80 pl-10 shadow-sm"
+            />
+          </div>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex gap-1 rounded-2xl bg-muted/70 p-1">
             <Button
-              variant={filter === "unassigned" ? "default" : "ghost"}
+              variant={filter === "all" ? "default" : "ghost"}
               size="sm"
-              onClick={() => onFilterChange("unassigned")}
+              className="rounded-xl"
+              onClick={() => onFilterChange("all")}
             >
-              Unassigned
+              All Tickets
+            </Button>
+            <Button
+              variant={filter === "mine" ? "default" : "ghost"}
+              size="sm"
+              className="rounded-xl"
+              onClick={() => onFilterChange("mine")}
+            >
+              My Queue
+            </Button>
+            {isSupervisor && (
+              <Button
+                variant={filter === "unassigned" ? "default" : "ghost"}
+                size="sm"
+                className="rounded-xl"
+                onClick={() => onFilterChange("unassigned")}
+              >
+                Unassigned
+              </Button>
+            )}
+          </div>
+
+          <Select value={statusFilter} onValueChange={(value) => onStatusFilterChange(value as TicketStatus | "all")}>
+            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Status</SelectItem>
+              <SelectItem value="open">Open</SelectItem>
+              <SelectItem value="in_progress">In Progress</SelectItem>
+              <SelectItem value="pending">Pending</SelectItem>
+              <SelectItem value="resolved">Resolved</SelectItem>
+              <SelectItem value="closed">Closed</SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={priorityFilter} onValueChange={(value) => onPriorityFilterChange(value as TicketPriority | "all")}>
+            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm">
+              <SelectValue placeholder="Priority" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">All Priority</SelectItem>
+              <SelectItem value="low">Low</SelectItem>
+              <SelectItem value="medium">Medium</SelectItem>
+              <SelectItem value="high">High</SelectItem>
+              <SelectItem value="urgent">Urgent</SelectItem>
+            </SelectContent>
+          </Select>
+
+          {hasActiveFilters && (
+            <Button
+              variant="outline"
+              size="sm"
+              className="h-11 rounded-2xl border-white/70 bg-white/70"
+              onClick={() => {
+                onStatusFilterChange("all");
+                onPriorityFilterChange("all");
+                onSearchChange("");
+              }}
+            >
+              Clear Filters
             </Button>
           )}
         </div>
-
-        {/* Status Filter */}
-        <Select value={statusFilter} onValueChange={(value) => onStatusFilterChange(value as TicketStatus | "all")}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Status" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Status</SelectItem>
-            <SelectItem value="open">Open</SelectItem>
-            <SelectItem value="in_progress">In Progress</SelectItem>
-            <SelectItem value="pending">Pending</SelectItem>
-            <SelectItem value="resolved">Resolved</SelectItem>
-            <SelectItem value="closed">Closed</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Priority Filter */}
-        <Select value={priorityFilter} onValueChange={(value) => onPriorityFilterChange(value as TicketPriority | "all")}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="Priority" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Priority</SelectItem>
-            <SelectItem value="low">Low</SelectItem>
-            <SelectItem value="medium">Medium</SelectItem>
-            <SelectItem value="high">High</SelectItem>
-            <SelectItem value="urgent">Urgent</SelectItem>
-          </SelectContent>
-        </Select>
-
-        {/* Clear Filters */}
-        {(statusFilter !== "all" || priorityFilter !== "all" || searchQuery) && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => {
-              onStatusFilterChange("all");
-              onPriorityFilterChange("all");
-              onSearchChange("");
-            }}
-          >
-            Clear Filters
-          </Button>
-        )}
       </div>
     </div>
   );

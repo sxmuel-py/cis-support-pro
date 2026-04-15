@@ -17,7 +17,7 @@ export function CategoryBarChart({ data }: CategoryBarChartProps) {
   }));
 
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
       <CardHeader>
         <CardTitle>Category Breakdown</CardTitle>
         <CardDescription>Most common issue types</CardDescription>
@@ -25,7 +25,7 @@ export function CategoryBarChart({ data }: CategoryBarChartProps) {
       <CardContent>
         <ResponsiveContainer width="100%" height={300}>
           <BarChart data={chartData}>
-            <CartesianGrid strokeDasharray="3 3" className="stroke-muted" />
+            <CartesianGrid strokeDasharray="3 3" stroke="hsl(var(--border))" opacity={0.35} />
             <XAxis 
               dataKey="category"
               className="text-xs"
@@ -45,7 +45,7 @@ export function CategoryBarChart({ data }: CategoryBarChartProps) {
             <Bar 
               dataKey="count" 
               fill="hsl(var(--primary))"
-              radius={[4, 4, 0, 0]}
+              radius={[10, 10, 0, 0]}
             />
           </BarChart>
         </ResponsiveContainer>

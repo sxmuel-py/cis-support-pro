@@ -1,103 +1,171 @@
 /**
  * Gmail OAuth2 Token Generator
- * 
- * This script helps you get a refresh token for your bot Gmail account.
- * Run this ONCE to authorize the bot.
+ *
+ * Uses a localhost callback instead of the deprecated OOB flow.
+ * Before running, add this redirect URI to your Google OAuth client:
+ * http://127.0.0.1:3007/oauth2callback
  */
 
-const { google } = require('googleapis');
-const readline = require('readline');
-const fs = require('fs');
-const path = require('path');
+const { google } = require("googleapis");
+const fs = require("fs");
+const http = require("http");
+const path = require("path");
+const { URL } = require("url");
 
-console.log('\n===========================================');
-console.log('Gmail Bot OAuth2 Setup');
-console.log('===========================================\n');
-
-// Check if credentials file exists
-const credentialsPath = path.join(__dirname, '..', 'gmail-credentials.json');
-
-if (!fs.existsSync(credentialsPath)) {
-  console.log('❌ ERROR: gmail-credentials.json not found!\n');
-  console.log('Please:');
-  console.log('1. Download OAuth2 credentials from Google Cloud Console');
-  console.log('2. Save as: gmail-credentials.json');
-  console.log('3. Place in: c:\\Users\\new\\Documents\\IT SUPPORT\\');
-  console.log('\nThen run this script again.\n');
-  process.exit(1);
-}
-
-// Load credentials
-const credentials = JSON.parse(fs.readFileSync(credentialsPath, 'utf8'));
-const { client_id, client_secret } = credentials.installed || credentials.web;
-
-if (!client_id || !client_secret) {
-  console.log('❌ ERROR: Invalid credentials file format!\n');
-  process.exit(1);
-}
-
-const REDIRECT_URI = 'urn:ietf:wg:oauth:2.0:oob';
-
-const oauth2Client = new google.auth.OAuth2(
-  client_id,
-  client_secret,
-  REDIRECT_URI
-);
-
+const PORT = Number(process.env.GMAIL_OAUTH_PORT || 3007);
+const REDIRECT_URI = `http://127.0.0.1:${PORT}/oauth2callback`;
 const SCOPES = [
-  'https://www.googleapis.com/auth/gmail.readonly',
-  'https://www.googleapis.com/auth/gmail.modify',
+  "https://www.googleapis.com/auth/gmail.readonly",
+  "https://www.googleapis.com/auth/gmail.modify",
 ];
 
-// Generate auth URL
-const authUrl = oauth2Client.generateAuthUrl({
-  access_type: 'offline',
-  scope: SCOPES,
-  prompt: 'consent', // Force to get refresh token
-});
-
-console.log('STEP 1: Authorize the bot Gmail account\n');
-console.log('Open this URL in your browser:\n');
-console.log(authUrl);
-console.log('\n');
-console.log('STEP 2: Sign in with your BOT Gmail account');
-console.log('(e.g., cissupportbot@gmail.com)\n');
-console.log('STEP 3: Copy the authorization code\n');
-
-const rl = readline.createInterface({
-  input: process.stdin,
-  output: process.stdout,
-});
-
-rl.question('Paste the authorization code here: ', async (code) => {
-  try {
-    const { tokens } = await oauth2Client.getToken(code);
-    
-    if (!tokens.refresh_token) {
-      console.log('\n❌ ERROR: No refresh token received!');
-      console.log('This might happen if you already authorized this app before.');
-      console.log('Try revoking access at: https://myaccount.google.com/permissions');
-      console.log('Then run this script again.\n');
-      rl.close();
-      return;
-    }
-    
-    console.log('\n===========================================');
-    console.log('✅ SUCCESS! Add these to .env.local:');
-    console.log('===========================================\n');
-    console.log('# Gmail Bot Account (OAuth2)');
-    console.log(`GMAIL_CLIENT_ID=${client_id}`);
-    console.log(`GMAIL_CLIENT_SECRET=${client_secret}`);
-    console.log(`GMAIL_REFRESH_TOKEN=${tokens.refresh_token}`);
-    console.log('\n===========================================');
-    console.log('\nNext steps:');
-    console.log('1. Copy the above lines to .env.local');
-    console.log('2. Restart your dev server: npm run dev');
-    console.log('3. Test the integration!\n');
-    
-  } catch (error) {
-    console.error('\n❌ Error getting tokens:', error.message);
+function loadDotEnv(filePath) {
+  if (!fs.existsSync(filePath)) {
+    return;
   }
-  
-  rl.close();
+
+  const contents = fs.readFileSync(filePath, "utf8");
+
+  for (const rawLine of contents.split("\n")) {
+    const line = rawLine.trim();
+    if (!line || line.startsWith("#")) {
+      continue;
+    }
+
+    const equalsIndex = line.indexOf("=");
+    if (equalsIndex === -1) {
+      continue;
+    }
+
+    const key = line.slice(0, equalsIndex).trim();
+    const value = line.slice(equalsIndex + 1).trim();
+
+    if (!process.env[key]) {
+      process.env[key] = value;
+    }
+  }
+}
+
+function getClientCredentials() {
+  loadDotEnv(path.join(__dirname, "..", ".env.local"));
+
+  if (process.env.GMAIL_CLIENT_ID && process.env.GMAIL_CLIENT_SECRET) {
+    return {
+      clientId: process.env.GMAIL_CLIENT_ID,
+      clientSecret: process.env.GMAIL_CLIENT_SECRET,
+      source: ".env.local",
+    };
+  }
+
+  const credentialsPath = path.join(__dirname, "..", "gmail-credentials.json");
+  if (!fs.existsSync(credentialsPath)) {
+    throw new Error(
+      "Missing Gmail OAuth credentials. Set GMAIL_CLIENT_ID and GMAIL_CLIENT_SECRET in .env.local or add gmail-credentials.json."
+    );
+  }
+
+  const credentials = JSON.parse(fs.readFileSync(credentialsPath, "utf8"));
+  const config = credentials.installed || credentials.web || {};
+
+  if (!config.client_id || !config.client_secret) {
+    throw new Error("gmail-credentials.json is missing client_id/client_secret.");
+  }
+
+  return {
+    clientId: config.client_id,
+    clientSecret: config.client_secret,
+    source: "gmail-credentials.json",
+  };
+}
+
+async function main() {
+  const { clientId, clientSecret, source } = getClientCredentials();
+
+  console.log("\n===========================================");
+  console.log("Gmail Bot OAuth2 Setup");
+  console.log("===========================================\n");
+  console.log(`Using client credentials from ${source}`);
+  console.log(`Redirect URI: ${REDIRECT_URI}\n`);
+  console.log("If Google rejects the redirect URI, add this exact URI to your OAuth client first:");
+  console.log(REDIRECT_URI);
+  console.log("");
+
+  const oauth2Client = new google.auth.OAuth2(clientId, clientSecret, REDIRECT_URI);
+  const authUrl = oauth2Client.generateAuthUrl({
+    access_type: "offline",
+    scope: SCOPES,
+    prompt: "consent",
+  });
+
+  const server = http.createServer(async (req, res) => {
+    try {
+      const requestUrl = new URL(req.url, `http://127.0.0.1:${PORT}`);
+
+      if (requestUrl.pathname !== "/oauth2callback") {
+        res.writeHead(404, { "Content-Type": "text/plain" });
+        res.end("Not found");
+        return;
+      }
+
+      const code = requestUrl.searchParams.get("code");
+      const error = requestUrl.searchParams.get("error");
+
+      if (error) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end(`Google OAuth error: ${error}`);
+        console.error(`\nGoogle OAuth error: ${error}`);
+        server.close();
+        return;
+      }
+
+      if (!code) {
+        res.writeHead(400, { "Content-Type": "text/plain" });
+        res.end("Missing authorization code");
+        console.error("\nMissing authorization code in callback.");
+        server.close();
+        return;
+      }
+
+      const { tokens } = await oauth2Client.getToken(code);
+
+      res.writeHead(200, { "Content-Type": "text/plain" });
+      res.end("Authorization complete. You can close this tab and return to Codex.");
+
+      console.log("\n===========================================");
+      console.log("SUCCESS");
+      console.log("===========================================\n");
+      console.log("Add these values to .env.local or your Vercel env vars:\n");
+      console.log(`GMAIL_CLIENT_ID=${clientId}`);
+      console.log(`GMAIL_CLIENT_SECRET=${clientSecret}`);
+      console.log(`GMAIL_REFRESH_TOKEN=${tokens.refresh_token || "<no refresh token returned>"}`);
+      console.log("");
+
+      if (!tokens.refresh_token) {
+        console.log("No refresh token was returned.");
+        console.log("If this app was already authorized before, revoke it at https://myaccount.google.com/permissions");
+        console.log("then run this script again.\n");
+      } else {
+        console.log("This is your fresh production refresh token.\n");
+      }
+
+      server.close();
+    } catch (error) {
+      res.writeHead(500, { "Content-Type": "text/plain" });
+      res.end("Failed to exchange the authorization code.");
+      console.error("\nFailed to exchange authorization code:", error.message);
+      server.close();
+    }
+  });
+
+  server.listen(PORT, "127.0.0.1", () => {
+    console.log("Open this URL in your browser and approve the Gmail account:\n");
+    console.log(authUrl);
+    console.log("");
+    console.log("Waiting for Google callback...\n");
+  });
+}
+
+main().catch((error) => {
+  console.error("\nSetup failed:", error.message);
+  process.exit(1);
 });

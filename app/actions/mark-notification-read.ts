@@ -1,9 +1,19 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
+
+async function getAuthenticatedUserId() {
+  const { data: { user } } = await getCachedUser();
+  return user?.id ?? null;
+}
 
 export async function markNotificationAsRead(notificationId: string) {
   const supabase = await createClient();
+  const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return { error: "Unauthorized" };
+  }
 
   const { error } = await supabase
     .from("notifications")
@@ -11,7 +21,8 @@ export async function markNotificationAsRead(notificationId: string) {
       read: true,
       read_at: new Date().toISOString(),
     })
-    .eq("id", notificationId);
+    .eq("id", notificationId)
+    .eq("user_id", userId);
 
   if (error) {
     console.error("Error marking notification as read:", error);
@@ -21,8 +32,13 @@ export async function markNotificationAsRead(notificationId: string) {
   return { success: true };
 }
 
-export async function markAllNotificationsAsRead(userId: string) {
+export async function markAllNotificationsAsRead() {
   const supabase = await createClient();
+  const userId = await getAuthenticatedUserId();
+
+  if (!userId) {
+    return { error: "Unauthorized" };
+  }
 
   const { error } = await supabase
     .from("notifications")
