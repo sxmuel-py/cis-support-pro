@@ -47,7 +47,74 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
   };
 
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-white/75 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+    <>
+      <div className="space-y-3 md:hidden">
+        {tickets.length === 0 ? (
+          <div className="rounded-[1.5rem] border border-white/60 bg-white/75 p-6 text-center text-sm shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+            No tickets found.
+          </div>
+        ) : tickets.map((ticket) => {
+          const assignedStaff = staff.find((s) => s.id === ticket.assigned_to);
+          const reporter = ticket.sender_name || ticket.sender_email;
+          return (
+            <div
+              key={ticket.id}
+              className="rounded-[1.5rem] border border-white/60 bg-white/75 p-4 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20"
+              onClick={() => onTicketClick?.(ticket)}
+            >
+              <div className="flex items-start justify-between gap-3">
+                <div className="inline-flex rounded-full bg-muted px-3 py-1 font-mono text-xs dark:bg-white/10">
+                  #{ticket.id.slice(0, 8)}
+                </div>
+                <Badge variant={statusVariants[ticket.status]} className="capitalize">
+                  {ticket.status.replace("_", " ")}
+                </Badge>
+              </div>
+              <div className="mt-3 space-y-3">
+                <div>
+                  <p className="text-base font-semibold leading-6 dark:text-white">{ticket.subject}</p>
+                  <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                    <span className="inline-flex items-center gap-1 capitalize">
+                      <CircleAlert className="h-3.5 w-3.5" />
+                      {ticket.category}
+                    </span>
+                    <Badge variant={priorityVariants[ticket.priority]} className="capitalize">
+                      {ticket.priority}
+                    </Badge>
+                  </div>
+                </div>
+                <div className="space-y-1 text-sm">
+                  <p className="inline-flex items-center gap-2 font-medium">
+                    <User2 className="h-3.5 w-3.5 text-muted-foreground" />
+                    <span className="truncate">{reporter}</span>
+                  </p>
+                  <p className="inline-flex items-center gap-2 text-xs text-muted-foreground">
+                    <Mail className="h-3.5 w-3.5" />
+                    <span className="truncate">{ticket.sender_email}</span>
+                  </p>
+                </div>
+                <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
+                  <span>{formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })}</span>
+                  {isSupervisor ? (
+                    <span>{assignedStaff ? assignedStaff.full_name : "Unassigned"}</span>
+                  ) : null}
+                </div>
+                {isSupervisor ? (
+                  <div onClick={(e) => e.stopPropagation()}>
+                    <AssignTicketDropdown
+                      ticketId={ticket.id}
+                      currentAssignee={ticket.assigned_to ?? null}
+                      staff={staff}
+                    />
+                  </div>
+                ) : null}
+              </div>
+            </div>
+          );
+        })}
+      </div>
+
+      <div className="hidden overflow-hidden rounded-[2rem] border border-white/60 bg-white/75 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 md:block">
       <Table>
         <TableHeader>
           <TableRow className="border-white/60 bg-muted/30 dark:border-white/10 dark:bg-white/5">
@@ -160,6 +227,7 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
           )}
         </TableBody>
       </Table>
-    </div>
+      </div>
+    </>
   );
 }

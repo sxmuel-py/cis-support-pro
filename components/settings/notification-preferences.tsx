@@ -6,14 +6,14 @@ import { Switch } from "@/components/ui/switch";
 
 export function NotificationPreferences() {
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Notification Preferences</CardTitle>
         <CardDescription>Manage how you receive notifications</CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-0.5 pr-2">
             <Label htmlFor="email-notifications">Email Notifications</Label>
             <p className="text-sm text-muted-foreground">
               Receive email alerts for new ticket assignments
@@ -22,8 +22,8 @@ export function NotificationPreferences() {
           <Switch id="email-notifications" defaultChecked />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-0.5 pr-2">
             <Label htmlFor="browser-notifications">Browser Notifications</Label>
             <p className="text-sm text-muted-foreground">
               Show desktop notifications for real-time updates
@@ -32,8 +32,8 @@ export function NotificationPreferences() {
           <Switch id="browser-notifications" defaultChecked />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-0.5 pr-2">
             <Label htmlFor="ticket-updates">Ticket Updates</Label>
             <p className="text-sm text-muted-foreground">
               Get notified when tickets you're watching are updated
@@ -42,8 +42,8 @@ export function NotificationPreferences() {
           <Switch id="ticket-updates" defaultChecked />
         </div>
 
-        <div className="flex items-center justify-between">
-          <div className="space-y-0.5">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <div className="space-y-0.5 pr-2">
             <Label htmlFor="daily-summary">Daily Summary</Label>
             <p className="text-sm text-muted-foreground">
               Receive a daily summary of your open tickets

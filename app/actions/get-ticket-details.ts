@@ -1,6 +1,7 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
+import { canAccessTicketCategory } from "@/lib/ticket-access";
 
 export interface TicketDetails {
   ticket: any;
@@ -11,6 +12,17 @@ export interface TicketDetails {
 
 export async function getTicketDetails(ticketId: string): Promise<TicketDetails | null> {
   const supabase = await createClient();
+  const { data: { user } } = await getCachedUser();
+
+  if (!user) {
+    return null;
+  }
+
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", user.id)
+    .single();
 
   // Fetch ticket
   const { data: ticket, error: ticketError } = await supabase
@@ -21,6 +33,15 @@ export async function getTicketDetails(ticketId: string): Promise<TicketDetails 
 
   if (ticketError || !ticket) {
     console.error("Error fetching ticket:", ticketError);
+    return null;
+  }
+
+  if (!canAccessTicketCategory(profile?.role, ticket.category)) {
+    console.error("Unauthorized ticket access attempt", {
+      ticketId,
+      role: profile?.role,
+      category: ticket.category,
+    });
     return null;
   }
 

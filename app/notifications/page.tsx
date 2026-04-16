@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import { Bell } from "lucide-react";
 import { Sidebar } from "@/components/sidebar";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { NotificationItem } from "@/components/notification-item";
@@ -58,28 +58,30 @@ export default function NotificationsPage() {
   };
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto p-8">
-          <Card>
-            <CardHeader className="flex flex-row items-start justify-between gap-4">
+        <div className="container mx-auto space-y-6 px-4 pb-24 pt-4 sm:p-6 md:p-8 md:pb-8">
+          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 p-5 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:p-6">
+            <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1">
-                <CardTitle>Notifications</CardTitle>
+                <CardTitle className="text-2xl font-semibold tracking-tight dark:text-white">Notifications</CardTitle>
                 <CardDescription>
                   Updates about assignments, rejections, and ticket activity.
                 </CardDescription>
               </div>
 
               {unreadCount > 0 && (
-                <Button variant="outline" onClick={handleMarkAllAsRead}>
+                <Button variant="outline" className="dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15" onClick={handleMarkAllAsRead}>
                   Mark all as read
                 </Button>
               )}
-            </CardHeader>
+            </div>
+          </div>
 
-            <CardContent>
+          <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
+            <CardContent className="p-0 sm:p-0">
               {loading ? (
                 <div className="py-12 text-center text-sm text-muted-foreground">
                   Loading notifications...
@@ -95,8 +97,8 @@ export default function NotificationsPage() {
                   </div>
                 </div>
               ) : (
-                <ScrollArea className="h-[70vh]">
-                  <div className="divide-y rounded-md border">
+                <ScrollArea className="h-[65vh] sm:h-[70vh]">
+                  <div className="divide-y rounded-md border border-white/60 dark:border-white/10">
                     {notifications.map((notification) => (
                       <NotificationItem
                         key={notification.id}

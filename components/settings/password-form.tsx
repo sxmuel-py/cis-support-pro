@@ -63,7 +63,7 @@ export function PasswordForm() {
   };
 
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Change Password</CardTitle>
         <CardDescription>Update your password to keep your account secure</CardDescription>
@@ -79,6 +79,7 @@ export function PasswordForm() {
                 value={currentPassword}
                 onChange={(e) => setCurrentPassword(e.target.value)}
                 placeholder="Enter current password"
+                className="pr-10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
               />
               <Button
                 type="button"
@@ -105,6 +106,7 @@ export function PasswordForm() {
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
                 placeholder="Enter new password"
+                className="pr-10 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
               />
               <Button
                 type="button"
@@ -133,12 +135,14 @@ export function PasswordForm() {
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
               placeholder="Confirm new password"
+              className="dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
             />
           </div>
 
           <Button 
             type="submit" 
             disabled={loading || !currentPassword || !newPassword || !confirmPassword}
+            className="w-full sm:w-auto"
           >
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Update Password

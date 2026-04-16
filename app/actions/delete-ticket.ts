@@ -35,7 +35,7 @@ export async function deleteTicket(ticketId: string) {
 
   if (deleteError) {
     console.error("Delete error:", deleteError);
-    return { error: "Failed to delete ticket. It may have associated records preventing deletion." };
+    return { error: deleteError.message || "Failed to delete ticket." };
   }
 
   revalidatePath("/dashboard");

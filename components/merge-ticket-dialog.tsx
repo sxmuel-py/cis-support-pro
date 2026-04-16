@@ -51,7 +51,7 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
     } else {
       toast({
         title: "Success",
-        description: `Ticket successfully merged into #${targetId.trim().slice(0, 8)}`,
+        description: `Ticket successfully merged into #${result.targetTicketShortId ?? targetId.trim().slice(0, 8)}`,
       });
       setProcessing(false);
       setTargetId("");

@@ -256,11 +256,11 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-8 p-6 md:p-8">
+        <div className="container mx-auto space-y-6 px-4 pb-24 pt-4 sm:space-y-8 sm:p-6 md:p-8 md:pb-8">
           <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30">
             <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
               <div className="max-w-3xl space-y-4">
@@ -310,7 +310,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className={`grid gap-4 ${isStaffAdmin ? "md:grid-cols-2 xl:grid-cols-5" : "md:grid-cols-2 xl:grid-cols-4"}`}>
+          <div className={`grid gap-4 ${isStaffAdmin ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
             {statCards.map((card) => {
               const Icon = card.icon;
 

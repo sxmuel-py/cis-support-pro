@@ -4,6 +4,7 @@ import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
 import { sendEmail } from "@/lib/gmail/send-email";
 import { generateTicketAssignedTemplate } from "@/lib/gmail/templates";
+import { canAccessTicketCategory } from "@/lib/ticket-access";
 
 export async function assignTicket(ticketId: string, technicianId: string | null) {
   const supabase = await createClient();
@@ -37,11 +38,19 @@ export async function assignTicket(ticketId: string, technicianId: string | null
   if (technicianId) {
     const { data: technician } = await supabase
       .from("users")
-      .select("full_name")
+      .select("full_name, role")
       .eq("id", technicianId)
       .single();
     
     if (technician) {
+      if (!canAccessTicketCategory(technician.role, ticket?.category)) {
+        return {
+          error:
+            ticket?.category === "sims"
+              ? "SIMS tickets can only be assigned to SIMS managers, supervisors, or the HOD."
+              : "SIMS managers can only be assigned SIMS tickets.",
+        };
+      }
       technicianName = technician.full_name;
     }
   }

@@ -1,6 +1,6 @@
 "use server";
 
-import { createClient } from "@/lib/supabase/server";
+import { createClient, getCachedUser } from "@/lib/supabase/server";
 
 export interface AnalyticsData {
   overview: {
@@ -44,17 +44,38 @@ export async function getAnalyticsData(
   const supabase = await createClient();
 
   try {
+    const { data: { user } } = await getCachedUser();
+    if (!user) {
+      return null;
+    }
+
+    const { data: profile } = await supabase
+      .from("users")
+      .select("id, role")
+      .eq("id", user.id)
+      .single();
+
+    if (!profile) {
+      return null;
+    }
+
     // Calculate date range
     const startDate = new Date();
     startDate.setDate(startDate.getDate() - timeRange);
 
-    // Get all tickets (filtered by user if technician)
+    // Get all tickets with role-based filtering
     let ticketsQuery = supabase
       .from("tickets")
       .select("*")
       .gte("created_at", startDate.toISOString());
 
-    if (userId) {
+    if (profile.role === "technician") {
+      ticketsQuery = ticketsQuery
+        .eq("assigned_to", profile.id)
+        .neq("category", "sims");
+    } else if (profile.role === "sims_manager") {
+      ticketsQuery = ticketsQuery.eq("category", "sims");
+    } else if (userId) {
       ticketsQuery = ticketsQuery.eq("assigned_to", userId);
     }
 
@@ -159,11 +180,11 @@ export async function getAnalyticsData(
     // Technician performance (only for supervisors)
     let technicianPerformance: AnalyticsData["technicianPerformance"] = [];
 
-    if (!userId) {
+    if (profile.role !== "technician" && profile.role !== "sims_manager") {
       const { data: users } = await supabase
         .from("users")
         .select("id, full_name")
-        .eq("role", "technician");
+        .in("role", ["technician", "sims_manager"]);
 
       if (users) {
         technicianPerformance = users.map((user) => {

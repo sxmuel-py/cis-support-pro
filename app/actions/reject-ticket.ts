@@ -2,6 +2,7 @@
 
 import { createClient, getCachedUser } from "@/lib/supabase/server";
 import { revalidatePath } from "next/cache";
+import { canAccessTicketCategory } from "@/lib/ticket-access";
 
 export async function rejectTicket(ticketId: string, reason?: string) {
   const supabase = await createClient();
@@ -12,15 +13,25 @@ export async function rejectTicket(ticketId: string, reason?: string) {
     return { error: "Unauthorized" };
   }
 
+  const { data: profile } = await supabase
+    .from("users")
+    .select("role")
+    .eq("id", user.id)
+    .single();
+
   // Verify ticket is assigned to this user
   const { data: ticket } = await supabase
     .from("tickets")
-    .select("assigned_to, assigned_by")
+    .select("assigned_to, assigned_by, category")
     .eq("id", ticketId)
     .single();
 
   if (!ticket) {
     return { error: "Ticket not found" };
+  }
+
+  if (!canAccessTicketCategory(profile?.role, ticket.category)) {
+    return { error: "You do not have access to this ticket." };
   }
 
   if (ticket.assigned_to !== user.id) {

@@ -15,12 +15,14 @@ import { markNotificationAsRead, markAllNotificationsAsRead } from "@/app/action
 import { NotificationItem } from "./notification-item";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import Link from "next/link";
+import { cn } from "@/lib/utils";
 
 interface NotificationBellProps {
   userId?: string;
+  compact?: boolean;
 }
 
-export function NotificationBell({ userId }: NotificationBellProps) {
+export function NotificationBell({ userId, compact = false }: NotificationBellProps) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
   const [unreadCount, setUnreadCount] = useState(0);
   const [open, setOpen] = useState(false);
@@ -105,7 +107,7 @@ export function NotificationBell({ userId }: NotificationBellProps) {
   return (
     <Popover open={open} onOpenChange={setOpen}>
       <PopoverTrigger asChild>
-        <Button variant="ghost" size="icon" className="relative">
+        <Button variant="ghost" size="icon" className={cn("relative", compact && "h-9 w-9 rounded-xl")}>
           <Bell className="h-5 w-5" />
           {unreadCount > 0 && (
             <Badge
@@ -117,7 +119,7 @@ export function NotificationBell({ userId }: NotificationBellProps) {
           )}
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-80 p-0" align="end">
+      <PopoverContent className="w-[calc(100vw-1.5rem)] max-w-80 p-0" align="end">
         <div className="flex items-center justify-between p-4 border-b">
           <h3 className="font-semibold">Notifications</h3>
           {unreadCount > 0 && (

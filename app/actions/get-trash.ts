@@ -28,7 +28,7 @@ export async function getTrash() {
   // Role-based filtering for trash
   // SIMS managers only see junk that mentions SIMS-related keywords
   if (role === "sims_manager") {
-    query = query.or("email_subject.ilike.%sims%,email_subject.ilike.%isams%,body.ilike.%sims%,body.ilike.%isams%");
+    query = query.or("subject.ilike.%sims%,subject.ilike.%isams%,body.ilike.%sims%,body.ilike.%isams%");
   }
 
   const { data, error } = await query;

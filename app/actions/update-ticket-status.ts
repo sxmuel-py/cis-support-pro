@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { TicketStatus } from "@/lib/types";
 import { sendEmail } from "@/lib/gmail/send-email";
 import { generateTicketClosedTemplate } from "@/lib/gmail/templates";
+import { canAccessTicketCategory, isIndividualContributorRole } from "@/lib/ticket-access";
 
 export async function updateTicketStatus(ticketId: string, newStatus: TicketStatus) {
   const supabase = await createClient();
@@ -24,7 +25,7 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
 
   const { data: ticket } = await supabase
     .from("tickets") // Fixed table name from previous context if needed, usually 'tickets'
-    .select("assigned_to, status, sender_email, subject, sender_name") // Added sender_email, subject, sender_name
+    .select("assigned_to, status, sender_email, subject, sender_name, category") // Added sender_email, subject, sender_name
     .eq("id", ticketId)
     .single();
 
@@ -32,8 +33,12 @@ export async function updateTicketStatus(ticketId: string, newStatus: TicketStat
     return { error: "Ticket not found" };
   }
 
-  // Permission check: technicians can only update their assigned tickets
-  if (currentUser?.role === "technician" && ticket.assigned_to !== user.id) {
+  if (!canAccessTicketCategory(currentUser?.role, ticket.category)) {
+    return { error: "You do not have access to this ticket." };
+  }
+
+  // Permission check: technicians and SIMS managers can only update their assigned tickets
+  if (isIndividualContributorRole(currentUser?.role) && ticket.assigned_to !== user.id) {
     return { error: "You can only update tickets assigned to you" };
   }
   

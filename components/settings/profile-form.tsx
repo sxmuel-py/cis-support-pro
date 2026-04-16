@@ -48,7 +48,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
   const hasChanges = fullName !== initialData.fullName || email !== initialData.email;
 
   return (
-    <Card>
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Profile Information</CardTitle>
         <CardDescription>Update your personal information</CardDescription>
@@ -62,6 +62,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               value={fullName}
               onChange={(e) => setFullName(e.target.value)}
               placeholder="John Doe"
+              className="dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
             />
           </div>
 
@@ -73,6 +74,7 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="john@cislagos.org"
+              className="dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
             />
           </div>
 
@@ -82,14 +84,14 @@ export function ProfileForm({ initialData }: ProfileFormProps) {
               id="role"
               value={initialData.role}
               disabled
-              className="bg-muted"
+              className="bg-muted dark:border-white/10 dark:bg-white/5"
             />
             <p className="text-xs text-muted-foreground">
               Contact your supervisor to change your role
             </p>
           </div>
 
-          <Button type="submit" disabled={loading || !hasChanges}>
+          <Button type="submit" disabled={loading || !hasChanges} className="w-full sm:w-auto">
             {loading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             Save Changes
           </Button>

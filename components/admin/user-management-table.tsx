@@ -79,6 +79,58 @@ export function UserManagementTable({ initialUsers, currentUser }: UserManagemen
         </div>
       </div>
 
+      <div className="md:hidden space-y-3 p-4">
+        {users.length === 0 ? (
+          <div className="rounded-2xl border border-white/60 bg-white/70 p-6 text-center text-sm dark:border-white/10 dark:bg-white/5">
+            No staff members found.
+          </div>
+        ) : users.map((user) => (
+          <div key={user.id} className="rounded-2xl border border-white/60 bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+            <div className="space-y-3">
+              <div>
+                <p className="font-medium dark:text-white">{user.full_name}</p>
+                <p className="text-sm text-muted-foreground break-all">{user.email}</p>
+              </div>
+              <div className="flex flex-wrap items-center gap-2">
+                <Badge variant="outline" className={roleColors[user.role] || ""}>
+                  {user.role === "hod" ? "HOD" : user.role.replace("_", " ")}
+                </Badge>
+                <span className="text-xs text-muted-foreground">
+                  Created {formatDistanceToNow(new Date(user.created_at), { addSuffix: true })}
+                </span>
+              </div>
+              <p className="text-xs text-muted-foreground">
+                Last sign in: {user.last_sign_in ? formatDistanceToNow(new Date(user.last_sign_in), { addSuffix: true }) : "Never"}
+              </p>
+              {user.id !== currentUser.id ? (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  className="w-full gap-2 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
+                  onClick={() => handleSendWelcome(user)}
+                  disabled={processingId === user.id || sentIds.has(user.id)}
+                >
+                  {processingId === user.id ? (
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                  ) : sentIds.has(user.id) ? (
+                    <CheckCircle2 className="h-4 w-4 text-green-600" />
+                  ) : (
+                    <Mail className="h-4 w-4" />
+                  )}
+                  {sentIds.has(user.id) ? "Sent" : "Send Welcome"}
+                </Button>
+              ) : (
+                <span className="flex items-center gap-1 text-xs italic text-muted-foreground">
+                  <ShieldAlert className="h-3 w-3" />
+                  You
+                </span>
+              )}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="hidden md:block">
       <Table>
         <TableHeader>
           <TableRow className="border-white/60 bg-muted/30 dark:border-white/10 dark:bg-white/5">
@@ -159,6 +211,7 @@ export function UserManagementTable({ initialUsers, currentUser }: UserManagemen
           )}
         </TableBody>
       </Table>
+      </div>
     </div>
   );
 }

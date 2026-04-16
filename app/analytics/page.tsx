@@ -54,7 +54,7 @@ export default function AnalyticsPage() {
     setLoading(false);
   };
 
-  const isSupervisor = currentUser?.role === "supervisor";
+  const isSupervisor = currentUser?.role === "supervisor" || currentUser?.role === "hod";
   const timeOptions = [7, 30, 90];
   const exportActions = data ? [
     { label: "Export CSV", onClick: () => exportToCSV(data, timeRange) },
@@ -63,11 +63,11 @@ export default function AnalyticsPage() {
   ] : [];
 
   return (
-    <div className="flex h-screen bg-background">
+    <div className="flex min-h-screen bg-background">
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-8 p-6 md:p-8">
+        <div className="container mx-auto space-y-6 px-4 pb-24 pt-4 sm:space-y-8 sm:p-6 md:p-8 md:pb-8">
           <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30">
             <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
               <div className="max-w-3xl space-y-4">
@@ -114,15 +114,15 @@ export default function AnalyticsPage() {
                 Choose the period you want to inspect, then export when you need to share the story.
               </p>
             </div>
-            <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10">
-                <CalendarRange className="ml-3 h-4 w-4 text-muted-foreground" />
+            <div className="flex flex-col gap-3 sm:flex-row sm:flex-wrap sm:items-center">
+              <div className="flex w-full items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10 sm:w-auto">
+                <CalendarRange className="ml-3 h-4 w-4 shrink-0 text-muted-foreground" />
                 {timeOptions.map((option) => (
                   <Button
                     key={option}
                     variant={timeRange === option ? "secondary" : "ghost"}
                     size="sm"
-                    className="h-8 rounded-xl px-3"
+                    className="h-8 flex-1 rounded-xl px-3 sm:flex-none"
                     onClick={() => setTimeRange(option)}
                   >
                     {option} Days
@@ -135,7 +135,7 @@ export default function AnalyticsPage() {
                   key={action.label}
                   variant="outline"
                   size="sm"
-                  className="rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
+                  className="w-full rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto"
                   onClick={action.onClick}
                 >
                   <Download className="mr-2 h-4 w-4" />
@@ -163,7 +163,7 @@ export default function AnalyticsPage() {
           ) : (
             <>
               {/* Overview Stats */}
-              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
                 <StatCard
                   title="Total Tickets"
                   value={data.overview.totalTickets}
@@ -191,7 +191,7 @@ export default function AnalyticsPage() {
               </div>
 
               {/* Charts Grid */}
-              <div className="grid gap-4 md:grid-cols-2">
+              <div className="grid gap-4 lg:grid-cols-2">
                 <TicketTrendsChart data={data.ticketTrends} />
                 <StatusPieChart data={data.statusDistribution} />
                 <PriorityBarChart data={data.priorityDistribution} />

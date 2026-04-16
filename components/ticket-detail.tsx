@@ -20,6 +20,7 @@ import { formatDistanceToNow } from "date-fns";
 import { useToast } from "@/hooks/use-toast";
 import { createClient } from "@/lib/supabase/client";
 import { MergeTicketDialog } from "./merge-ticket-dialog";
+import { canAccessTicketCategory } from "@/lib/ticket-access";
 
 interface TicketDetailProps {
   ticket: Ticket;
@@ -40,11 +41,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
   const isAssignedToMe = currentUser && ticket.assigned_to === currentUser.id;
   const isSupervisor = currentUser?.role === "supervisor";
   const isHod = currentUser?.role === "hod";
+  const isContributor = currentUser?.role === "technician" || currentUser?.role === "sims_manager";
   const canAcceptReject = isAssignedToMe && assignmentStatus === "assigned";
   
   // More robust check for self-assignment
   const canSelfAssign = 
-    currentUser?.role === "technician" && 
+    isContributor && 
+    canAccessTicketCategory(currentUser?.role, ticket.category) &&
     !ticket.assigned_to && 
     (assignmentStatus === "unassigned" || !assignmentStatus);
 
@@ -95,6 +98,15 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
 
   const loadDetails = async () => {
     const data = await getTicketDetails(ticket.id);
+    if (!data) {
+      toast({
+        title: "Ticket unavailable",
+        description: "This ticket could not be loaded or you no longer have access to it.",
+        variant: "destructive",
+      });
+      onClose();
+      return;
+    }
     setDetails(data);
     setLoading(false);
   };
@@ -261,7 +273,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
     <div className="fixed inset-0 z-50 bg-slate-950/35 backdrop-blur-sm">
       <div className="fixed right-0 top-0 h-full w-full max-w-3xl border-l border-white/50 bg-background/95 shadow-2xl shadow-slate-900/25 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-black/40">
         <div className="flex h-full flex-col">
-          <div className="mesh-panel border-b border-white/60 p-6 dark:border-white/10">
+          <div className="mesh-panel border-b border-white/60 p-4 dark:border-white/10 sm:p-6">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
@@ -276,7 +288,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                   </Badge>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{ticket.subject}</h2>
+                  <h2 className="text-xl font-semibold text-slate-900 dark:text-white sm:text-2xl">{ticket.subject}</h2>
                   <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                     Keep context, coordinate owners, and move this ticket forward without losing the story.
                   </p>
@@ -305,14 +317,14 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
           </div>
 
           <div className="border-b border-white/60 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
-            <div className="flex flex-wrap items-center gap-2">
+            <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
               {canAcceptReject && (
                 <>
-                  <Button onClick={handleAccept} disabled={processing} className="gap-2 rounded-xl">
+                  <Button onClick={handleAccept} disabled={processing} className="w-full gap-2 rounded-xl sm:w-auto">
                     <CheckCircle2 className="h-4 w-4" />
                     Accept
                   </Button>
-                  <Button onClick={handleReject} disabled={processing} variant="outline" className="gap-2 rounded-xl bg-white dark:bg-white/10 dark:hover:bg-white/15">
+                  <Button onClick={handleReject} disabled={processing} variant="outline" className="w-full gap-2 rounded-xl bg-white dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto">
                     <XCircle className="h-4 w-4" />
                     Reject
                   </Button>
@@ -320,7 +332,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
               )}
               
               {canSelfAssign && (
-                <Button onClick={handleSelfAssign} disabled={processing} className="gap-2 rounded-xl">
+                <Button onClick={handleSelfAssign} disabled={processing} className="w-full gap-2 rounded-xl sm:w-auto">
                   <UserPlus className="h-4 w-4" />
                   Assign to Me
                 </Button>
@@ -346,7 +358,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                   onClick={handleDelete} 
                   disabled={processing} 
                   variant="destructive" 
-                  className="ml-auto gap-2 rounded-xl"
+                  className="w-full gap-2 rounded-xl sm:ml-auto sm:w-auto"
                 >
                   <Trash2 className="h-4 w-4" />
                   Delete Ticket
@@ -356,9 +368,9 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
           </div>
 
           <ScrollArea className="flex-1">
-            <div className="p-6">
+            <div className="p-4 pb-28 sm:p-6 sm:pb-6">
               <Tabs defaultValue="details" className="w-full">
-                <TabsList className="rounded-2xl bg-muted/70 p-1 dark:bg-white/5">
+                <TabsList className="grid w-full grid-cols-3 rounded-2xl bg-muted/70 p-1 dark:bg-white/5">
                   <TabsTrigger value="details" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Details</TabsTrigger>
                   <TabsTrigger value="notes" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Notes ({details?.notes.length || 0})</TabsTrigger>
                   <TabsTrigger value="activity" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Activity</TabsTrigger>

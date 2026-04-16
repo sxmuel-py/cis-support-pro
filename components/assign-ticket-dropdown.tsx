@@ -85,7 +85,7 @@ export function AssignTicketDropdown({
           variant="outline"
           role="combobox"
           aria-expanded={open}
-          className="w-[200px] justify-between"
+          className="w-full justify-between sm:w-[200px]"
           disabled={isPending}
         >
           {selectedStaff ? (
@@ -96,7 +96,7 @@ export function AssignTicketDropdown({
           <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
         </Button>
       </PopoverTrigger>
-      <PopoverContent className="w-[260px] p-2" align="start">
+      <PopoverContent className="w-[min(92vw,260px)] p-2" align="start">
         <div className="space-y-2">
           <div className="relative">
             <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
