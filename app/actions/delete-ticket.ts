@@ -28,14 +28,20 @@ export async function deleteTicket(ticketId: string) {
   // Actually, Supabase/Postgres usually handles this if FK is set to Cascade.
   // In this project, let's assume it's configured correctly, or handle it here if not.
   
-  const { error: deleteError } = await supabase
+  const { data: deletedTicket, error: deleteError } = await supabase
     .from("tickets")
     .delete()
-    .eq("id", ticketId);
+    .eq("id", ticketId)
+    .select("id")
+    .maybeSingle();
 
   if (deleteError) {
     console.error("Delete error:", deleteError);
     return { error: deleteError.message || "Failed to delete ticket." };
+  }
+
+  if (!deletedTicket) {
+    return { error: "Ticket not found." };
   }
 
   revalidatePath("/dashboard");

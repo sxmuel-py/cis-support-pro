@@ -56,7 +56,7 @@ export async function assignTicket(ticketId: string, technicianId: string | null
   }
 
   // Update ticket assignment
-  const { error } = await supabase
+  const { data: updatedTicket, error } = await supabase
     .from("tickets")
     .update({
       assigned_to: technicianId,
@@ -64,10 +64,16 @@ export async function assignTicket(ticketId: string, technicianId: string | null
       assigned_at: technicianId ? new Date().toISOString() : null,
       assignment_status: technicianId ? "assigned" : "unassigned",
     })
-    .eq("id", ticketId);
+    .eq("id", ticketId)
+    .select("id")
+    .maybeSingle();
 
   if (error) {
     return { error: error.message };
+  }
+
+  if (!updatedTicket) {
+    return { error: "Ticket not found." };
   }
 
   // Send email notification to cishelpdesk@cislagos.org when ticket is assigned

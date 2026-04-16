@@ -77,6 +77,12 @@ BEGIN
   SET ticket_id = target_ticket_record.id
   WHERE ticket_id = source_ticket_record.id;
 
+  UPDATE public.tickets
+  SET
+    status = 'closed',
+    merged_into_id = target_ticket_record.id
+  WHERE id = source_ticket_record.id;
+
   UPDATE public.activity_log
   SET ticket_id = target_ticket_record.id
   WHERE ticket_id = source_ticket_record.id;
@@ -92,12 +98,6 @@ BEGIN
       'source_ticket_subject', source_ticket_record.subject
     )
   );
-
-  UPDATE public.tickets
-  SET
-    status = 'closed',
-    merged_into_id = target_ticket_record.id
-  WHERE id = source_ticket_record.id;
 
   RETURN jsonb_build_object(
     'source_ticket_id', source_ticket_record.id,

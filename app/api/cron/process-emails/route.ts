@@ -111,11 +111,18 @@ export async function GET(request: Request) {
         // ============================================
         
         // Check if this email is a reply to an existing ticket (by thread ID)
-        const { data: existingTicket } = await supabase
+        const { data: existingTickets, error: existingTicketError } = await supabase
           .from('tickets')
           .select('id, subject, status, sender_email')
           .eq('email_thread_id', email.threadId)
-          .single();
+          .order('created_at', { ascending: false })
+          .limit(2);
+
+        if (existingTicketError) {
+          throw existingTicketError;
+        }
+
+        const existingTicket = existingTickets?.[0] ?? null;
 
         if (existingTicket) {
           // This is a reply to an existing ticket - add as note instead
@@ -134,21 +141,40 @@ export async function GET(request: Request) {
             noteContent = `**Reply from** ${email.fromName || email.from}:\n\n${email.body}`;
           }
 
-          // Add as note to existing ticket
-          await supabase.from('notes').insert({
+          // Claim the message first so a later retry cannot duplicate the note.
+          const { error: processedReplyError } = await supabase.from('processed_emails').insert({
+            message_id: email.id,
+            thread_id: email.threadId,
+            classification: 'reply',
+            ticket_id: existingTicket.id,
+          });
+
+          if (processedReplyError) {
+            if ((processedReplyError as { code?: string }).code === '23505') {
+              console.log(`Reply already claimed for processing: ${email.id}`);
+              results.duplicates_skipped++;
+              await markEmailAsRead(email.id);
+              continue;
+            }
+
+            throw processedReplyError;
+          }
+
+          const { error: noteInsertError } = await supabase.from('notes').insert({
             ticket_id: existingTicket.id,
             content: noteContent,
             author_name: email.fromName || email.from,
             author_id: null, // System-generated note
           });
 
-          // Mark as processed
-          await supabase.from('processed_emails').insert({
-            message_id: email.id,
-            thread_id: email.threadId,
-            classification: 'reply',
-            ticket_id: existingTicket.id,
-          });
+          if (noteInsertError) {
+            await supabase
+              .from('processed_emails')
+              .delete()
+              .eq('message_id', email.id);
+
+            throw noteInsertError;
+          }
 
           // Mark email as read
           await markEmailAsRead(email.id);
@@ -172,14 +198,19 @@ export async function GET(request: Request) {
           }
           
           // Fallback: Try to find a recent open ticket by this sender and subject
-          const { data: subjectMatchTicket } = await supabase
+          const { data: subjectMatchTickets, error: subjectMatchError } = await supabase
             .from('tickets')
             .select('id, subject, status, sender_email')
             .eq('sender_email', email.from)
             .ilike('subject', `%${baseSubject}%`) // Use ilike for case-insensitive match
             .order('created_at', { ascending: false })
-            .limit(1)
-            .single();
+            .limit(2);
+
+          if (subjectMatchError) {
+            throw subjectMatchError;
+          }
+
+          const subjectMatchTicket = subjectMatchTickets?.[0] ?? null;
 
           if (subjectMatchTicket) {
             console.log(`Matched "RE:" email to existing ticket #${subjectMatchTicket.id.slice(0, 8)} based on subject: ${baseSubject}`);
@@ -194,21 +225,39 @@ export async function GET(request: Request) {
               noteContent = `**Customer Follow-up via Email Reply** (${email.fromName || email.from}):\n\n${email.body}`;
             }
 
-            // Add as note to existing ticket
-            await supabase.from('notes').insert({
+            const { error: processedReplyError } = await supabase.from('processed_emails').insert({
+              message_id: email.id,
+              thread_id: email.threadId,
+              classification: 'reply',
+              ticket_id: subjectMatchTicket.id,
+            });
+
+            if (processedReplyError) {
+              if ((processedReplyError as { code?: string }).code === '23505') {
+                console.log(`Reply already claimed for processing: ${email.id}`);
+                results.duplicates_skipped++;
+                await markEmailAsRead(email.id);
+                continue;
+              }
+
+              throw processedReplyError;
+            }
+
+            const { error: noteInsertError } = await supabase.from('notes').insert({
               ticket_id: subjectMatchTicket.id,
               content: noteContent,
               author_name: email.fromName || email.from,
               author_id: null, // System-generated note
             });
 
-            // Mark as processed
-            await supabase.from('processed_emails').insert({
-              message_id: email.id,
-              thread_id: email.threadId,
-              classification: 'reply',
-              ticket_id: subjectMatchTicket.id,
-            });
+            if (noteInsertError) {
+              await supabase
+                .from('processed_emails')
+                .delete()
+                .eq('message_id', email.id);
+
+              throw noteInsertError;
+            }
 
             // Mark email as read
             await markEmailAsRead(email.id);
