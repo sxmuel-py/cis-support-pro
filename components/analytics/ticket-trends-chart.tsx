@@ -19,7 +19,7 @@ export function TicketTrendsChart({ data }: TicketTrendsChartProps) {
   }));
 
   return (
-    <Card className="surface-glass col-span-2 border-white/60 shadow-xl shadow-slate-200/60">
+    <Card className="surface-glass col-span-2 border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Ticket Trends</CardTitle>
         <CardDescription>Created vs Resolved tickets over time</CardDescription>

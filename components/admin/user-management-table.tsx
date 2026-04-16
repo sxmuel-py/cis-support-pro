@@ -59,17 +59,29 @@ export function UserManagementTable({ initialUsers, currentUser }: UserManagemen
   };
 
   const roleColors: Record<string, string> = {
-    hod: "bg-purple-100 text-purple-800 border-purple-200",
-    supervisor: "bg-blue-100 text-blue-800 border-blue-200",
-    technician: "bg-green-100 text-green-800 border-green-200",
-    sims_manager: "bg-orange-100 text-orange-800 border-orange-200",
+    hod: "bg-purple-100 text-purple-800 border-purple-200 dark:bg-purple-500/15 dark:text-purple-200 dark:border-purple-400/20",
+    supervisor: "bg-blue-100 text-blue-800 border-blue-200 dark:bg-blue-500/15 dark:text-blue-200 dark:border-blue-400/20",
+    technician: "bg-green-100 text-green-800 border-green-200 dark:bg-green-500/15 dark:text-green-200 dark:border-green-400/20",
+    sims_manager: "bg-orange-100 text-orange-800 border-orange-200 dark:bg-orange-500/15 dark:text-orange-200 dark:border-orange-400/20",
   };
 
   return (
-    <div className="rounded-md border bg-card">
+    <div className="surface-glass overflow-hidden rounded-[2rem] border border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
+      <div className="flex flex-col gap-3 border-b border-white/60 px-6 py-5 dark:border-white/10 md:flex-row md:items-end md:justify-between">
+        <div>
+          <h2 className="text-xl font-semibold tracking-tight dark:text-white">Staff roster</h2>
+          <p className="mt-1 text-sm text-muted-foreground">
+            Dispatch secure setup links, track recent access, and keep the support bench organized.
+          </p>
+        </div>
+        <div className="rounded-full bg-white/80 px-3 py-1.5 text-xs font-medium text-slate-600 shadow-sm dark:bg-white/10 dark:text-slate-300">
+          {users.length} staff accounts
+        </div>
+      </div>
+
       <Table>
         <TableHeader>
-          <TableRow>
+          <TableRow className="border-white/60 bg-muted/30 dark:border-white/10 dark:bg-white/5">
             <TableHead>Staff Member</TableHead>
             <TableHead>Role</TableHead>
             <TableHead>Created</TableHead>
@@ -79,10 +91,10 @@ export function UserManagementTable({ initialUsers, currentUser }: UserManagemen
         </TableHeader>
         <TableBody>
           {users.map((user) => (
-            <TableRow key={user.id}>
+            <TableRow key={user.id} className="border-white/50 dark:border-white/10">
               <TableCell>
                 <div className="flex flex-col">
-                  <span className="font-medium">{user.full_name}</span>
+                  <span className="font-medium dark:text-white">{user.full_name}</span>
                   <span className="text-sm text-muted-foreground">
                     {user.email}
                   </span>
@@ -113,7 +125,7 @@ export function UserManagementTable({ initialUsers, currentUser }: UserManagemen
                   <Button
                     variant="outline"
                     size="sm"
-                    className="gap-2"
+                    className="gap-2 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                     onClick={() => handleSendWelcome(user)}
                     disabled={
                       processingId === user.id || sentIds.has(user.id)

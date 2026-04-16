@@ -68,18 +68,18 @@ export default function AnalyticsPage() {
       
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto space-y-8 p-6 md:p-8">
-          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70">
+          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30">
             <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
               <div className="max-w-3xl space-y-4">
-                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm">
+                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                   <Sparkles className="mr-2 h-3.5 w-3.5" />
                   Performance Intelligence
                 </Badge>
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-5xl">
                     Analytics that actually help you steer.
                   </h1>
-                  <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+                  <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 md:text-base">
                     {isSupervisor
                       ? "Monitor queue health, spot team imbalance early, and keep service quality visible."
                       : "Track your response rhythm, output, and where your tickets are spending time."}
@@ -88,34 +88,34 @@ export default function AnalyticsPage() {
               </div>
 
               <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[460px]">
-                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Time Window</div>
-                  <div className="text-3xl font-semibold text-slate-900">{timeRange}</div>
-                  <p className="mt-2 text-sm text-slate-600">Days in view</p>
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-300">Time Window</div>
+                  <div className="text-3xl font-semibold text-slate-900 dark:text-white">{timeRange}</div>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Days in view</p>
                 </div>
-                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Perspective</div>
-                  <div className="text-xl font-semibold text-slate-900">{isSupervisor ? "Team" : "Personal"}</div>
-                  <p className="mt-2 text-sm text-slate-600">Current reporting lens</p>
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-300">Perspective</div>
+                  <div className="text-xl font-semibold text-slate-900 dark:text-white">{isSupervisor ? "Team" : "Personal"}</div>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Current reporting lens</p>
                 </div>
-                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50">
-                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">Exports</div>
-                  <div className="text-xl font-semibold text-slate-900">{data ? exportActions.length : 0}</div>
-                  <p className="mt-2 text-sm text-slate-600">Report formats ready</p>
+                <div className="rounded-3xl border border-white/70 bg-white/75 p-4 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+                  <div className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-300">Exports</div>
+                  <div className="text-xl font-semibold text-slate-900 dark:text-white">{data ? exportActions.length : 0}</div>
+                  <p className="mt-2 text-sm text-slate-600 dark:text-slate-300">Report formats ready</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div className="surface-glass flex flex-col gap-4 rounded-[2rem] border border-white/60 p-5 shadow-xl shadow-slate-200/60 lg:flex-row lg:items-center lg:justify-between">
+          <div className="surface-glass flex flex-col gap-4 rounded-[2rem] border border-white/60 p-5 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <h2 className="text-2xl font-semibold tracking-tight">Reporting Controls</h2>
+              <h2 className="text-2xl font-semibold tracking-tight dark:text-white">Reporting Controls</h2>
               <p className="text-sm text-muted-foreground">
                 Choose the period you want to inspect, then export when you need to share the story.
               </p>
             </div>
             <div className="flex flex-wrap items-center gap-3">
-              <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm">
+              <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10">
                 <CalendarRange className="ml-3 h-4 w-4 text-muted-foreground" />
                 {timeOptions.map((option) => (
                   <Button
@@ -135,7 +135,7 @@ export default function AnalyticsPage() {
                   key={action.label}
                   variant="outline"
                   size="sm"
-                  className="rounded-2xl border-white/70 bg-white/80"
+                  className="rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                   onClick={action.onClick}
                 >
                   <Download className="mr-2 h-4 w-4" />
@@ -146,7 +146,7 @@ export default function AnalyticsPage() {
           </div>
 
           {loading ? (
-            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
               <CardContent className="flex items-center justify-center h-64">
                 <div className="flex flex-col items-center gap-2">
                   <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -155,7 +155,7 @@ export default function AnalyticsPage() {
               </CardContent>
             </Card>
           ) : !data ? (
-            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+            <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
               <CardContent className="flex items-center justify-center h-64">
                 <p className="text-sm text-muted-foreground">No data available</p>
               </CardContent>

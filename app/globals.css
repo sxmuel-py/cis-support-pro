@@ -64,6 +64,13 @@
       "calt" 1;
   }
 
+  .dark body {
+    background-image:
+      radial-gradient(circle at top left, hsl(var(--primary) / 0.16), transparent 26%),
+      radial-gradient(circle at top right, hsl(24 95% 53% / 0.12), transparent 22%),
+      linear-gradient(to bottom, hsl(222 50% 8%), hsl(224 47% 6%));
+  }
+
   input.auth-input:-webkit-autofill,
   input.auth-input:-webkit-autofill:hover,
   input.auth-input:-webkit-autofill:focus {
@@ -128,5 +135,17 @@
       radial-gradient(circle at 0% 0%, hsl(var(--primary) / 0.16), transparent 30%),
       radial-gradient(circle at 100% 0%, hsl(24 95% 53% / 0.12), transparent 28%),
       linear-gradient(180deg, hsl(var(--card)), hsl(var(--card) / 0.94));
+  }
+
+  .dark .surface-glass {
+    background: linear-gradient(180deg, hsl(223 39% 11% / 0.9), hsl(224 42% 9% / 0.84));
+    box-shadow: 0 20px 40px hsl(224 55% 4% / 0.45);
+  }
+
+  .dark .mesh-panel {
+    background-image:
+      radial-gradient(circle at 0% 0%, hsl(var(--primary) / 0.22), transparent 30%),
+      radial-gradient(circle at 100% 0%, hsl(24 95% 53% / 0.16), transparent 26%),
+      linear-gradient(180deg, hsl(223 40% 12%), hsl(224 42% 9%));
   }
 }

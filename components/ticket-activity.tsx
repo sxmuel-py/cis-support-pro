@@ -113,18 +113,18 @@ export function TicketActivity({ activities }: TicketActivityProps) {
       ) : (
         <div className="relative space-y-4">
           {/* Timeline line */}
-          <div className="absolute left-4 top-2 bottom-2 w-px bg-border" />
+          <div className="absolute bottom-2 left-4 top-2 w-px bg-border dark:bg-white/10" />
 
           {activities.map((activity, index) => (
             <div key={activity.id} className="relative flex gap-4">
               {/* Icon */}
-              <div className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full bg-background border-2 ${getActivityColor(activity.action)}`}>
+              <div className={`relative z-10 flex h-8 w-8 items-center justify-center rounded-full border-2 bg-background dark:bg-slate-950 ${getActivityColor(activity.action)}`}>
                 {getActivityIcon(activity.action)}
               </div>
 
               {/* Content */}
               <div className="flex-1 space-y-1 pb-4">
-                <p className="text-sm font-medium">
+                <p className="text-sm font-medium dark:text-white">
                   {formatAction(activity.action, activity.details)}
                 </p>
                 <div className="flex items-center gap-2 text-xs text-muted-foreground">

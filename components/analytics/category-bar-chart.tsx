@@ -17,7 +17,7 @@ export function CategoryBarChart({ data }: CategoryBarChartProps) {
   }));
 
   return (
-    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Category Breakdown</CardTitle>
         <CardDescription>Most common issue types</CardDescription>

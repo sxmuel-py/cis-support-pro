@@ -47,10 +47,10 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
   };
 
   return (
-    <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-white/75 shadow-xl shadow-slate-200/60">
+    <div className="overflow-hidden rounded-[2rem] border border-white/60 bg-white/75 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
       <Table>
         <TableHeader>
-          <TableRow className="border-white/60 bg-muted/30">
+          <TableRow className="border-white/60 bg-muted/30 dark:border-white/10 dark:bg-white/5">
             <TableHead className="w-[110px]">ID</TableHead>
             <TableHead>Ticket</TableHead>
             <TableHead>Reporter</TableHead>
@@ -76,8 +76,8 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
                 <TableRow
                   key={ticket.id}
                   className={cn(
-                    "cursor-pointer border-white/50 transition-colors",
-                    onTicketClick && "hover:bg-primary/5"
+                    "cursor-pointer border-white/50 transition-colors dark:border-white/10",
+                    onTicketClick && "hover:bg-primary/5 dark:hover:bg-white/5"
                   )}
                   onClick={(e) => {
                     if ((e.target as HTMLElement).closest("button,input,[role='dialog']")) {
@@ -87,14 +87,14 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
                   }}
                 >
                   <TableCell className="align-top">
-                    <div className="inline-flex rounded-full bg-muted px-3 py-1 font-mono text-xs">
+                    <div className="inline-flex rounded-full bg-muted px-3 py-1 font-mono text-xs dark:bg-white/10">
                       #{ticket.id.slice(0, 8)}
                     </div>
                   </TableCell>
                   <TableCell className="align-top">
                     <div className="space-y-1">
                       <div className="flex items-start justify-between gap-3">
-                        <p className="max-w-[34rem] text-sm font-semibold leading-5">{ticket.subject}</p>
+                        <p className="max-w-[34rem] text-sm font-semibold leading-5 dark:text-white">{ticket.subject}</p>
                         <ArrowUpRight className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" />
                       </div>
                       <div className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">

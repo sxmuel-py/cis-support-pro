@@ -41,19 +41,19 @@ export function TicketStatusDropdown({ currentStatus, onStatusChange, disabled }
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" disabled={disabled} className="gap-2">
+        <Button variant="outline" disabled={disabled} className="gap-2 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15">
           <Badge variant={currentStatusObj?.variant} className="capitalize">
             {currentStatusObj?.label}
           </Badge>
           <ChevronDown className="h-4 w-4" />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="start">
+      <DropdownMenuContent align="start" className="dark:border-white/10 dark:bg-slate-950 dark:text-white">
         {statuses.map((status) => (
           <DropdownMenuItem
             key={status.value}
             onClick={() => handleStatusChange(status.value)}
-            className="gap-2"
+            className="gap-2 dark:focus:bg-white/10 dark:focus:text-white"
           >
             {currentStatus === status.value && <Check className="h-4 w-4" />}
             <Badge variant={status.variant} className="capitalize">

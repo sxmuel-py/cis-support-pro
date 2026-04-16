@@ -70,8 +70,8 @@ export function Sidebar() {
   };
 
   return (
-    <div className="surface-glass flex h-screen w-72 flex-col border-r border-white/60 shadow-xl shadow-slate-200/40">
-      <div className="mesh-panel flex h-24 items-center gap-4 border-b border-white/60 px-6">
+    <div className="surface-glass flex h-screen w-72 flex-col border-r border-white/60 shadow-xl shadow-slate-200/40 dark:border-white/10 dark:shadow-black/30">
+      <div className="mesh-panel flex h-24 items-center gap-4 border-b border-white/60 px-6 dark:border-white/10">
         <Logo size={42} />
         <div className="flex flex-col">
           <h1 className="bg-gradient-to-br from-foreground to-foreground/70 bg-clip-text text-xl font-black tracking-tight text-transparent uppercase">
@@ -84,9 +84,9 @@ export function Sidebar() {
       </div>
 
       {user && (
-        <div className="border-b border-white/60 px-4 py-4">
+        <div className="border-b border-white/60 px-4 py-4 dark:border-white/10">
           <div className="flex items-center gap-3">
-            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-2xl bg-primary/10 shadow-sm dark:bg-primary/15">
               <UserIcon className="h-5 w-5 text-primary" />
             </div>
             <div className="flex-1 min-w-0">
@@ -118,13 +118,15 @@ export function Sidebar() {
               className={cn(
                 "group flex items-center gap-3 rounded-2xl px-3 py-3 text-sm font-medium transition-all",
                 isActive
-                  ? "bg-white text-foreground shadow-md shadow-slate-200/50"
-                  : "text-muted-foreground hover:bg-white/70 hover:text-foreground"
+                  ? "bg-white text-foreground shadow-md shadow-slate-200/50 dark:bg-white/10 dark:text-white dark:shadow-black/20"
+                  : "text-muted-foreground hover:bg-white/70 hover:text-foreground dark:hover:bg-white/5 dark:hover:text-white"
               )}
             >
               <div className={cn(
                 "flex h-9 w-9 items-center justify-center rounded-xl transition-colors",
-                isActive ? "bg-primary/10 text-primary" : "bg-muted/60 text-muted-foreground group-hover:text-foreground"
+                isActive
+                  ? "bg-primary/10 text-primary dark:bg-primary/15"
+                  : "bg-muted/60 text-muted-foreground group-hover:text-foreground dark:bg-white/5 dark:group-hover:text-white"
               )}>
                 <item.icon className="h-4 w-4" />
               </div>
@@ -138,7 +140,7 @@ export function Sidebar() {
         })}
       </nav>
 
-      <div className="border-t border-white/60 p-4 space-y-3">
+      <div className="border-t border-white/60 p-4 space-y-3 dark:border-white/10">
         <div className="flex items-center justify-between gap-2">
           <LogoutButton />
           <div className="flex items-center gap-1">
@@ -146,7 +148,7 @@ export function Sidebar() {
             <ThemeToggle />
           </div>
         </div>
-        <div className="rounded-2xl bg-white/70 px-3 py-2 text-center text-xs text-muted-foreground">
+        <div className="rounded-2xl bg-white/70 px-3 py-2 text-center text-xs text-muted-foreground dark:bg-white/5">
           IT Help Desk v1.0
         </div>
       </div>

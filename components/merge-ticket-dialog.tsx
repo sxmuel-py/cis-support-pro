@@ -71,12 +71,12 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
       }}
     >
       <DialogTrigger asChild>
-        <Button variant="outline" className="gap-2 text-primary hover:text-primary">
+        <Button variant="outline" className="gap-2 text-primary hover:text-primary dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15">
           <CopyPlus className="h-4 w-4" />
           Merge Ticket
         </Button>
       </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
+      <DialogContent className="sm:max-w-[425px] dark:border-white/10 dark:bg-slate-950 dark:text-white">
         <DialogHeader>
           <DialogTitle>Merge Ticket</DialogTitle>
           <DialogDescription>
@@ -94,7 +94,7 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
               <Input
                 id="target-id"
                 placeholder="Paste the ticket ID or first 8 characters..."
-                className="pl-9"
+                className="pl-9 dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
                 value={targetId}
                 onChange={(e) => setTargetId(e.target.value)}
               />
@@ -105,7 +105,7 @@ export function MergeTicketDialog({ sourceTicket, onMerged }: MergeTicketDialogP
           </div>
         </div>
         <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)} disabled={processing}>
+          <Button variant="outline" onClick={() => setOpen(false)} disabled={processing} className="dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15">
             Cancel
           </Button>
           <Button onClick={handleMerge} disabled={processing || !targetId}>

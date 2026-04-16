@@ -21,7 +21,7 @@ export function TeamWorkload({ stats }: TeamWorkloadProps) {
   const totalLoad = stats.reduce((sum, tech) => sum + tech.count, 0);
 
   return (
-    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
       <CardHeader className="flex flex-row items-start justify-between space-y-0">
         <div className="space-y-1">
           <CardTitle className="flex items-center gap-2 text-base">
@@ -38,10 +38,10 @@ export function TeamWorkload({ stats }: TeamWorkloadProps) {
       </CardHeader>
       <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((tech) => (
-          <div key={tech.id} className="rounded-2xl border bg-white/70 p-4 shadow-sm">
+          <div key={tech.id} className="rounded-2xl border bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
-                <p className="truncate font-medium">{tech.name}</p>
+                <p className="truncate font-medium dark:text-white">{tech.name}</p>
                 <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">
                   Current queue
                 </p>
@@ -51,7 +51,7 @@ export function TeamWorkload({ stats }: TeamWorkloadProps) {
               </Badge>
             </div>
             <div className="space-y-2">
-              <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary">
+              <div className="h-2.5 w-full overflow-hidden rounded-full bg-secondary dark:bg-white/10">
                 <div
                   className="h-full rounded-full bg-primary transition-all"
                   style={{ width: `${(tech.count / maxCount) * 100}%` }}

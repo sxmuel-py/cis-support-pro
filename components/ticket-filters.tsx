@@ -38,7 +38,7 @@ export function TicketFilters({
   const hasActiveFilters = statusFilter !== "all" || priorityFilter !== "all" || searchQuery;
 
   return (
-    <div className="surface-glass rounded-3xl border border-white/60 p-4 shadow-lg shadow-slate-200/60">
+    <div className="surface-glass rounded-3xl border border-white/60 p-4 shadow-lg shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
         <div className="w-full max-w-xl space-y-2">
           <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
@@ -50,13 +50,13 @@ export function TicketFilters({
               placeholder="Search by ticket ID, subject, sender, or category..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-11 rounded-2xl border-white/70 bg-white/80 pl-10 shadow-sm"
+              className="h-11 rounded-2xl border-white/70 bg-white/80 pl-10 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder:text-slate-400"
             />
           </div>
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          <div className="flex gap-1 rounded-2xl bg-muted/70 p-1">
+          <div className="flex gap-1 rounded-2xl bg-muted/70 p-1 dark:bg-white/5">
             <Button
               variant={filter === "all" ? "default" : "ghost"}
               size="sm"
@@ -86,7 +86,7 @@ export function TicketFilters({
           </div>
 
           <Select value={statusFilter} onValueChange={(value) => onStatusFilterChange(value as TicketStatus | "all")}>
-            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm">
+            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -100,7 +100,7 @@ export function TicketFilters({
           </Select>
 
           <Select value={priorityFilter} onValueChange={(value) => onPriorityFilterChange(value as TicketPriority | "all")}>
-            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm">
+            <SelectTrigger className="h-11 w-[150px] rounded-2xl border-white/70 bg-white/80 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export function TicketFilters({
             <Button
               variant="outline"
               size="sm"
-              className="h-11 rounded-2xl border-white/70 bg-white/70"
+              className="h-11 rounded-2xl border-white/70 bg-white/70 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
               onClick={() => {
                 onStatusFilterChange("all");
                 onPriorityFilterChange("all");

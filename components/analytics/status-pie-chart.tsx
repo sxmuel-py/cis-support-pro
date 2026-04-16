@@ -27,7 +27,7 @@ export function StatusPieChart({ data }: StatusPieChartProps) {
   }));
 
   return (
-    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Status Distribution</CardTitle>
         <CardDescription>Breakdown of tickets by status</CardDescription>

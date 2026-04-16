@@ -69,7 +69,7 @@ export function TicketNotes({ ticketId, notes, currentUser, onNoteAdded }: Ticke
           value={content}
           onChange={(e) => setContent(e.target.value)}
           rows={3}
-          className="resize-none"
+          className="resize-none dark:border-white/10 dark:bg-white/5 dark:text-white dark:placeholder:text-slate-400"
         />
         <div className="flex justify-end">
           <Button type="submit" disabled={submitting || !content.trim()} className="gap-2">
@@ -88,23 +88,23 @@ export function TicketNotes({ ticketId, notes, currentUser, onNoteAdded }: Ticke
           </div>
         ) : (
           notes.map((note) => (
-            <div key={note.id} className="rounded-lg border bg-muted/50 p-4 space-y-2">
+            <div key={note.id} className="rounded-lg border bg-muted/50 p-4 space-y-2 dark:border-white/10 dark:bg-white/5">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-2">
-                  <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
+                  <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary/10 dark:bg-primary/15">
                     <span className="text-xs font-medium text-primary">
                       {(note.author?.full_name || note.author_name || note.author?.email || "?").charAt(0).toUpperCase()}
                     </span>
                   </div>
                   <div>
-                    <p className="text-sm font-medium">{note.author?.full_name || note.author_name || note.author?.email}</p>
+                    <p className="text-sm font-medium dark:text-white">{note.author?.full_name || note.author_name || note.author?.email}</p>
                     <p className="text-xs text-muted-foreground">
                       {formatDistanceToNow(new Date(note.created_at), { addSuffix: true })}
                     </p>
                   </div>
                 </div>
               </div>
-              <p className="text-sm whitespace-pre-wrap">{note.content}</p>
+              <p className="whitespace-pre-wrap text-sm dark:text-slate-100">{note.content}</p>
             </div>
           ))
         )}

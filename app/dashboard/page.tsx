@@ -261,29 +261,29 @@ export default function DashboardPage() {
       
       <main className="flex-1 overflow-y-auto">
         <div className="container mx-auto space-y-8 p-6 md:p-8">
-          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70">
+          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30">
             <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
               <div className="max-w-3xl space-y-4">
-                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm">
+                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                   <Sparkles className="mr-2 h-3.5 w-3.5" />
                   Operations Console
                 </Badge>
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 md:text-5xl">
+                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-5xl">
                     {`Good to see you, ${firstName}.`}
                   </h1>
-                  <p className="max-w-2xl text-sm leading-6 text-slate-600 md:text-base">
+                  <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 md:text-base">
                     The support queue is live. Keep the backlog moving, spot risk early, and hand off work with confidence.
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600">
-                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm dark:bg-white/10">
                     {stats.total} total tickets in view
                   </div>
-                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm dark:bg-white/10">
                     {currentUser?.role?.replace("_", " ")} access
                   </div>
-                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm">
+                  <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm dark:bg-white/10">
                     {new Date().toLocaleDateString(undefined, { weekday: "long", month: "long", day: "numeric" })}
                   </div>
                 </div>
@@ -294,15 +294,15 @@ export default function DashboardPage() {
                   const Icon = card.icon;
 
                   return (
-                    <div key={card.title} className={`rounded-3xl border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50`}>
+                    <div key={card.title} className={`rounded-3xl border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50 dark:border-white/15 dark:shadow-black/20`}>
                       <div className="mb-4 flex items-center justify-between">
-                        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600">
+                        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-300">
                           {card.title}
                         </span>
-                        <Icon className="h-4 w-4 text-slate-700" />
+                        <Icon className="h-4 w-4 text-slate-700 dark:text-slate-200" />
                       </div>
-                      <div className="text-3xl font-semibold text-slate-900">{card.value}</div>
-                      <p className="mt-2 text-sm leading-5 text-slate-600">{card.description}</p>
+                      <div className="text-3xl font-semibold text-slate-900 dark:text-white">{card.value}</div>
+                      <p className="mt-2 text-sm leading-5 text-slate-600 dark:text-slate-300">{card.description}</p>
                     </div>
                   );
                 })}
@@ -315,13 +315,13 @@ export default function DashboardPage() {
               const Icon = card.icon;
 
               return (
-                <Card key={card.title} className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+                <Card key={card.title} className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
                   <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
                     <div className="space-y-1">
-                      <CardTitle className="text-sm font-medium text-slate-700">{card.title}</CardTitle>
+                      <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-200">{card.title}</CardTitle>
                       <CardDescription>{card.description}</CardDescription>
                     </div>
-                    <div className="rounded-2xl bg-white/80 p-2 shadow-sm">
+                    <div className="rounded-2xl bg-white/80 p-2 shadow-sm dark:bg-white/10">
                       <Icon className={`h-4 w-4 ${card.iconClass}`} />
                     </div>
                   </CardHeader>
@@ -339,13 +339,13 @@ export default function DashboardPage() {
             })}
 
             {isStaffAdmin && (
-              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
                 <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
                   <div className="space-y-1">
-                    <CardTitle className="text-sm font-medium text-slate-700">Unassigned</CardTitle>
+                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-200">Unassigned</CardTitle>
                     <CardDescription>Tickets waiting for an owner.</CardDescription>
                   </div>
-                  <div className="rounded-2xl bg-white/80 p-2 shadow-sm">
+                  <div className="rounded-2xl bg-white/80 p-2 shadow-sm dark:bg-white/10">
                     <UserX className="h-4 w-4 text-yellow-600" />
                   </div>
                 </CardHeader>
@@ -367,9 +367,9 @@ export default function DashboardPage() {
           )}
 
           <div className="space-y-4">
-            <div className="flex flex-col gap-4 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-xl shadow-slate-200/60 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tight">Active Tickets</h2>
+                <h2 className="text-2xl font-semibold tracking-tight dark:text-white">Active Tickets</h2>
                 <p className="text-sm text-muted-foreground">
                   Scan the live queue, then jump into detail with one click.
                 </p>
@@ -377,13 +377,13 @@ export default function DashboardPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="outline"
-                  className="rounded-2xl border-white/70 bg-white/80"
+                  className="rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
                   onClick={() => refreshData(true)}
                 >
                   <RefreshCcw className="mr-2 h-4 w-4" />
                   Refresh Queue
                 </Button>
-                <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm">
+                <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10">
                   <Button 
                     variant={viewMode === "list" ? "secondary" : "ghost"} 
                     size="sm" 
@@ -403,7 +403,7 @@ export default function DashboardPage() {
                     Board
                   </Button>
                 </div>
-                <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm">
+                <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm dark:bg-white/10 dark:text-slate-200">
                   {filteredTickets.length} of {tickets.length} tickets
                 </Badge>
               </div>
@@ -422,7 +422,7 @@ export default function DashboardPage() {
             />
 
             {loading ? (
-              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="flex flex-col items-center gap-2">
                     <Loader2 className="h-8 w-8 animate-spin text-muted-foreground" />
@@ -431,7 +431,7 @@ export default function DashboardPage() {
                 </CardContent>
               </Card>
             ) : filteredTickets.length === 0 ? (
-              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+              <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
                 <CardContent className="flex items-center justify-center h-64">
                   <div className="flex flex-col items-center gap-2 text-center">
                     <Inbox className="h-12 w-12 text-muted-foreground" />

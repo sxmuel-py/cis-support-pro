@@ -25,7 +25,7 @@ export function PriorityBarChart({ data }: PriorityBarChartProps) {
   }));
 
   return (
-    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60">
+    <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20">
       <CardHeader>
         <CardTitle>Priority Distribution</CardTitle>
         <CardDescription>Tickets by priority level</CardDescription>

@@ -259,13 +259,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/35 backdrop-blur-sm">
-      <div className="fixed right-0 top-0 h-full w-full max-w-3xl border-l border-white/50 bg-background/95 shadow-2xl shadow-slate-900/25">
+      <div className="fixed right-0 top-0 h-full w-full max-w-3xl border-l border-white/50 bg-background/95 shadow-2xl shadow-slate-900/25 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-black/40">
         <div className="flex h-full flex-col">
-          <div className="mesh-panel border-b border-white/60 p-6">
+          <div className="mesh-panel border-b border-white/60 p-6 dark:border-white/10">
             <div className="flex items-start justify-between gap-4">
               <div className="space-y-3">
                 <div className="flex flex-wrap items-center gap-2">
-                  <Badge className="rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-slate-700 shadow-sm">
+                  <Badge className="rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.22em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                     Ticket #{ticket.id.slice(0, 8)}
                   </Badge>
                   <Badge variant={statusVariants[ticket.status]} className="capitalize">
@@ -276,13 +276,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                   </Badge>
                 </div>
                 <div>
-                  <h2 className="text-2xl font-semibold text-slate-900">{ticket.subject}</h2>
-                  <p className="mt-1 text-sm text-slate-600">
+                  <h2 className="text-2xl font-semibold text-slate-900 dark:text-white">{ticket.subject}</h2>
+                  <p className="mt-1 text-sm text-slate-600 dark:text-slate-300">
                     Keep context, coordinate owners, and move this ticket forward without losing the story.
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full bg-white/70" onClick={onClose}>
+              <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-white/10 dark:hover:bg-white/15" onClick={onClose}>
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -292,19 +292,19 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                 const Icon = item.icon;
 
                 return (
-                  <div key={item.label} className="rounded-2xl border border-white/70 bg-white/75 p-3 shadow-sm">
-                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500">
+                  <div key={item.label} className="rounded-2xl border border-white/70 bg-white/75 p-3 shadow-sm dark:border-white/10 dark:bg-white/5">
+                    <div className="mb-2 flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.18em] text-slate-500 dark:text-slate-400">
                       <Icon className="h-3.5 w-3.5" />
                       {item.label}
                     </div>
-                    <p className="truncate text-sm font-medium text-slate-800 capitalize">{item.value}</p>
+                    <p className="truncate text-sm font-medium text-slate-800 capitalize dark:text-white">{item.value}</p>
                   </div>
                 );
               })}
             </div>
           </div>
 
-          <div className="border-b border-white/60 bg-white/70 p-4">
+          <div className="border-b border-white/60 bg-white/70 p-4 dark:border-white/10 dark:bg-white/5">
             <div className="flex flex-wrap items-center gap-2">
               {canAcceptReject && (
                 <>
@@ -312,7 +312,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                     <CheckCircle2 className="h-4 w-4" />
                     Accept
                   </Button>
-                  <Button onClick={handleReject} disabled={processing} variant="outline" className="gap-2 rounded-xl bg-white">
+                  <Button onClick={handleReject} disabled={processing} variant="outline" className="gap-2 rounded-xl bg-white dark:bg-white/10 dark:hover:bg-white/15">
                     <XCircle className="h-4 w-4" />
                     Reject
                   </Button>
@@ -358,43 +358,43 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
           <ScrollArea className="flex-1">
             <div className="p-6">
               <Tabs defaultValue="details" className="w-full">
-                <TabsList className="rounded-2xl bg-muted/70 p-1">
-                  <TabsTrigger value="details" className="rounded-xl">Details</TabsTrigger>
-                  <TabsTrigger value="notes" className="rounded-xl">Notes ({details?.notes.length || 0})</TabsTrigger>
-                  <TabsTrigger value="activity" className="rounded-xl">Activity</TabsTrigger>
+                <TabsList className="rounded-2xl bg-muted/70 p-1 dark:bg-white/5">
+                  <TabsTrigger value="details" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Details</TabsTrigger>
+                  <TabsTrigger value="notes" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Notes ({details?.notes.length || 0})</TabsTrigger>
+                  <TabsTrigger value="activity" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Activity</TabsTrigger>
                 </TabsList>
 
                 <TabsContent value="details" className="mt-6 space-y-6">
                   <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
-                    <div className="rounded-3xl border bg-white/80 p-5 shadow-sm">
+                    <div className="rounded-3xl border bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
                       <div className="mb-4">
-                        <h3 className="font-semibold">Conversation</h3>
+                        <h3 className="font-semibold dark:text-white">Conversation</h3>
                         <p className="text-sm text-muted-foreground">
                           Original request as received by the helpdesk.
                         </p>
                       </div>
-                      <div className="rounded-2xl border bg-muted/40 p-4">
-                        <p className="whitespace-pre-wrap text-sm leading-6">{ticket.body}</p>
+                      <div className="rounded-2xl border bg-muted/40 p-4 dark:border-white/10 dark:bg-white/5">
+                        <p className="whitespace-pre-wrap text-sm leading-6 dark:text-slate-100">{ticket.body}</p>
                       </div>
                     </div>
 
                     <div className="space-y-4">
-                      <div className="rounded-3xl border bg-white/80 p-5 shadow-sm">
-                        <h3 className="font-semibold">Assignment State</h3>
+                      <div className="rounded-3xl border bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+                        <h3 className="font-semibold dark:text-white">Assignment State</h3>
                         <p className="mt-1 text-sm text-muted-foreground">
                           {details?.assignedUser
                             ? `Currently owned by ${details.assignedUser.full_name}.`
                             : "No technician owns this ticket yet."}
                         </p>
-                        <div className="mt-4 rounded-2xl bg-muted/50 p-4 text-sm">
+                        <div className="mt-4 rounded-2xl bg-muted/50 p-4 text-sm dark:bg-white/10 dark:text-slate-100">
                           <p><span className="font-medium">Status:</span> {ticket.status.replace("_", " ")}</p>
                           <p className="mt-2"><span className="font-medium">Priority:</span> {ticket.priority}</p>
                           <p className="mt-2"><span className="font-medium">Assignment:</span> {assignmentStatus}</p>
                         </div>
                       </div>
 
-                      <div className="rounded-3xl border bg-white/80 p-5 shadow-sm">
-                        <h3 className="font-semibold">Reporter Contact</h3>
+                      <div className="rounded-3xl border bg-white/80 p-5 shadow-sm dark:border-white/10 dark:bg-white/5">
+                        <h3 className="font-semibold dark:text-white">Reporter Contact</h3>
                         <p className="mt-1 break-all text-sm text-muted-foreground">{ticket.sender_email}</p>
                       </div>
                     </div>
