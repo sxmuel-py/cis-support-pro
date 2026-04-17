@@ -260,23 +260,23 @@ export default function DashboardPage() {
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-6 px-4 pb-24 pt-4 sm:space-y-8 sm:p-6 md:p-8 md:pb-8">
-          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30">
-            <div className="flex flex-col gap-6 p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
+        <div className="container mx-auto space-y-5 px-3 pb-24 pt-3 sm:space-y-8 sm:p-6 md:p-8 md:pb-8">
+          <div className="mesh-panel overflow-hidden rounded-[1.5rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:rounded-[2rem]">
+            <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
               <div className="max-w-3xl space-y-4">
-                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[11px] uppercase tracking-[0.24em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
+                <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                   <Sparkles className="mr-2 h-3.5 w-3.5" />
                   Operations Console
                 </Badge>
                 <div className="space-y-2">
-                  <h1 className="text-3xl font-semibold tracking-tight text-slate-900 dark:text-white md:text-5xl">
+                  <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-5xl">
                     {`Good to see you, ${firstName}.`}
                   </h1>
-                  <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300 md:text-base">
+                  <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
                     The support queue is live. Keep the backlog moving, spot risk early, and hand off work with confidence.
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-3 text-sm text-slate-600 dark:text-slate-300">
+                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300 sm:text-sm">
                   <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm dark:bg-white/10">
                     {stats.total} total tickets in view
                   </div>
@@ -294,15 +294,15 @@ export default function DashboardPage() {
                   const Icon = card.icon;
 
                   return (
-                    <div key={card.title} className={`rounded-3xl border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50 dark:border-white/15 dark:shadow-black/20`}>
-                      <div className="mb-4 flex items-center justify-between">
-                        <span className="text-xs font-semibold uppercase tracking-[0.22em] text-slate-600 dark:text-slate-300">
+                    <div key={card.title} className={`rounded-[1.35rem] border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50 dark:border-white/15 dark:shadow-black/20 sm:rounded-3xl`}>
+                      <div className="mb-3 flex items-center justify-between">
+                        <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
                           {card.title}
                         </span>
                         <Icon className="h-4 w-4 text-slate-700 dark:text-slate-200" />
                       </div>
-                      <div className="text-3xl font-semibold text-slate-900 dark:text-white">{card.value}</div>
-                      <p className="mt-2 text-sm leading-5 text-slate-600 dark:text-slate-300">{card.description}</p>
+                      <div className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">{card.value}</div>
+                      <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-300 sm:text-sm">{card.description}</p>
                     </div>
                   );
                 })}
@@ -310,7 +310,7 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className={`grid gap-4 ${isStaffAdmin ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
+          <div className={`grid gap-3 sm:gap-4 ${isStaffAdmin ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
             {statCards.map((card) => {
               const Icon = card.icon;
 
@@ -367,9 +367,9 @@ export default function DashboardPage() {
           )}
 
           <div className="space-y-4">
-            <div className="flex flex-col gap-4 rounded-[2rem] border border-white/60 bg-white/60 p-5 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-4 rounded-[1.5rem] border border-white/60 bg-white/60 p-4 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 sm:rounded-[2rem] sm:p-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h2 className="text-2xl font-semibold tracking-tight dark:text-white">Active Tickets</h2>
+                <h2 className="text-xl font-semibold tracking-tight dark:text-white sm:text-2xl">Active Tickets</h2>
                 <p className="text-sm text-muted-foreground">
                   Scan the live queue, then jump into detail with one click.
                 </p>
@@ -377,17 +377,17 @@ export default function DashboardPage() {
               <div className="flex flex-wrap items-center gap-3">
                 <Button
                   variant="outline"
-                  className="rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15"
+                  className="w-full rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto"
                   onClick={() => refreshData(true)}
                 >
                   <RefreshCcw className="mr-2 h-4 w-4" />
                   Refresh Queue
                 </Button>
-                <div className="flex items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10">
+                <div className="grid w-full grid-cols-2 items-center rounded-2xl border border-white/70 bg-white/80 p-1 shadow-sm dark:border-white/10 dark:bg-white/10 sm:flex sm:w-auto">
                   <Button 
                     variant={viewMode === "list" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-8 rounded-xl px-3"
+                    className="h-9 rounded-xl px-3"
                     onClick={() => setViewMode("list")}
                   >
                     <LayoutList className="w-4 h-4 mr-1" />
@@ -396,14 +396,14 @@ export default function DashboardPage() {
                   <Button 
                     variant={viewMode === "board" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-8 rounded-xl px-3"
+                    className="h-9 rounded-xl px-3"
                     onClick={() => setViewMode("board")}
                   >
                     <KanbanSquare className="w-4 h-4 mr-1" />
                     Board
                   </Button>
                 </div>
-                <Badge variant="secondary" className="rounded-full px-3 py-1 text-sm dark:bg-white/10 dark:text-slate-200">
+                <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs dark:bg-white/10 dark:text-slate-200 sm:text-sm">
                   {filteredTickets.length} of {tickets.length} tickets
                 </Badge>
               </div>

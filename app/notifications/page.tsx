@@ -62,18 +62,18 @@ export default function NotificationsPage() {
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-6 px-4 pb-24 pt-4 sm:p-6 md:p-8 md:pb-8">
-          <div className="mesh-panel overflow-hidden rounded-[2rem] border border-white/60 p-5 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:p-6">
+        <div className="container mx-auto space-y-5 px-3 pb-24 pt-3 sm:p-6 md:p-8 md:pb-8">
+          <div className="mesh-panel overflow-hidden rounded-[1.5rem] border border-white/60 p-4 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:rounded-[2rem] sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1">
-                <CardTitle className="text-2xl font-semibold tracking-tight dark:text-white">Notifications</CardTitle>
+                <CardTitle className="text-xl font-semibold tracking-tight dark:text-white sm:text-2xl">Notifications</CardTitle>
                 <CardDescription>
                   Updates about assignments, rejections, and ticket activity.
                 </CardDescription>
               </div>
 
               {unreadCount > 0 && (
-                <Button variant="outline" className="dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15" onClick={handleMarkAllAsRead}>
+                <Button variant="outline" className="w-full dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto" onClick={handleMarkAllAsRead}>
                   Mark all as read
                 </Button>
               )}

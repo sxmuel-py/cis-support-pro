@@ -48,9 +48,9 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
 
   return (
     <>
-      <div className="space-y-3 md:hidden">
+      <div className="space-y-2.5 md:hidden">
         {tickets.length === 0 ? (
-          <div className="rounded-[1.5rem] border border-white/60 bg-white/75 p-6 text-center text-sm shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
+          <div className="rounded-[1.25rem] border border-white/60 bg-white/75 p-5 text-center text-sm shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20">
             No tickets found.
           </div>
         ) : tickets.map((ticket) => {
@@ -59,20 +59,20 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
           return (
             <div
               key={ticket.id}
-              className="rounded-[1.5rem] border border-white/60 bg-white/75 p-4 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20"
+              className="rounded-[1.25rem] border border-white/60 bg-white/75 p-3.5 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20"
               onClick={() => onTicketClick?.(ticket)}
             >
               <div className="flex items-start justify-between gap-3">
-                <div className="inline-flex rounded-full bg-muted px-3 py-1 font-mono text-xs dark:bg-white/10">
+                <div className="inline-flex rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] dark:bg-white/10">
                   #{ticket.id.slice(0, 8)}
                 </div>
-                <Badge variant={statusVariants[ticket.status]} className="capitalize">
+                <Badge variant={statusVariants[ticket.status]} className="max-w-[45%] capitalize">
                   {ticket.status.replace("_", " ")}
                 </Badge>
               </div>
-              <div className="mt-3 space-y-3">
+              <div className="mt-3 space-y-2.5">
                 <div>
-                  <p className="text-base font-semibold leading-6 dark:text-white">{ticket.subject}</p>
+                  <p className="text-sm font-semibold leading-5 dark:text-white">{ticket.subject}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1 capitalize">
                       <CircleAlert className="h-3.5 w-3.5" />
@@ -93,10 +93,10 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
                     <span className="truncate">{ticket.sender_email}</span>
                   </p>
                 </div>
-                <div className="flex items-center justify-between gap-3 text-xs text-muted-foreground">
-                  <span>{formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })}</span>
+                <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
+                  <span className="truncate">{formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })}</span>
                   {isSupervisor ? (
-                    <span>{assignedStaff ? assignedStaff.full_name : "Unassigned"}</span>
+                    <span className="max-w-[45%] truncate text-right">{assignedStaff ? assignedStaff.full_name : "Unassigned"}</span>
                   ) : null}
                 </div>
                 {isSupervisor ? (
