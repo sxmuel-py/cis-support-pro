@@ -38,8 +38,8 @@ export function TicketFilters({
   const hasActiveFilters = statusFilter !== "all" || priorityFilter !== "all" || searchQuery;
 
   return (
-    <div className="surface-glass rounded-[1.5rem] border border-white/60 p-3 shadow-lg shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20 sm:rounded-3xl sm:p-4">
-      <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
+    <div className="surface-glass rounded-[1.35rem] border border-white/60 p-3 shadow-lg shadow-slate-200/60 dark:border-white/10 dark:shadow-black/20 sm:rounded-3xl sm:p-4">
+      <div className="flex flex-col gap-3.5 xl:flex-row xl:items-center xl:justify-between">
         <div className="w-full max-w-xl space-y-2">
           <p className="text-[11px] font-semibold uppercase tracking-[0.18em] text-muted-foreground">
             Search And Refine
@@ -50,17 +50,17 @@ export function TicketFilters({
               placeholder="Search by ticket ID, subject, sender, or category..."
               value={searchQuery}
               onChange={(e) => onSearchChange(e.target.value)}
-              className="h-11 rounded-2xl border-white/70 bg-white/80 pl-10 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder:text-slate-400"
+              className="h-10 rounded-2xl border-white/70 bg-white/80 pl-10 text-sm shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white dark:placeholder:text-slate-400 sm:h-11"
             />
           </div>
         </div>
 
-        <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
-          <div className="grid w-full grid-cols-2 gap-1 rounded-2xl bg-muted/70 p-1 dark:bg-white/5 sm:flex sm:w-auto">
+        <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center">
+          <div className={`grid w-full gap-1 rounded-2xl bg-muted/70 p-1 dark:bg-white/5 ${isSupervisor ? "grid-cols-3" : "grid-cols-2"} sm:flex sm:w-auto`}>
             <Button
               variant={filter === "all" ? "default" : "ghost"}
               size="sm"
-              className="rounded-xl"
+              className="h-10 rounded-xl text-xs sm:text-sm"
               onClick={() => onFilterChange("all")}
             >
               All Tickets
@@ -68,7 +68,7 @@ export function TicketFilters({
             <Button
               variant={filter === "mine" ? "default" : "ghost"}
               size="sm"
-              className="rounded-xl"
+              className="h-10 rounded-xl text-xs sm:text-sm"
               onClick={() => onFilterChange("mine")}
             >
               My Queue
@@ -77,7 +77,7 @@ export function TicketFilters({
               <Button
                 variant={filter === "unassigned" ? "default" : "ghost"}
                 size="sm"
-                className="col-span-2 rounded-xl sm:col-span-1"
+                className="h-10 rounded-xl text-xs sm:text-sm"
                 onClick={() => onFilterChange("unassigned")}
               >
                 Unassigned
@@ -86,7 +86,7 @@ export function TicketFilters({
           </div>
 
           <Select value={statusFilter} onValueChange={(value) => onStatusFilterChange(value as TicketStatus | "all")}>
-            <SelectTrigger className="h-11 w-full rounded-2xl border-white/70 bg-white/80 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white sm:w-[150px]">
+            <SelectTrigger className="h-10 w-full rounded-2xl border-white/70 bg-white/80 text-sm shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white sm:h-11 sm:w-[150px]">
               <SelectValue placeholder="Status" />
             </SelectTrigger>
             <SelectContent>
@@ -100,7 +100,7 @@ export function TicketFilters({
           </Select>
 
           <Select value={priorityFilter} onValueChange={(value) => onPriorityFilterChange(value as TicketPriority | "all")}>
-            <SelectTrigger className="h-11 w-full rounded-2xl border-white/70 bg-white/80 shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white sm:w-[150px]">
+            <SelectTrigger className="h-10 w-full rounded-2xl border-white/70 bg-white/80 text-sm shadow-sm dark:border-white/10 dark:bg-white/10 dark:text-white sm:h-11 sm:w-[150px]">
               <SelectValue placeholder="Priority" />
             </SelectTrigger>
             <SelectContent>
@@ -116,7 +116,7 @@ export function TicketFilters({
             <Button
               variant="outline"
               size="sm"
-              className="h-11 w-full rounded-2xl border-white/70 bg-white/70 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto"
+              className="h-10 w-full rounded-2xl border-white/70 bg-white/70 text-sm dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:h-11 sm:w-auto"
               onClick={() => {
                 onStatusFilterChange("all");
                 onPriorityFilterChange("all");

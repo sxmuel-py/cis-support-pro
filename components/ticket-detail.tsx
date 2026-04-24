@@ -271,7 +271,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-950/35 backdrop-blur-sm">
-      <div className="fixed right-0 top-0 h-full w-full max-w-3xl border-l border-white/50 bg-background/95 shadow-2xl shadow-slate-900/25 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-black/40">
+      <div className="fixed inset-x-0 bottom-0 top-14 h-[calc(100dvh-3.5rem)] w-full rounded-t-[1.75rem] border border-white/50 bg-background/95 shadow-2xl shadow-slate-900/25 dark:border-white/10 dark:bg-slate-950/95 dark:shadow-black/40 md:inset-y-0 md:right-0 md:left-auto md:h-full md:max-w-3xl md:rounded-none md:border-l md:border-t-0">
         <div className="flex h-full flex-col">
           <div className="mesh-panel border-b border-white/60 p-3.5 dark:border-white/10 sm:p-6">
             <div className="flex items-start justify-between gap-4">
@@ -288,13 +288,13 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
                   </Badge>
                 </div>
                 <div>
-                  <h2 className="text-lg font-semibold text-slate-900 dark:text-white sm:text-2xl">{ticket.subject}</h2>
+                  <h2 className="text-base font-semibold leading-6 text-slate-900 dark:text-white sm:text-2xl">{ticket.subject}</h2>
                   <p className="mt-1 text-sm leading-5 text-slate-600 dark:text-slate-300">
                     Keep context, coordinate owners, and move this ticket forward without losing the story.
                   </p>
                 </div>
               </div>
-              <Button variant="ghost" size="icon" className="rounded-full bg-white/70 dark:bg-white/10 dark:hover:bg-white/15" onClick={onClose}>
+              <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0 rounded-full bg-white/70 dark:bg-white/10 dark:hover:bg-white/15 sm:h-10 sm:w-10" onClick={onClose}>
                 <X className="h-5 w-5" />
               </Button>
             </div>
@@ -316,7 +316,7 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
             </div>
           </div>
 
-          <div className="border-b border-white/60 bg-white/70 p-3.5 dark:border-white/10 dark:bg-white/5 sm:p-4">
+          <div className="border-b border-white/60 bg-white/70 p-3 dark:border-white/10 dark:bg-white/5 sm:p-4">
             <div className="flex flex-col gap-2 sm:flex-row sm:flex-wrap sm:items-center">
               {canAcceptReject && (
                 <>
@@ -368,16 +368,16 @@ export function TicketDetail({ ticket: initialTicket, currentUser, onClose }: Ti
           </div>
 
           <ScrollArea className="flex-1">
-            <div className="p-3.5 pb-28 sm:p-6 sm:pb-6">
+            <div className="p-3 pb-28 sm:p-6 sm:pb-6">
               <Tabs defaultValue="details" className="w-full">
                 <TabsList className="grid w-full grid-cols-3 rounded-2xl bg-muted/70 p-1 dark:bg-white/5">
-                  <TabsTrigger value="details" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Details</TabsTrigger>
-                  <TabsTrigger value="notes" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Notes ({details?.notes.length || 0})</TabsTrigger>
-                  <TabsTrigger value="activity" className="rounded-xl dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white">Activity</TabsTrigger>
+                  <TabsTrigger value="details" className="rounded-xl px-2 text-xs dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white sm:text-sm">Details</TabsTrigger>
+                  <TabsTrigger value="notes" className="rounded-xl px-2 text-xs dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white sm:text-sm">Notes ({details?.notes.length || 0})</TabsTrigger>
+                  <TabsTrigger value="activity" className="rounded-xl px-2 text-xs dark:data-[state=active]:bg-white/10 dark:data-[state=active]:text-white sm:text-sm">Activity</TabsTrigger>
                 </TabsList>
 
-                <TabsContent value="details" className="mt-6 space-y-6">
-                  <div className="grid gap-6 lg:grid-cols-[1.4fr_0.8fr]">
+                <TabsContent value="details" className="mt-4 space-y-4 sm:mt-6 sm:space-y-6">
+                  <div className="grid gap-4 sm:gap-6 lg:grid-cols-[1.4fr_0.8fr]">
                     <div className="rounded-[1.35rem] border bg-white/80 p-4 shadow-sm dark:border-white/10 dark:bg-white/5 sm:rounded-3xl sm:p-5">
                       <div className="mb-4">
                         <h3 className="font-semibold dark:text-white">Conversation</h3>

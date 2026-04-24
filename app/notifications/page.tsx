@@ -62,7 +62,7 @@ export default function NotificationsPage() {
       <Sidebar />
 
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-5 px-3 pb-24 pt-3 sm:p-6 md:p-8 md:pb-8">
+        <div className="mx-auto w-full max-w-5xl space-y-4 px-2.5 pb-24 pt-2.5 sm:space-y-5 sm:px-6 sm:pt-6 md:px-8 md:pb-8">
           <div className="mesh-panel overflow-hidden rounded-[1.5rem] border border-white/60 p-4 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:rounded-[2rem] sm:p-6">
             <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
               <div className="space-y-1">

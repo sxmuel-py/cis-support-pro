@@ -16,7 +16,7 @@ export interface ToasterToast extends ToastProps {
 }
 
 const TOAST_LIMIT = 1
-const TOAST_REMOVE_DELAY = 1000000
+const TOAST_REMOVE_DELAY = 300
 
 type ToasterToastType = ToasterToast & {
   id: string
@@ -190,6 +190,7 @@ function useToast() {
     ...state,
     toast,
     dismiss: (toastId?: string) => dispatch({ type: "DISMISS_TOAST", toastId }),
+    remove: (toastId?: string) => dispatch({ type: "REMOVE_TOAST", toastId }),
   }
 }
 

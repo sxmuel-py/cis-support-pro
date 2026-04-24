@@ -76,13 +76,13 @@ export function Sidebar() {
 
   return (
     <>
-      <div className="sticky top-0 z-30 border-b border-white/60 bg-background/85 px-3 py-2.5 backdrop-blur lg:hidden dark:border-white/10">
+      <div className="sticky top-0 z-30 border-b border-white/60 bg-background/90 px-3 py-2 backdrop-blur lg:hidden dark:border-white/10">
         <div className="flex items-center justify-between gap-3">
           <Link href="/dashboard" className="flex min-w-0 items-center gap-2.5">
-            <Logo size={30} />
+            <Logo size={26} />
             <div className="min-w-0">
-              <p className="truncate text-[13px] font-semibold leading-none">IT Helpdesk</p>
-              <p className="truncate pt-1 text-[10px] uppercase tracking-[0.16em] text-muted-foreground">Support Command</p>
+              <p className="truncate text-xs font-semibold leading-none">IT Helpdesk</p>
+              <p className="truncate pt-1 text-[9px] uppercase tracking-[0.16em] text-muted-foreground">Support Command</p>
             </div>
           </Link>
           <div className="flex items-center gap-1">
@@ -176,8 +176,8 @@ export function Sidebar() {
         </div>
       </div>
 
-      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/60 bg-background/92 px-2 py-2 backdrop-blur lg:hidden dark:border-white/10">
-        <div className="flex items-stretch gap-1.5">
+      <nav className="fixed inset-x-0 bottom-0 z-30 border-t border-white/60 bg-background/95 px-2 pb-[calc(env(safe-area-inset-bottom)+0.5rem)] pt-2 backdrop-blur lg:hidden dark:border-white/10">
+        <div className="grid grid-cols-[repeat(auto-fit,minmax(0,1fr))] items-stretch gap-1.5">
           {mobileNavigation.map((item) => {
             const isActive = pathname === item.href;
             return (
@@ -185,7 +185,7 @@ export function Sidebar() {
                 key={item.href}
                 href={item.href}
                 className={cn(
-                  "flex min-w-0 flex-1 flex-col items-center justify-center rounded-2xl px-2 py-2 text-[10px] font-medium transition",
+                  "flex min-w-0 flex-col items-center justify-center rounded-2xl px-1.5 py-2 text-[10px] font-medium transition",
                   isActive ? "bg-primary/10 text-primary" : "text-muted-foreground"
                 )}
               >

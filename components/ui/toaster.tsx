@@ -5,15 +5,16 @@ import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
 
 export function Toaster() {
-  const { toasts, dismiss } = useToast();
+  const { toasts, dismiss, remove } = useToast();
+  const visibleToasts = toasts.filter((toast) => toast.open !== false);
 
-  if (toasts.length === 0) {
+  if (visibleToasts.length === 0) {
     return null;
   }
 
   return (
     <div className="pointer-events-none fixed right-4 top-4 z-[100] flex w-full max-w-sm flex-col gap-3">
-      {toasts.map((toast) => {
+      {visibleToasts.map((toast) => {
         const isDestructive = toast.variant === "destructive";
 
         return (
@@ -50,8 +51,12 @@ export function Toaster() {
               <button
                 type="button"
                 aria-label="Dismiss notification"
-                onClick={() => dismiss(toast.id)}
-                className="rounded-full p-1 text-slate-400 transition hover:bg-black/5 hover:text-slate-700"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                  remove(toast.id);
+                }}
+                className="pointer-events-auto rounded-full p-1 text-slate-400 transition hover:bg-black/5 hover:text-slate-700"
               >
                 <X className="h-4 w-4" />
               </button>

@@ -59,20 +59,20 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
           return (
             <div
               key={ticket.id}
-              className="rounded-[1.25rem] border border-white/60 bg-white/75 p-3.5 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20"
+              className="rounded-[1.2rem] border border-white/60 bg-white/75 p-3 shadow-lg shadow-slate-200/50 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20"
               onClick={() => onTicketClick?.(ticket)}
             >
               <div className="flex items-start justify-between gap-3">
                 <div className="inline-flex rounded-full bg-muted px-2.5 py-1 font-mono text-[11px] dark:bg-white/10">
                   #{ticket.id.slice(0, 8)}
                 </div>
-                <Badge variant={statusVariants[ticket.status]} className="max-w-[45%] capitalize">
+                <Badge variant={statusVariants[ticket.status]} className="max-w-[48%] shrink-0 capitalize">
                   {ticket.status.replace("_", " ")}
                 </Badge>
               </div>
-              <div className="mt-3 space-y-2.5">
+              <div className="mt-2.5 space-y-2.5">
                 <div>
-                  <p className="text-sm font-semibold leading-5 dark:text-white">{ticket.subject}</p>
+                  <p className="line-clamp-2 text-[15px] font-semibold leading-5 dark:text-white">{ticket.subject}</p>
                   <div className="mt-2 flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                     <span className="inline-flex items-center gap-1 capitalize">
                       <CircleAlert className="h-3.5 w-3.5" />
@@ -93,10 +93,10 @@ export function TicketList({ tickets, staff, currentUser, onTicketClick }: Ticke
                     <span className="truncate">{ticket.sender_email}</span>
                   </p>
                 </div>
-                <div className="flex items-center justify-between gap-2 text-[11px] text-muted-foreground">
-                  <span className="truncate">{formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })}</span>
+                <div className="flex items-start justify-between gap-2 text-[11px] text-muted-foreground">
+                  <span className="max-w-[44%] truncate">{formatDistanceToNow(new Date(ticket.created_at), { addSuffix: true })}</span>
                   {isSupervisor ? (
-                    <span className="max-w-[45%] truncate text-right">{assignedStaff ? assignedStaff.full_name : "Unassigned"}</span>
+                    <span className="max-w-[50%] truncate text-right">{assignedStaff ? assignedStaff.full_name : "Unassigned"}</span>
                   ) : null}
                 </div>
                 {isSupervisor ? (

@@ -260,23 +260,23 @@ export default function DashboardPage() {
       <Sidebar />
       
       <main className="flex-1 overflow-y-auto">
-        <div className="container mx-auto space-y-5 px-3 pb-24 pt-3 sm:space-y-8 sm:p-6 md:p-8 md:pb-8">
+        <div className="mx-auto w-full max-w-7xl space-y-4 px-2.5 pb-24 pt-2.5 sm:space-y-8 sm:px-6 sm:pt-6 md:px-8 md:pb-8">
           <div className="mesh-panel overflow-hidden rounded-[1.5rem] border border-white/60 shadow-2xl shadow-slate-200/70 dark:border-white/10 dark:shadow-black/30 sm:rounded-[2rem]">
-            <div className="flex flex-col gap-4 p-4 sm:gap-6 sm:p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
-              <div className="max-w-3xl space-y-4">
+            <div className="flex flex-col gap-4 p-3.5 sm:gap-6 sm:p-6 md:p-8 xl:flex-row xl:items-end xl:justify-between">
+              <div className="max-w-3xl space-y-3 sm:space-y-4">
                 <Badge className="w-fit rounded-full border-0 bg-white/80 px-3 py-1 text-[10px] uppercase tracking-[0.2em] text-slate-700 shadow-sm dark:bg-white/10 dark:text-slate-200">
                   <Sparkles className="mr-2 h-3.5 w-3.5" />
                   Operations Console
                 </Badge>
-                <div className="space-y-2">
-                  <h1 className="text-2xl font-semibold tracking-tight text-slate-900 dark:text-white sm:text-3xl md:text-5xl">
+                <div className="space-y-1.5 sm:space-y-2">
+                  <h1 className="max-w-[12ch] text-[1.85rem] font-semibold leading-[1.02] tracking-tight text-slate-900 dark:text-white sm:max-w-none sm:text-3xl md:text-5xl">
                     {`Good to see you, ${firstName}.`}
                   </h1>
-                  <p className="max-w-2xl text-sm leading-6 text-slate-600 dark:text-slate-300">
+                  <p className="max-w-2xl text-[13px] leading-5 text-slate-600 dark:text-slate-300 sm:text-sm sm:leading-6">
                     The support queue is live. Keep the backlog moving, spot risk early, and hand off work with confidence.
                   </p>
                 </div>
-                <div className="flex flex-wrap items-center gap-2 text-xs text-slate-600 dark:text-slate-300 sm:text-sm">
+                <div className="grid gap-2 text-[11px] text-slate-600 dark:text-slate-300 sm:flex sm:flex-wrap sm:items-center sm:text-sm">
                   <div className="rounded-full bg-white/80 px-3 py-1 shadow-sm dark:bg-white/10">
                     {stats.total} total tickets in view
                   </div>
@@ -289,20 +289,20 @@ export default function DashboardPage() {
                 </div>
               </div>
 
-              <div className="grid gap-3 sm:grid-cols-3 xl:min-w-[460px]">
+              <div className="grid gap-2.5 sm:grid-cols-3 xl:min-w-[460px]">
                 {highlightCards.map((card) => {
                   const Icon = card.icon;
 
                   return (
-                    <div key={card.title} className={`rounded-[1.35rem] border border-white/70 bg-gradient-to-br ${card.accent} p-4 shadow-lg shadow-slate-200/50 dark:border-white/15 dark:shadow-black/20 sm:rounded-3xl`}>
-                      <div className="mb-3 flex items-center justify-between">
-                        <span className="text-[11px] font-semibold uppercase tracking-[0.18em] text-slate-600 dark:text-slate-300">
+                    <div key={card.title} className={`rounded-[1.2rem] border border-white/70 bg-gradient-to-br ${card.accent} p-3.5 shadow-lg shadow-slate-200/50 dark:border-white/15 dark:shadow-black/20 sm:rounded-3xl sm:p-4`}>
+                      <div className="mb-2 flex items-center justify-between">
+                        <span className="text-[10px] font-semibold uppercase tracking-[0.16em] text-slate-600 dark:text-slate-300 sm:text-[11px]">
                           {card.title}
                         </span>
                         <Icon className="h-4 w-4 text-slate-700 dark:text-slate-200" />
                       </div>
-                      <div className="text-2xl font-semibold text-slate-900 dark:text-white sm:text-3xl">{card.value}</div>
-                      <p className="mt-2 text-xs leading-5 text-slate-600 dark:text-slate-300 sm:text-sm">{card.description}</p>
+                      <div className="text-xl font-semibold text-slate-900 dark:text-white sm:text-3xl">{card.value}</div>
+                      <p className="mt-1.5 text-[12px] leading-5 text-slate-600 dark:text-slate-300 sm:mt-2 sm:text-sm">{card.description}</p>
                     </div>
                   );
                 })}
@@ -310,25 +310,25 @@ export default function DashboardPage() {
             </div>
           </div>
 
-          <div className={`grid gap-3 sm:gap-4 ${isStaffAdmin ? "sm:grid-cols-2 xl:grid-cols-5" : "sm:grid-cols-2 xl:grid-cols-4"}`}>
+          <div className={`grid grid-cols-2 gap-2.5 sm:gap-4 ${isStaffAdmin ? "xl:grid-cols-5" : "xl:grid-cols-4"}`}>
             {statCards.map((card) => {
               const Icon = card.icon;
 
               return (
                 <Card key={card.title} className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
-                  <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                  <CardHeader className="flex flex-row items-start justify-between space-y-0 px-3.5 pb-2 pt-3.5 sm:pb-3">
                     <div className="space-y-1">
-                      <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-200">{card.title}</CardTitle>
-                      <CardDescription>{card.description}</CardDescription>
+                      <CardTitle className="text-xs font-medium text-slate-700 dark:text-slate-200 sm:text-sm">{card.title}</CardTitle>
+                      <CardDescription className="text-[11px] leading-4 sm:text-sm">{card.description}</CardDescription>
                     </div>
-                    <div className="rounded-2xl bg-white/80 p-2 shadow-sm dark:bg-white/10">
-                      <Icon className={`h-4 w-4 ${card.iconClass}`} />
+                    <div className="rounded-2xl bg-white/80 p-1.5 shadow-sm dark:bg-white/10 sm:p-2">
+                      <Icon className={`h-3.5 w-3.5 sm:h-4 sm:w-4 ${card.iconClass}`} />
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex items-end justify-between gap-4">
-                      <div className="text-3xl font-semibold tracking-tight">{card.value}</div>
-                      <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                  <CardContent className="px-3.5 pb-3.5 pt-0">
+                    <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                      <div className="text-2xl font-semibold tracking-tight sm:text-3xl">{card.value}</div>
+                      <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground sm:text-xs">
                         <ArrowUpRight className="h-3.5 w-3.5" />
                         {card.meta}
                       </div>
@@ -340,19 +340,19 @@ export default function DashboardPage() {
 
             {isStaffAdmin && (
               <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
-                <CardHeader className="flex flex-row items-start justify-between space-y-0 pb-3">
+                <CardHeader className="flex flex-row items-start justify-between space-y-0 px-3.5 pb-2 pt-3.5 sm:pb-3">
                   <div className="space-y-1">
-                    <CardTitle className="text-sm font-medium text-slate-700 dark:text-slate-200">Unassigned</CardTitle>
-                    <CardDescription>Tickets waiting for an owner.</CardDescription>
+                    <CardTitle className="text-xs font-medium text-slate-700 dark:text-slate-200 sm:text-sm">Unassigned</CardTitle>
+                    <CardDescription className="text-[11px] leading-4 sm:text-sm">Tickets waiting for an owner.</CardDescription>
                   </div>
-                  <div className="rounded-2xl bg-white/80 p-2 shadow-sm dark:bg-white/10">
-                    <UserX className="h-4 w-4 text-yellow-600" />
+                  <div className="rounded-2xl bg-white/80 p-1.5 shadow-sm dark:bg-white/10 sm:p-2">
+                    <UserX className="h-3.5 w-3.5 text-yellow-600 sm:h-4 sm:w-4" />
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="flex items-end justify-between gap-4">
-                    <div className="text-3xl font-semibold tracking-tight">{stats.unassigned}</div>
-                    <div className="flex items-center gap-1 text-xs font-medium text-muted-foreground">
+                <CardContent className="px-3.5 pb-3.5 pt-0">
+                  <div className="flex flex-col gap-1.5 sm:flex-row sm:items-end sm:justify-between sm:gap-4">
+                    <div className="text-2xl font-semibold tracking-tight sm:text-3xl">{stats.unassigned}</div>
+                    <div className="flex items-center gap-1 text-[11px] font-medium text-muted-foreground sm:text-xs">
                       <ArrowUpRight className="h-3.5 w-3.5" />
                       Dispatch queue
                     </div>
@@ -367,17 +367,17 @@ export default function DashboardPage() {
           )}
 
           <div className="space-y-4">
-            <div className="flex flex-col gap-4 rounded-[1.5rem] border border-white/60 bg-white/60 p-4 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 sm:rounded-[2rem] sm:p-5 lg:flex-row lg:items-center lg:justify-between">
+            <div className="flex flex-col gap-3 rounded-[1.35rem] border border-white/60 bg-white/60 p-3.5 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:bg-white/5 dark:shadow-black/20 sm:rounded-[2rem] sm:p-5 lg:flex-row lg:items-center lg:justify-between">
               <div>
-                <h2 className="text-xl font-semibold tracking-tight dark:text-white sm:text-2xl">Active Tickets</h2>
-                <p className="text-sm text-muted-foreground">
+                <h2 className="text-lg font-semibold tracking-tight dark:text-white sm:text-2xl">Active Tickets</h2>
+                <p className="text-[13px] text-muted-foreground sm:text-sm">
                   Scan the live queue, then jump into detail with one click.
                 </p>
               </div>
-              <div className="flex flex-wrap items-center gap-3">
+              <div className="flex flex-col gap-2.5 sm:flex-row sm:flex-wrap sm:items-center sm:gap-3">
                 <Button
                   variant="outline"
-                  className="w-full rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:w-auto"
+                  className="h-10 w-full rounded-2xl border-white/70 bg-white/80 dark:border-white/10 dark:bg-white/10 dark:hover:bg-white/15 sm:h-11 sm:w-auto"
                   onClick={() => refreshData(true)}
                 >
                   <RefreshCcw className="mr-2 h-4 w-4" />
@@ -387,7 +387,7 @@ export default function DashboardPage() {
                   <Button 
                     variant={viewMode === "list" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-9 rounded-xl px-3"
+                    className="h-10 rounded-xl px-3"
                     onClick={() => setViewMode("list")}
                   >
                     <LayoutList className="w-4 h-4 mr-1" />
@@ -396,14 +396,14 @@ export default function DashboardPage() {
                   <Button 
                     variant={viewMode === "board" ? "secondary" : "ghost"} 
                     size="sm" 
-                    className="h-9 rounded-xl px-3"
+                    className="h-10 rounded-xl px-3"
                     onClick={() => setViewMode("board")}
                   >
                     <KanbanSquare className="w-4 h-4 mr-1" />
                     Board
                   </Button>
                 </div>
-                <Badge variant="secondary" className="rounded-full px-3 py-1 text-xs dark:bg-white/10 dark:text-slate-200 sm:text-sm">
+                <Badge variant="secondary" className="justify-center rounded-full px-3 py-1 text-xs dark:bg-white/10 dark:text-slate-200 sm:text-sm">
                   {filteredTickets.length} of {tickets.length} tickets
                 </Badge>
               </div>

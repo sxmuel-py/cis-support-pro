@@ -22,7 +22,7 @@ export function TeamWorkload({ stats }: TeamWorkloadProps) {
 
   return (
     <Card className="surface-glass border-white/60 shadow-xl shadow-slate-200/60 dark:border-white/10 dark:shadow-black/25">
-      <CardHeader className="flex flex-row items-start justify-between space-y-0">
+      <CardHeader className="flex flex-col gap-3 space-y-0 sm:flex-row sm:items-start sm:justify-between">
         <div className="space-y-1">
           <CardTitle className="flex items-center gap-2 text-base">
             <Users className="h-5 w-5" />
@@ -32,13 +32,13 @@ export function TeamWorkload({ stats }: TeamWorkloadProps) {
             Live distribution across the active support bench.
           </p>
         </div>
-        <Badge variant="secondary" className="rounded-full px-3 py-1">
+        <Badge variant="secondary" className="w-fit rounded-full px-3 py-1">
           {totalLoad} open assignments
         </Badge>
       </CardHeader>
-      <CardContent className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+      <CardContent className="grid gap-3 sm:gap-4 md:grid-cols-2 xl:grid-cols-3">
         {stats.map((tech) => (
-          <div key={tech.id} className="rounded-2xl border bg-white/70 p-4 shadow-sm dark:border-white/10 dark:bg-white/5">
+          <div key={tech.id} className="rounded-[1.25rem] border bg-white/70 p-3.5 shadow-sm dark:border-white/10 dark:bg-white/5 sm:rounded-2xl sm:p-4">
             <div className="mb-3 flex items-center justify-between gap-3">
               <div className="min-w-0">
                 <p className="truncate font-medium dark:text-white">{tech.name}</p>
