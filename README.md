@@ -1,243 +1,250 @@
 <div align="center">
 
-# 🎯 CIS Support Pro
+# CIS Support Pro
 
-### Built by Samuel for the IT team at Children's International School Lagos
+### Internal IT Helpdesk Platform for Children's International School Lagos
 
 [![Next.js](https://img.shields.io/badge/Next.js-15-black?style=flat-square&logo=next.js)](https://nextjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5-blue?style=flat-square&logo=typescript)](https://www.typescriptlang.org/)
 [![Supabase](https://img.shields.io/badge/Supabase-Powered-green?style=flat-square&logo=supabase)](https://supabase.com/)
 [![Tailwind CSS](https://img.shields.io/badge/Tailwind-CSS-38B2AC?style=flat-square&logo=tailwind-css)](https://tailwindcss.com/)
 
-*Because dealing with cluttered email threads and lost tickets is so 2020* 📧❌
+A custom IT service management system that converts support emails into trackable tickets, supports role-based workflows, and gives the IT team a real-time operational dashboard.
 
 </div>
 
 ---
 
-## 🤔 What is this?
+## Overview
 
-This is a custom-built help desk system I created to replace our old cluttered ticket system. Instead of dealing with messy email threads and losing track of requests, we now have a clean dashboard where the IT team can see everything at a glance.
+CIS Support Pro is a custom-built helpdesk platform designed for the IT operations workflow at Children's International School Lagos. It replaces scattered support inbox activity with a structured ticket queue, automated email intake, AI-assisted triage, internal notes, assignment tracking, and role-aware dashboards.
 
-The system automatically pulls emails from our support inbox (`cishelpdesk@cislagos.org`), creates tickets, and even uses AI to filter out spam and marketing emails so we only see real support requests.
-
-## 💡 Why I built this
-
-Working IT support at CIS Lagos, I got tired of:
-
-- 📨 Digging through email threads to find ticket details
-- 🤷‍♂️ Losing track of who's working on what
-- 🗑️ Spam and marketing emails mixed with real support requests
-- 📝 No easy way to add internal notes without emailing everyone
-
-So I built this. It's designed specifically for how **we** work at CIS.
+The system connects to a support Gmail inbox, processes unread emails, filters noise, creates tickets for valid support requests, detects email replies, and appends follow-ups to existing tickets instead of creating duplicates.
 
 ---
 
-## ✨ Features
+## Problem Solved
+
+The previous support workflow relied heavily on email threads and manual tracking, which created several operational problems:
+
+- Support requests could be buried in long inbox threads.
+- It was difficult to see which technician owned each issue.
+- Replies and follow-ups could become disconnected from the original request.
+- Spam, newsletters, and automated notifications mixed with real IT requests.
+- The team lacked a single operational dashboard for queue visibility.
+
+CIS Support Pro centralizes this workflow into a dashboard built around ticket ownership, status, priority, internal notes, and real-time updates.
+
+---
+
+## Key Features
 
 | Feature | Description |
-|---------|-------------|
-| 📬 **Email Integration** | Automatically pulls emails from Gmail and creates tickets |
-| 🤖 **AI Triage** | Uses Groq AI to filter junk emails (newsletters, marketing, etc.) |
-| 📊 **Clean Dashboard** | See all open tickets, who they're assigned to, and their status |
-| 💬 **Internal Notes** | Add notes that only IT staff can see |
-| ⚡ **Real-time Updates** | When someone updates a ticket, everyone sees it instantly |
-| 🌙 **Dark Mode** | Because we're in the server room a lot |
+| --- | --- |
+| Email-to-ticket intake | Pulls unread support emails from Gmail and creates structured tickets. |
+| AI-assisted triage | Uses Groq/OpenAI-compatible classification with keyword fallback for reliability. |
+| Duplicate prevention | Tracks processed Gmail message IDs and Gmail thread IDs to reduce duplicate tickets. |
+| Reply handling | Adds email replies to existing tickets as internal notes when thread or subject matching succeeds. |
+| Role-based dashboard | Supports technician, supervisor, HOD, and SIMS manager workflows. |
+| SIMS ticket separation | Keeps SIMS-related requests visible to SIMS-specific roles while filtering them from general technician queues. |
+| Internal notes | Allows ticket discussion and follow-up tracking without replying to the full email thread. |
+| Real-time updates | Uses Supabase real-time subscriptions so queue changes appear without manual refresh. |
+| Ticket board and list views | Supports both tabular queue review and Kanban-style ticket movement. |
+| Cron-secured processing | Protects the email processor endpoint with a bearer token secret. |
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
-<table>
-<tr>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/nextjs/nextjs-original.svg" width="48" height="48" alt="Next.js" />
-<br>Next.js 15
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/typescript/typescript-original.svg" width="48" height="48" alt="TypeScript" />
-<br>TypeScript
-</td>
-<td align="center" width="96">
-<img src="https://www.vectorlogo.zone/logos/supabase/supabase-icon.svg" width="48" height="48" alt="Supabase" />
-<br>Supabase
-</td>
-<td align="center" width="96">
-<img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/tailwindcss/tailwindcss-plain.svg" width="48" height="48" alt="Tailwind" />
-<br>Tailwind CSS
-</td>
-</tr>
-</table>
-
-Plus: **Groq AI** for email classification (free and blazing fast ⚡)
+| Area | Technology |
+| --- | --- |
+| Frontend | Next.js 15, React 19, TypeScript |
+| Styling | Tailwind CSS, Radix UI, Lucide React |
+| Backend | Next.js App Router, Server Actions, API Routes |
+| Database/Auth | Supabase |
+| Email Integration | Gmail API via OAuth2 or Google Workspace service account |
+| AI Triage | Groq/OpenAI-compatible chat completion API with keyword fallback |
+| Deployment | Vercel |
 
 ---
 
-## 🚀 Setup
-
-If you're setting this up for another school or organization:
-
-### 1️⃣ Clone and install
-
-```bash
-git clone <repo-url>
-cd "IT SUPPORT"
-npm install
-```
-
-### 2️⃣ Set up Supabase
-
-- Create a project at [supabase.com](https://supabase.com)
-- Run the migrations in `supabase/migrations/` in order (001 → 006)
-- Copy your project URL and keys to `.env.local`
-
-### 3️⃣ Set up Gmail
-
-- Create a Google Cloud project
-- Enable Gmail API
-- Create OAuth2 credentials
-- Run `node scripts/get-gmail-token.js` to get your refresh token
-- Add credentials to `.env.local`
-
-### 4️⃣ Set up AI (optional but recommended)
-
-- Get a free API key from [groq.com](https://groq.com)
-- Add to `.env.local` as `GROQ_API_KEY`
-
-### 5️⃣ Run it
-
-```bash
-npm run dev
-```
-
-Open [http://localhost:3000](http://localhost:3000) and you're good to go! 🎉
-
----
-
-## 🔄 How it works
+## Architecture
 
 ```mermaid
 graph LR
-    A[📧 Email arrives] --> B[🤖 AI checks it]
-    B --> C{Real support request?}
-    C -->|Yes| D[🎫 Create ticket]
-    C -->|No| E[🗑️ Mark as junk]
-    D --> F[📨 Send auto-reply]
-    F --> G[👨‍💻 IT team works on it]
-    G --> H[⚡ Real-time updates]
+    A[Support Email Inbox] --> B[Cron Endpoint]
+    B --> C[Gmail API Fetch]
+    C --> D[Duplicate / Thread Check]
+    D --> E{Existing Ticket?}
+    E -->|Yes| F[Add Reply as Note]
+    E -->|No| G[AI / Keyword Triage]
+    G --> H{Support Request?}
+    H -->|Yes| I[Create Ticket]
+    H -->|No| J[Mark as Junk]
+    I --> K[Send Auto-Reply]
+    I --> L[Supabase Dashboard]
+    F --> L
 ```
 
-1. **Email comes in** → Gmail API fetches it
-2. **AI checks it** → Groq determines if it's a real support request or junk
-3. **Ticket created** → Real requests become tickets in the dashboard
-4. **Auto-reply sent** → Customer gets a confirmation email with ticket number
-5. **IT team works on it** → Assign, add notes, update status
-6. **Real-time updates** → Everyone sees changes instantly
+### Email Processing Flow
+
+1. A secured cron request hits `/api/cron/process-emails`.
+2. The system verifies the `CRON_SECRET` bearer token.
+3. Gmail unread inbox messages are fetched.
+4. Already processed message IDs are skipped.
+5. Gmail thread IDs are checked against existing tickets.
+6. Replies are added as notes instead of creating duplicate tickets.
+7. New emails are classified as support requests or junk.
+8. Valid support requests become tickets.
+9. Auto-replies are sent to the requester.
+10. Tickets appear in the real-time dashboard.
 
 ---
 
-## 📁 Project Structure
+## Project Structure
 
-```
-IT SUPPORT/
-├── 📱 app/
-│   ├── dashboard/              # Main ticket dashboard
-│   ├── api/cron/process-emails # Email processing endpoint
-│   └── actions/                # Server actions (assign, add notes, etc.)
-├── 🧩 components/
-│   ├── ticket-list.tsx         # Ticket table
-│   ├── ticket-detail.tsx       # Ticket details sidebar
-│   └── ticket-notes.tsx        # Internal notes
-├── 📚 lib/
-│   ├── gmail/                  # Gmail API integration
-│   └── triage/                 # AI email classification
-└── 🗄️ supabase/migrations/     # Database schema
+```txt
+cis-support-pro/
+├── app/
+│   ├── actions/                 # Server actions for dashboard data and ticket operations
+│   ├── api/cron/process-emails/  # Secured Gmail email-processing endpoint
+│   ├── auth/                     # Login and authentication routes
+│   └── dashboard/                # Protected IT dashboard pages
+├── components/                   # Dashboard, ticket, filter, board, and UI components
+├── lib/
+│   ├── gmail/                    # Gmail client, fetching, sending, and templates
+│   ├── supabase/                 # Supabase browser/server/middleware clients
+│   ├── triage/                   # AI and keyword-based email classification
+│   └── types.ts                  # Shared application types
+├── public/                       # Static assets
+└── supabase/migrations/          # Database schema migrations
 ```
 
 ---
 
-## 🔐 Environment Variables
+## Environment Variables
 
-Copy `.env.local` and fill in your credentials:
+Create a `.env.local` file using `.env.example` as a reference.
 
 ```env
 # Supabase
-NEXT_PUBLIC_SUPABASE_URL=your_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
-SUPABASE_SERVICE_ROLE_KEY=your_service_key
+NEXT_PUBLIC_SUPABASE_URL=
+NEXT_PUBLIC_SUPABASE_ANON_KEY=
+SUPABASE_SERVICE_ROLE_KEY=
 
-# Gmail OAuth
-GMAIL_CLIENT_ID=your_client_id
-GMAIL_CLIENT_SECRET=your_secret
-GMAIL_REFRESH_TOKEN=your_refresh_token
-GMAIL_INBOX_EMAIL=your_support_email
+# Gmail OAuth2 option
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
 
-# AI (optional)
-GROQ_API_KEY=your_groq_key
+# Google Workspace service account option
+GOOGLE_SERVICE_ACCOUNT_EMAIL=
+GOOGLE_PRIVATE_KEY=
+GMAIL_INBOX_EMAIL=
+
+# AI triage
+GROQ_API_KEY=
+OPENAI_API_KEY=
 
 # Cron security
-CRON_SECRET=random_string
+CRON_SECRET=
+```
+
+> Never commit real API keys, Gmail refresh tokens, service role keys, or private keys.
+
+---
+
+## Local Setup
+
+```bash
+git clone https://github.com/sxmuel-py/cis-support-pro.git
+cd cis-support-pro
+npm install
+cp .env.example .env.local
+npm run dev
+```
+
+Open `http://localhost:3000`.
+
+---
+
+## Supabase Setup
+
+1. Create a Supabase project.
+2. Run the migrations in `supabase/migrations/` in order.
+3. Add the Supabase URL, anon key, and service role key to `.env.local`.
+4. Configure authentication for authorized IT staff accounts.
+5. Ensure row-level security policies match the intended role-based access model.
+
+---
+
+## Gmail Setup
+
+The application supports two Gmail authentication modes:
+
+### OAuth2
+
+Use this for a bot mailbox or personal Gmail-style integration.
+
+Required variables:
+
+```env
+GMAIL_CLIENT_ID=
+GMAIL_CLIENT_SECRET=
+GMAIL_REFRESH_TOKEN=
+```
+
+### Google Workspace Service Account
+
+Use this for Workspace environments with domain-wide delegation.
+
+Required variables:
+
+```env
+GOOGLE_SERVICE_ACCOUNT_EMAIL=
+GOOGLE_PRIVATE_KEY=
+GMAIL_INBOX_EMAIL=
 ```
 
 ---
 
-## 🚢 Deployment
+## Deployment Notes
 
-I deployed this on **Vercel**:
+This project is designed to run on Vercel.
 
-1. Push to GitHub
-2. Import to Vercel
-3. Add environment variables
-4. Deploy
-5. Set up a cron job to hit `/api/cron/process-emails` every 5 minutes
+1. Import the repository into Vercel.
+2. Add all required environment variables.
+3. Deploy the application.
+4. Configure a scheduled job to call:
 
-**Live at:** `https://cis-pro-support.vercel.app`
+```txt
+GET /api/cron/process-emails
+Authorization: Bearer <CRON_SECRET>
+```
 
----
-
-## 📝 Notes
-
-- ✅ Built specifically for CIS Lagos IT team workflows
-- ✅ Email replies to tickets automatically become notes
-- ✅ The triage system learns from our patterns
-- ✅ All internal - no customer-facing portal (yet)
+Recommended schedule: every 5 minutes, depending on mailbox volume and operational needs.
 
 ---
 
-## 🤝 Questions?
+## Security Notes
 
-**CIS Lagos IT team:** You know where to find me 😉
-
-**Other schools:** Feel free to use this! Just know it's built for our specific setup. You might need to tweak things.
-
----
-
-## ☕ Support
-
-If this project helped you or your school, consider buying me a coffee! It helps keep the late-night coding sessions going ☕
-
-<div align="center">
-
-[![Buy Me A Coffee](https://img.shields.io/badge/Buy%20Me%20A%20Coffee-FFDD00?style=for-the-badge&logo=buy-me-a-coffee&logoColor=black)](https://buymeacoffee.com/yourusername)
-[![PayPal](https://img.shields.io/badge/PayPal-00457C?style=for-the-badge&logo=paypal&logoColor=white)](https://paypal.me/yourusername)
-[![Ko-fi](https://img.shields.io/badge/Ko--fi-F16061?style=for-the-badge&logo=ko-fi&logoColor=white)](https://ko-fi.com/yourusername)
-[![GitHub Sponsors](https://img.shields.io/badge/GitHub%20Sponsors-EA4AAA?style=for-the-badge&logo=github-sponsors&logoColor=white)](https://github.com/sponsors/yourusername)
-
-**Crypto:**
-
-- **Bitcoin (BTC):** `your-btc-address`
-- **Ethereum (ETH):** `your-eth-address`
-- **USDT (TRC20):** `your-usdt-address`
-
-</div>
+- The email processor is protected by `CRON_SECRET`.
+- Supabase service role usage is limited to backend processing routes.
+- Dashboard access is protected through Supabase authentication.
+- Ticket visibility is filtered by user role.
+- Secrets must be configured through environment variables only.
+- The AI triage layer should be treated as advisory; final workflow decisions should remain auditable through ticket history.
 
 ---
 
-<div align="center">
+## Current Status
 
-### Built with ☕ and late nights in the CIS server room
+CIS Support Pro is an internal operational tool built around real IT support workflows. The current version includes email intake, ticket creation, role-based dashboard views, AI-assisted classification, duplicate handling, reply-to-note handling, and real-time queue updates.
 
-**Made with ❤️ by Samuel**
+Planned improvements may include SLA tracking, reporting exports, user-facing ticket status pages, improved Gmail threading headers, and stronger transactional guarantees during email processing.
 
-</div>
+---
+
+## Author
+
+Built by Samuel Olatidoye as a custom internal IT support platform for school IT operations.
