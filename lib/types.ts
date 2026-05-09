@@ -2,6 +2,7 @@ export type TicketStatus = "open" | "in_progress" | "pending" | "resolved" | "cl
 export type TicketPriority = "low" | "medium" | "high" | "urgent";
 export type TicketCategory = "hardware" | "software" | "network" | "access" | "email" | "sims" | "other";
 export type UserRole = "supervisor" | "technician" | "sims_manager" | "hod";
+export type EmailClassification = "support_request" | "junk";
 
 export interface User {
   id: string;
@@ -45,9 +46,10 @@ export interface InboundEmail {
 }
 
 export interface TriageResult {
-  classification: "support" | "junk";
-  confidence: number;
-  reason?: string;
+  classification: EmailClassification;
+  priority: TicketPriority;
+  category: TicketCategory;
+  reasoning: string;
 }
 
 export interface ActivityLog {
