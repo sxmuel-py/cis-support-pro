@@ -1,12 +1,45 @@
 import OpenAI from 'openai';
 
-import { TicketCategory, TicketPriority } from "@/lib/types";
+import { TicketCategory, TicketPriority, TriageResult } from "@/lib/types";
 
-export interface TriageResult {
-  classification: 'support_request' | 'junk';
-  priority: TicketPriority;
-  category: TicketCategory;
-  reasoning: string;
+const ALLOWED_CLASSIFICATIONS = ["support_request", "junk"] as const;
+const ALLOWED_PRIORITIES: TicketPriority[] = ["low", "medium", "high", "urgent"];
+const ALLOWED_CATEGORIES: TicketCategory[] = ["hardware", "software", "network", "access", "email", "sims", "other"];
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === "object" && value !== null && !Array.isArray(value);
+}
+
+function validateTriageResult(value: unknown): TriageResult {
+  if (!isRecord(value)) {
+    throw new Error("Invalid LLM response: expected JSON object");
+  }
+
+  const classification = value.classification;
+  const priority = value.priority;
+  const category = value.category;
+  const reasoning = value.reasoning;
+
+  if (typeof classification !== "string" || !ALLOWED_CLASSIFICATIONS.includes(classification as TriageResult["classification"])) {
+    throw new Error(`Invalid LLM classification: ${String(classification)}`);
+  }
+
+  if (typeof priority !== "string" || !ALLOWED_PRIORITIES.includes(priority as TicketPriority)) {
+    throw new Error(`Invalid LLM priority: ${String(priority)}`);
+  }
+
+  if (typeof category !== "string" || !ALLOWED_CATEGORIES.includes(category as TicketCategory)) {
+    throw new Error(`Invalid LLM category: ${String(category)}`);
+  }
+
+  return {
+    classification: classification as TriageResult["classification"],
+    priority: priority as TicketPriority,
+    category: category as TicketCategory,
+    reasoning: typeof reasoning === "string" && reasoning.trim().length > 0
+      ? reasoning.trim()
+      : "No reasoning provided by triage model",
+  };
 }
 
 export async function triageEmailWithLLM(
@@ -37,7 +70,7 @@ export async function triageEmailWithLLM(
     const model = groqApiKey ? 'llama-3.3-70b-versatile' : 'gpt-4o-mini';
     console.log(`Using ${groqApiKey ? 'Groq' : 'OpenAI'} for email triage with model: ${model}`);
 
-  const prompt = `You are an IT support ticket classifier for a school (CIS Lagos). Analyze this email and determine if it's a legitimate support request or junk/spam.
+    const prompt = `You are an IT support ticket classifier for a school (CIS Lagos). Analyze this email and determine if it's a legitimate support request or junk/spam.
 
 Email Details:
 - From: ${from}
@@ -83,14 +116,8 @@ Respond ONLY with valid JSON in this exact format:
       throw new Error('No response from LLM');
     }
 
-    const result = JSON.parse(content) as TriageResult;
-
-    // Validate response
-    if (!result.classification || !result.priority || !result.category) {
-      throw new Error('Invalid LLM response format');
-    }
-
-    return result;
+    const parsed = JSON.parse(content);
+    return validateTriageResult(parsed);
   } catch (error) {
     console.error('LLM triage error:', error);
     
